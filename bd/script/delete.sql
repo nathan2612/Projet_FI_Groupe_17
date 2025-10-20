@@ -1,9 +1,0 @@
-drop table APPARTENIR;
-drop table CONTENIR;
-drop table RESERVATION;
-drop table AVIS;
-drop table COMMANDES;
-drop table CLIENTS;
-drop table PLATS;
-drop table CATEGORIES;
-drop table MENU;
