@@ -1,0 +1,190 @@
+context:
+  restaurant_name: "Traiteur Oumami - Cuisine Chinoise"
+  description: "Base de données d'exemple pour un restaurant chinois (menu, clients, réservations, commandes, stocks, avis)."
+
+categories:
+  - id_categorie: 1
+    nom_categorie: "Entrées"
+    description: "Petites entrées chaudes et froides typiques"
+  - id_categorie: 2
+    nom_categorie: "Plats"
+    description: "Plats principaux cuisinés maison"
+  - id_categorie: 3
+    nom_categorie: "Desserts"
+    description: "Desserts sucrés chinois et maisons"
+  - id_categorie: 4
+    nom_categorie: "Boissons"
+    description: "Boissons chaudes et froides"
+
+plats:
+  - id_plat: 1
+    id_categorie: 1
+    nom_plat: "Nems végétariens"
+    description: "Nems croustillants aux légumes"
+    prix: 4.50
+    stock: 50
+  - id_plat: 2
+    id_categorie: 1
+    nom_plat: "Raviolis vapeur (Jiaozi)"
+    description: "Raviolis vapeur à la viande et légumes"
+    prix: 5.00
+    stock: 60
+  - id_plat: 3
+    id_categorie: 2
+    nom_plat: "Canard laqué (Peking Duck) - demi"
+    description: "Canard laqué servi avec crêpes et condiments"
+    prix: 32.00
+    stock: 8
+  - id_plat: 4
+    id_categorie: 2
+    nom_plat: "Porc aigre-doux"
+    description: "Porc sauté sauce aigre-douce"
+    prix: 12.50
+    stock: 25
+  - id_plat: 5
+    id_categorie: 2
+    nom_plat: "Riz cantonnais"
+    description: "Riz sauté aux œufs, petits pois et jambon"
+    prix: 9.00
+    stock: 40
+  - id_plat: 6
+    id_categorie: 3
+    nom_plat: "Pudding de mangue"
+    description: "Pudding à la mangue, dessert frais"
+    prix: 4.00
+    stock: 20
+  - id_plat: 7
+    id_categorie: 4
+    nom_plat: "Thé au jasmin"
+    description: "Thé vert parfumé au jasmin"
+    prix: 2.50
+    stock: 100
+  - id_plat: 8
+    id_categorie: 4
+    nom_plat: "Bière Tsingtao 33cl"
+    description: "Bière chinoise importée"
+    prix: 4.00
+    stock: 60
+
+clients:
+  - id_client: 1
+    nom_client: "Wang"
+    prenom_client: "Mei"
+    email: "mei.wang@example.com"
+    telephone: "+33123456789"
+  - id_client: 2
+    nom_client: "Dupont"
+    prenom_client: "Jean"
+    email: "jean.dupont@example.com"
+    telephone: "+33699887766"
+  - id_client: 3
+    nom_client: "Martin"
+    prenom_client: "Sophie"
+    email: "sophie.martin@example.com"
+    telephone: "+33611223344"
+
+reservations:
+  - id_reservation: 1
+    id_client: 2
+    date_reservation: "2025-10-21"
+    heure_reservation: "19:00:00"
+    nombre_personnes: 4
+  - id_reservation: 2
+    id_client: 3
+    date_reservation: "2025-10-22"
+    heure_reservation: "12:30:00"
+    nombre_personnes: 2
+
+commandes:
+  - id_commande: 1
+    id_client: 1
+    date_commande: "2025-10-20"
+    statut: "En attente"
+    montant_total: 21.50
+    sur_place: false
+  - id_commande: 2
+    id_client: 2
+    date_commande: "2025-10-20"
+    statut: "Confirmée"
+    montant_total: 41.00
+    sur_place: true
+
+menus:
+  - id_menu: 1
+    nom_menu: "Formule vapeur"
+    description: "Entrée vapeur + plat au choix"
+    prix: 14.00
+  - id_menu: 2
+    nom_menu: "Menu Canard"
+    description: "Demi canard laqué + 2 accompagnements"
+    prix: 36.00
+
+contenir:
+  - id_menu: 1
+    id_plat: 2
+  - id_menu: 1
+    id_plat: 5
+  - id_menu: 2
+    id_plat: 3
+  - id_menu: 2
+    id_plat: 5
+
+appartenir_plats:
+  - id_commande: 1
+    id_plat: 5
+    quantite: 1
+    prix_unitaire: 9.00
+  - id_commande: 1
+    id_plat: 7
+    quantite: 1
+    prix_unitaire: 2.50
+  - id_commande: 2
+    id_plat: 3
+    quantite: 1
+    prix_unitaire: 32.00
+  - id_commande: 2
+    id_plat: 5
+    quantite: 1
+    prix_unitaire: 9.00
+
+appartenir_menus:
+  - id_commande: 1
+    id_menu: 1
+    quantite: 1
+    prix_unitaire: 14.00
+
+avis:
+  - id_avis: 1
+    id_client: 1
+    note: 5
+    commentaire: "Excellent canard, service impeccable."
+  - id_avis: 2
+    id_client: 3
+    note: 4
+    commentaire: "Très bon, mais le riz était un peu sec."
+
+definir_stock:
+  - id_plat: 1
+    jour: "2025-10-20"
+    stock: 50
+  - id_plat: 2
+    jour: "2025-10-20"
+    stock: 60
+  - id_plat: 3
+    jour: "2025-10-20"
+    stock: 8
+  - id_plat: 4
+    jour: "2025-10-20"
+    stock: 25
+  - id_plat: 5
+    jour: "2025-10-20"
+    stock: 40
+  - id_plat: 6
+    jour: "2025-10-20"
+    stock: 20
+  - id_plat: 7
+    jour: "2025-10-20"
+    stock: 100
+  - id_plat: 8
+    jour: "2025-10-20"
+    stock: 60
