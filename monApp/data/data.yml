@@ -22,49 +22,57 @@ plats:
     nom_plat: "Nems végétariens"
     description: "Nems croustillants aux légumes"
     prix: 4.50
-    stock: 50
+    stock_reservation: 50
+    stock_directe: 50
   - id_plat: 2
     id_categorie: 1
     nom_plat: "Raviolis vapeur (Jiaozi)"
     description: "Raviolis vapeur à la viande et légumes"
     prix: 5.00
-    stock: 60
+    stock_reservation: 60
+    stock_directe: 60
   - id_plat: 3
     id_categorie: 2
     nom_plat: "Canard laqué (Peking Duck) - demi"
     description: "Canard laqué servi avec crêpes et condiments"
     prix: 32.00
-    stock: 8
+    stock_reservation: 8
+    stock_directe: 8
   - id_plat: 4
     id_categorie: 2
     nom_plat: "Porc aigre-doux"
     description: "Porc sauté sauce aigre-douce"
     prix: 12.50
-    stock: 25
+    stock_reservation: 25
+    stock_directe: 25
   - id_plat: 5
     id_categorie: 2
     nom_plat: "Riz cantonnais"
     description: "Riz sauté aux œufs, petits pois et jambon"
     prix: 9.00
-    stock: 40
+    stock_reservation: 40
+    stock_directe: 40
   - id_plat: 6
     id_categorie: 3
     nom_plat: "Pudding de mangue"
     description: "Pudding à la mangue, dessert frais"
     prix: 4.00
-    stock: 20
+    stock_reservation: 20
+    stock_directe: 20
   - id_plat: 7
     id_categorie: 4
     nom_plat: "Thé au jasmin"
     description: "Thé vert parfumé au jasmin"
     prix: 2.50
-    stock: 100
+    stock_reservation: 100
+    stock_directe: 100
   - id_plat: 8
     id_categorie: 4
     nom_plat: "Bière Tsingtao 33cl"
     description: "Bière chinoise importée"
     prix: 4.00
-    stock: 60
+    stock_reservation: 60
+    stock_directe: 60
 
 clients:
   - id_client: 1
@@ -102,12 +110,14 @@ commandes:
     statut: "En attente"
     montant_total: 21.50
     sur_place: false
+    nombre_personnes: 1
   - id_commande: 2
     id_client: 2
     date_commande: "2025-10-20"
     statut: "Confirmée"
     montant_total: 41.00
     sur_place: true
+    nombre_personnes: 2
 
 menus:
   - id_menu: 1

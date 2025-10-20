@@ -7,7 +7,7 @@ from .app import app, db
 def loaddb(filename):
     """Creates the tables and populates them with data from a YAML file.
 
-    Expected YAML keys: context, categories, plats, clients, reservations,
+    Expected YAML keys: context, categories, plats, clients,
     commandes, menus, contenir, appartenir_plats, appartenir_menus, avis, definir_stock
     """
 
@@ -24,7 +24,7 @@ def loaddb(filename):
 
     # import des modèles locaux
     from .models import (
-        CATEGORIE, PLAT, CLIENT, RESERVATION, COMMANDE, MENU,
+        CATEGORIE, PLAT, CLIENT, COMMANDE, MENU,
         CONTENIR, APPARTENIR_PLATS, APPARTENIR_MENUS, AVIS, DEFINIR_STOCK
     )
 
@@ -68,7 +68,8 @@ def loaddb(filename):
             nom_plat=entry.get('nom_plat'),
             description=entry.get('description'),
             prix=entry.get('prix'),
-            stock=entry.get('stock'),
+            stock_reservation=entry.get('stock_reservation'),
+            stock_directe=entry.get('stock_directe'),
             disponible=entry.get('disponible', True)
         )
         db.session.merge(obj)
@@ -81,7 +82,8 @@ def loaddb(filename):
             nom_client=entry.get('nom_client'),
             prenom_client=entry.get('prenom_client'),
             email=entry.get('email'),
-            telephone=entry.get('telephone')
+            telephone=entry.get('telephone'),
+            banni=entry.get('banni', False)
         )
         db.session.merge(obj)
     db.session.commit()
@@ -114,7 +116,8 @@ def loaddb(filename):
             date_commande=parse_date(entry.get('date_commande')),
             statut=entry.get('statut'),
             montant_total=entry.get('montant_total'),
-            sur_place=entry.get('sur_place')
+            sur_place=entry.get('sur_place'),
+            nombre_personnes=entry.get('nombre_personnes')
         )
         db.session.merge(obj)
     db.session.commit()
@@ -137,18 +140,6 @@ def loaddb(filename):
             id_menu=entry.get('id_menu'),
             quantite=entry.get('quantite'),
             prix_unitaire=entry.get('prix_unitaire')
-        )
-        db.session.merge(obj)
-    db.session.commit()
-
-    # 9) reservations
-    for entry in data.get('reservations', []) or []:
-        obj = RESERVATION(
-            id_reservation=entry.get('id_reservation'),
-            id_client=entry.get('id_client'),
-            date_reservation=parse_date(entry.get('date_reservation')),
-            heure_reservation=parse_time(entry.get('heure_reservation')),
-            nombre_personnes=entry.get('nombre_personnes')
         )
         db.session.merge(obj)
     db.session.commit()

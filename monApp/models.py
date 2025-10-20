@@ -22,7 +22,8 @@ class PLAT(db.Model):
 	nom_plat = db.Column(db.String(150))
 	description = db.Column(db.Text)
 	prix = db.Column(db.Numeric(10, 2))
-	stock = db.Column(db.Integer)
+	stock_reservation = db.Column(db.Integer)
+	stock_directe = db.Column(db.Integer)
 	disponible = db.Column(db.Boolean, default=True)
 
 	categorie = db.relationship('CATEGORIE', back_populates='plats')
@@ -41,32 +42,13 @@ class CLIENT(db.Model):
 	prenom_client = db.Column(db.String(100))
 	email = db.Column(db.String(150))
 	telephone = db.Column(db.String(15))
+	banni = db.Column(db.Boolean, default=False)
 
-	reservations = db.relationship('RESERVATION', back_populates='client')
 	commandes = db.relationship('COMMANDE', back_populates='client')
 	avis = db.relationship('AVIS', back_populates='client')
 
 	def __repr__(self):
 		return f"<Client {self.nom_client} {self.prenom_client} ({self.id_client})>"
-
-
-class RESERVATION(db.Model):
-	__tablename__ = 'reservation'
-	id_reservation = db.Column(db.Integer, primary_key=True)
-	id_client = db.Column(db.Integer, db.ForeignKey('clients.id_client'))
-	date_reservation = db.Column(db.Date)
-	heure_reservation = db.Column(db.Time)
-	nombre_personnes = db.Column(db.Integer)
-
-	__table_args__ = (
-		db.CheckConstraint('nombre_personnes <= 12', name='chk_nombre_personnes_range'),
-	)
-
-	client = db.relationship('CLIENT', back_populates='reservations')
-
-	def __repr__(self):
-		return f"<Reservation {self.id_reservation} client={self.id_client} date={self.date_reservation}>"
-
 
 class COMMANDE(db.Model):
 	__tablename__ = 'commandes'
@@ -76,6 +58,11 @@ class COMMANDE(db.Model):
 	statut = db.Column(db.String(50), default='En attente')
 	montant_total = db.Column(db.Numeric(10, 2))
 	sur_place = db.Column(db.Boolean, default=False)
+	nombre_personnes = db.Column(db.Integer)
+
+	__table_args__ = (
+		db.CheckConstraint('nombre_personnes <= 12', name='chk_nombre_personnes'),
+	)
 
 	client = db.relationship('CLIENT', back_populates='commandes')
 	plats = db.relationship('APPARTENIR_PLATS', back_populates='commande')
@@ -167,13 +154,21 @@ class DEFINIR_STOCK(db.Model):
 # DDL trigger creation for MySQL/MariaDB: create trigger after table creation
 trigger_update_stock_plats = DDL('''
 CREATE TRIGGER trg_update_stock_plats
-AFTER INSERT ON appartenir_plats
+BEFORE INSERT ON appartenir_plats
 FOR EACH ROW
 BEGIN
-	IF (SELECT stock FROM plats WHERE id_plat = NEW.id_plat) - NEW.quantite >= 0 THEN
-		UPDATE plats SET stock = stock - NEW.quantite WHERE id_plat = NEW.id_plat;
+	IF (select sur_place from commandes where id_commande = NEW.id_commande) THEN
+		IF (SELECT stock_reservation FROM plats WHERE id_plat = NEW.id_plat) - NEW.quantite >= 0 THEN
+			UPDATE plats SET stock_reservation = stock_reservation - NEW.quantite WHERE id_plat = NEW.id_plat;
+		ELSE
+			SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Stock insuffisant pour le plat';
+		END IF;
 	ELSE
-		SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Stock insuffisant pour le plat';
+		IF (SELECT stock_directe FROM plats WHERE id_plat = NEW.id_plat) - NEW.quantite >= 0 THEN
+			UPDATE plats SET stock_directe = stock_directe - NEW.quantite WHERE id_plat = NEW.id_plat;
+		ELSE
+			SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Stock insuffisant pour le plat';
+		END IF;
 	END IF;
 END;''')
 
@@ -198,10 +193,19 @@ BEGIN
 		IF fini = 1 THEN
 			LEAVE read_loop;
 		END IF;
-		IF (SELECT stock FROM plats WHERE id_plat = plat_id) - NEW.quantite < 0 THEN
-			SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Stock insuffisant pour un des plats du menu';
+		IF (select sur_place from commandes where id_commande = NEW.id_commande) THEN
+			IF (SELECT stock_reservation FROM plats WHERE id_plat = plat_id) - NEW.quantite >= 0 THEN
+				UPDATE plats SET stock_reservation = stock_reservation - NEW.quantite WHERE id_plat = plat_id;
+			ELSE
+				SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Stock insuffisant pour le plat';
+			END IF;
+		ELSE
+			IF (SELECT stock_directe FROM plats WHERE id_plat = plat_id) - NEW.quantite >= 0 THEN
+				UPDATE plats SET stock_directe = stock_directe - NEW.quantite WHERE id_plat = plat_id;
+			ELSE
+				SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Stock insuffisant pour le plat';
+			END IF;
 		END IF;
-		UPDATE plats SET stock = stock - NEW.quantite WHERE id_plat = plat_id;
 	END LOOP;
 	CLOSE les_plats;
 END;''')

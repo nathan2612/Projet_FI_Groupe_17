@@ -9,7 +9,7 @@ basedir = os.path.abspath(os.path.dirname(__file__))
 # requested MariaDB server. Default DB name is 'oumami' — change if needed.
 SQLALCHEMY_DATABASE_URI = os.environ.get(
 	'DATABASE_URL',
-	'mysql+pymysql://joubert:joubert@servinfo-maria:3306/DBjoubert?charset=utf8mb4'
+	'mysql+pymysql://louis:louis@localhost:3306/oumami?charset=utf8mb4'
 )
 
 BOOTSTRAP_SERVE_LOCAL = True
