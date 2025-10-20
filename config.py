@@ -5,6 +5,11 @@ import os
 SECRET_KEY = "730c3469-5303-432e-ad06-d0de212a7d98"
 
 basedir = os.path.abspath(os.path.dirname(__file__))
-SQLALCHEMY_DATABASE_URI = 'sqlite:///' + os.path.join(basedir, 'monApp.db')
+# Use DATABASE_URL environment variable when provided, otherwise connect to the
+# requested MariaDB server. Default DB name is 'oumami' — change if needed.
+SQLALCHEMY_DATABASE_URI = os.environ.get(
+	'DATABASE_URL',
+	'mysql+pymysql://joubert:joubert@servinfo-maria:3306/DBjoubert?charset=utf8mb4'
+)
 
 BOOTSTRAP_SERVE_LOCAL = True

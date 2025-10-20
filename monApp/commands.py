@@ -24,8 +24,8 @@ def loaddb(filename):
 
     # import des modèles locaux
     from .models import (
-        Categorie, Plat, Client, Reservation, Commande, Menu,
-        Contenir, AppartenirPlats, AppartenirMenus, Avis, DefinirStock
+        CATEGORIE, PLAT, CLIENT, RESERVATION, COMMANDE, MENU,
+        CONTENIR, APPARTENIR_PLATS, APPARTENIR_MENUS, AVIS, DEFINIR_STOCK
     )
 
     # helpers pour parsing date/time
@@ -52,7 +52,7 @@ def loaddb(filename):
     # Insertions par sections (ordre pour respecter FK)
     # 1) categories
     for entry in data.get('categories', []) or []:
-        obj = Categorie(
+        obj = CATEGORIE(
             id_categorie=entry.get('id_categorie'),
             nom_categorie=entry.get('nom_categorie'),
             description=entry.get('description')
@@ -62,7 +62,7 @@ def loaddb(filename):
 
     # 2) plats
     for entry in data.get('plats', []) or []:
-        obj = Plat(
+        obj = PLAT(
             id_plat=entry.get('id_plat'),
             id_categorie=entry.get('id_categorie'),
             nom_plat=entry.get('nom_plat'),
@@ -76,7 +76,7 @@ def loaddb(filename):
 
     # 3) clients
     for entry in data.get('clients', []) or []:
-        obj = Client(
+        obj = CLIENT(
             id_client=entry.get('id_client'),
             nom_client=entry.get('nom_client'),
             prenom_client=entry.get('prenom_client'),
@@ -88,7 +88,7 @@ def loaddb(filename):
 
     # 4) menus
     for entry in data.get('menus', []) or []:
-        obj = Menu(
+        obj = MENU(
             id_menu=entry.get('id_menu'),
             nom_menu=entry.get('nom_menu'),
             description=entry.get('description'),
@@ -99,7 +99,7 @@ def loaddb(filename):
 
     # 5) contenir (menu -> plat)
     for entry in data.get('contenir', []) or []:
-        obj = Contenir(
+        obj = CONTENIR(
             id_menu=entry.get('id_menu'),
             id_plat=entry.get('id_plat')
         )
@@ -108,7 +108,7 @@ def loaddb(filename):
 
     # 6) commandes
     for entry in data.get('commandes', []) or []:
-        obj = Commande(
+        obj = COMMANDE(
             id_commande=entry.get('id_commande'),
             id_client=entry.get('id_client'),
             date_commande=parse_date(entry.get('date_commande')),
@@ -121,7 +121,7 @@ def loaddb(filename):
 
     # 7) appartenir_plats (lignes de commande pour plats)
     for entry in data.get('appartenir_plats', []) or []:
-        obj = AppartenirPlats(
+        obj = APPARTENIR_PLATS(
             id_commande=entry.get('id_commande'),
             id_plat=entry.get('id_plat'),
             quantite=entry.get('quantite'),
@@ -132,7 +132,7 @@ def loaddb(filename):
 
     # 8) appartenir_menus (lignes de commande pour menus)
     for entry in data.get('appartenir_menus', []) or []:
-        obj = AppartenirMenus(
+        obj = APPARTENIR_MENUS(
             id_commande=entry.get('id_commande'),
             id_menu=entry.get('id_menu'),
             quantite=entry.get('quantite'),
@@ -143,7 +143,7 @@ def loaddb(filename):
 
     # 9) reservations
     for entry in data.get('reservations', []) or []:
-        obj = Reservation(
+        obj = RESERVATION(
             id_reservation=entry.get('id_reservation'),
             id_client=entry.get('id_client'),
             date_reservation=parse_date(entry.get('date_reservation')),
@@ -155,7 +155,7 @@ def loaddb(filename):
 
     # 10) avis
     for entry in data.get('avis', []) or []:
-        obj = Avis(
+        obj = AVIS(
             id_avis=entry.get('id_avis'),
             id_client=entry.get('id_client'),
             note=entry.get('note'),
@@ -166,7 +166,7 @@ def loaddb(filename):
 
     # 11) definir_stock
     for entry in data.get('definir_stock', []) or []:
-        obj = DefinirStock(
+        obj = DEFINIR_STOCK(
             id_plat=entry.get('id_plat'),
             jour=parse_date(entry.get('jour')),
             stock=entry.get('stock')

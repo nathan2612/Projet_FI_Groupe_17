@@ -11,7 +11,10 @@ CREATE TABLE PLATS (
     nom_plat VARCHAR(150),
     description TEXT,
     prix DECIMAL(10,2),
-    stock INT,
+    stock_ventes INT,
+    stock_reservation INT,
+    vegetarien BOOLEAN,
+    sans_gluten BOOLEAN,
     PRIMARY KEY (id_plat, id_categorie)
 );
 
@@ -21,6 +24,7 @@ create table CLIENTS(
     prenom_client VARCHAR(100),
     email VARCHAR(150),
     telephone VARCHAR(15),
+    banni BOOLEAN default false,
     PRIMARY KEY (id_client)
 );
 
