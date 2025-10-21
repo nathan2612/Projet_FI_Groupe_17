@@ -1,4 +1,4 @@
-/* Global layout: ensure footer stays at the bottom */
+/* ===== GLOBAL ===== */
 html, body {
     height: 100%;
     margin: 0;
@@ -11,38 +11,63 @@ body {
     font-family: Arial, sans-serif;
 }
 
-main {
-    flex: 1 0 auto;
+/* ===== NAVBAR ===== */
+.navbar-complet {
+    display: flex;
+    align-items: center;
+    gap: 24px;
 }
 
-/* --- Style de la barre de navigation (Desktop) --- */
+.nav-logo {
+    display: flex;
+    align-items: center;
+    flex-direction: row;
+    list-style: none;
+    margin-right: 20px;
+    padding: 0;
+}
+
+.nav-logo li {
+    display: flex;
+    align-items: center;
+}
+
+.nav-logo .logo {
+    height: 6rem;
+    width: auto;
+    display: block;
+}
+
 .navbar {
-    display: flex; 
-    justify-content: center; 
-    padding: 20px 0;
-    width: 100%;
+    display: flex;
+    flex: 1 1 auto; /* allow navbar to share line with logo */
+    align-items: center;
+    justify-content: center;
+    padding: 40px 0;
+    width: auto;
 }
 
 .navbar ul {
+    display: flex;
     list-style-type: none;
     margin: 0;
-    padding: 8px;
-    display: flex; 
-    background-color: #F3EDF7; 
-    border-radius: 50px;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05); 
+    padding: 18px;
+    background-color: #F3EDF7;
+    border-radius: 70px;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
 }
 
 .navbar ul li a {
     display: block;
-    padding: 10px 18px;
+    padding: 18px 28px;
     text-decoration: none;
-    color: #000000; 
-    border-radius: 30px; 
+    color: #000000;
+    border-radius: 38px;
+    font-size: 1.15rem;
 }
 
 .navbar ul li a.active {
-    background-color: #e6e0f8; 
+    background-color: #e6e0f8;
     color: #6a5acd;
     font-weight: 700;
 }
@@ -51,47 +76,51 @@ main {
     background-color: #E8DEF8;
 }
 
-
-/* --- @media pour les téléphones --- */
-
+/* ===== MOBILE ===== */
 @media (max-width: 700px) {
-
     .navbar ul {
         flex-direction: column;
-        width: 90%; 
-            border-radius: 20px; 
-            padding: 10px;
+        width: 90%;
+        border-radius: 20px;
+        padding: 10px;
     }
 
     .navbar ul li {
-        margin: 4px 0; 
         width: 100%;
+        margin: 4px 0;
     }
 
     .navbar ul li a {
-        text-align: center; 
         width: 100%;
-        box-sizing: border-box; 
+        text-align: center;
+        box-sizing: border-box;
     }
 }
 
-/* --- Style de base pour le Footer --- */
+h1 {
+    text-align: center;
+    font-size: 120px;
+    margin-bottom: 20px;
+}
 
+
+
+
+/* ===== FOOTER ===== */
 footer {
     display: flex;
     justify-content: space-around;
     flex-wrap: wrap;
-    padding: 40px 20px;
-    color: #444;
-    font-size: 0.9rem;
-    margin-top: auto; /* force footer to the bottom */
+    padding: 56px 24px;
+    font-size: 1.05rem;
+    margin-top: auto;
 }
 
 footer ul {
-    list-style-type: none; 
+    list-style-type: none;
     padding: 0;
-    margin: 10px 20px; 
-    min-width: 250px; 
+    margin: 12px 24px;
+    min-width: 300px;
 }
 
 footer ul li:first-child {
@@ -102,11 +131,11 @@ footer ul li:first-child {
 }
 
 footer ul li {
-    margin-bottom: 8px; 
+    margin-bottom: 8px;
 }
 
 footer ul li a {
-    color: #6a5acd; 
+    color: #6a5acd;
     text-decoration: none;
 }
 
