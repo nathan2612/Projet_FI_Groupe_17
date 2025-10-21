@@ -1,5 +1,21 @@
-/* --- Style de la barre de navigation (Desktop) --- */
+/* Global layout: ensure footer stays at the bottom */
+html, body {
+    height: 100%;
+    margin: 0;
+}
 
+body {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+    font-family: Arial, sans-serif;
+}
+
+main {
+    flex: 1 0 auto;
+}
+
+/* --- Style de la barre de navigation (Desktop) --- */
 .navbar {
     display: flex; 
     justify-content: center; 
@@ -64,10 +80,11 @@
 footer {
     display: flex;
     justify-content: space-around;
-    flex-wrap: wrap; 
+    flex-wrap: wrap;
     padding: 40px 20px;
     color: #444;
     font-size: 0.9rem;
+    margin-top: auto; /* force footer to the bottom */
 }
 
 footer ul {
