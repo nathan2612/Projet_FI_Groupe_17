@@ -72,31 +72,17 @@ clients:
     prenom_client: "Sophie"
     telephone: "+33611223344"
 
-reservations:
-  - id_reservation: 1
-    id_client: 2
-    date_reservation: "2025-10-21"
-    heure_reservation: "19:00:00"
-    nombre_personnes: 4
-  - id_reservation: 2
-    id_client: 3
-    date_reservation: "2025-10-22"
-    heure_reservation: "12:30:00"
-    nombre_personnes: 2
-
 commandes:
   - id_commande: 1
     id_client: 1
-    date_commande: "2025-10-20"
-    time_commande: "13:00:00"
+    date_commande: "2025-10-21 13:00:00"
     statut: "En attente"
     montant_total: 21.50
     sur_place: false
     nombre_personnes: 1
   - id_commande: 2
     id_client: 2
-    date_commande: "2025-10-20"
-    time_commande: "12:00:00"
+    date_commande: "2025-10-21 12:00:00"
     statut: "En préparation"
     montant_total: 41.00
     sur_place: true
@@ -153,26 +139,26 @@ avis:
 
 definir_stock:
   - id_plat: 1
-    jour: "2025-10-20"
+    jour: "2025-10-21"
     stock: 50
   - id_plat: 2
-    jour: "2025-10-20"
+    jour: "2025-10-21"
     stock: 60
   - id_plat: 3
-    jour: "2025-10-20"
-    stock: 8
+    jour: "2025-10-21"
+    stock: 50
   - id_plat: 4
-    jour: "2025-10-20"
-    stock: 25
+    jour: "2025-10-21"
+    stock: 50
   - id_plat: 5
-    jour: "2025-10-20"
+    jour: "2025-10-21"
     stock: 40
   - id_plat: 6
-    jour: "2025-10-20"
-    stock: 20
+    jour: "2025-10-21"
+    stock: 50
   - id_plat: 7
-    jour: "2025-10-20"
+    jour: "2025-10-21"
     stock: 100
   - id_plat: 8
-    jour: "2025-10-20"
+    jour: "2025-10-21"
     stock: 60
