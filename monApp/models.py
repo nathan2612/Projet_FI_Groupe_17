@@ -40,7 +40,6 @@ class CLIENT(db.Model):
 	id_client = db.Column(db.Integer, primary_key=True)
 	nom_client = db.Column(db.String(100))
 	prenom_client = db.Column(db.String(100))
-	email = db.Column(db.String(150))
 	telephone = db.Column(db.String(15))
 	banni = db.Column(db.Boolean, default=False)
 
@@ -56,7 +55,7 @@ class COMMANDE(db.Model):
 	id_client = db.Column(db.Integer, db.ForeignKey('clients.id_client'))
 	date_commande = db.Column(db.Date)
 	statut = db.Column(db.String(50), default='En attente')
-	montant_total = db.Column(db.Numeric(10, 2))
+	montant_total = db.Column(db.Numeric(10, 2),default=0.00)
 	sur_place = db.Column(db.Boolean, default=False)
 	nombre_personnes = db.Column(db.Integer)
 
@@ -103,7 +102,6 @@ class APPARTENIR_PLATS(db.Model):
 	id_commande = db.Column(db.Integer, db.ForeignKey('commandes.id_commande'), primary_key=True)
 	id_plat = db.Column(db.Integer, db.ForeignKey('plats.id_plat'), primary_key=True)
 	quantite = db.Column(db.Integer)
-	prix_unitaire = db.Column(db.Numeric(10, 2))
 
 	commande = db.relationship('COMMANDE', back_populates='plats')
 	plat = db.relationship('PLAT', back_populates='details_commandes')
@@ -117,7 +115,6 @@ class APPARTENIR_MENUS(db.Model):
 	id_commande = db.Column(db.Integer, db.ForeignKey('commandes.id_commande'), primary_key=True)
 	id_menu = db.Column(db.Integer, db.ForeignKey('menu.id_menu'), primary_key=True)
 	quantite = db.Column(db.Integer)
-	prix_unitaire = db.Column(db.Numeric(10, 2))
 
 	commande = db.relationship('COMMANDE', back_populates='menus')
 	menu = db.relationship('MENU', back_populates='appartenir_menus')
@@ -152,8 +149,8 @@ class DEFINIR_STOCK(db.Model):
 	
 
 # DDL trigger creation for MySQL/MariaDB: create trigger after table creation
-trigger_update_stock_plats = DDL('''
-CREATE TRIGGER trg_update_stock_plats
+trigger_insert_stock_plats = DDL('''
+CREATE TRIGGER trg_insert_stock_plats
 BEFORE INSERT ON appartenir_plats
 FOR EACH ROW
 BEGIN
@@ -172,11 +169,32 @@ BEGIN
 	END IF;
 END;''')
 
-event.listen(APPARTENIR_PLATS.__table__, 'after_create', trigger_update_stock_plats)
-# tester et vérifier le fonctionnement du trigger
+event.listen(APPARTENIR_PLATS.__table__, 'after_create', trigger_insert_stock_plats)
 
-trigger_update_stock_menus = DDL('''
-CREATE TRIGGER trg_update_stock_menus
+trigger_update_stock_plats = DDL('''
+CREATE TRIGGER trg_update_stock_plats
+BEFORE UPDATE ON appartenir_plats
+FOR EACH ROW
+BEGIN
+	IF (select sur_place from commandes where id_commande = NEW.id_commande) THEN
+		IF (SELECT stock_reservation FROM plats WHERE id_plat = NEW.id_plat) - NEW.quantite >= 0 THEN
+			UPDATE plats SET stock_reservation = stock_reservation - NEW.quantite WHERE id_plat = NEW.id_plat;
+		ELSE
+			SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Stock insuffisant pour le plat';
+		END IF;
+	ELSE
+		IF (SELECT stock_directe FROM plats WHERE id_plat = NEW.id_plat) - NEW.quantite >= 0 THEN
+			UPDATE plats SET stock_directe = stock_directe - NEW.quantite WHERE id_plat = NEW.id_plat;
+		ELSE
+			SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Stock insuffisant pour le plat';
+		END IF;
+	END IF;
+END;''')
+
+event.listen(APPARTENIR_PLATS.__table__, 'after_create', trigger_update_stock_plats)
+
+trigger_insert_stock_menus = DDL('''
+CREATE TRIGGER trg_insert_stock_menus
 BEFORE INSERT ON appartenir_menus
 FOR EACH ROW
 BEGIN
@@ -210,4 +228,113 @@ BEGIN
 	CLOSE les_plats;
 END;''')
 
+event.listen(APPARTENIR_MENUS.__table__, 'after_create', trigger_insert_stock_menus)
+
+trigger_update_stock_menus = DDL('''
+CREATE TRIGGER trg_update_stock_menus
+BEFORE UPDATE ON appartenir_menus
+FOR EACH ROW
+BEGIN
+	DECLARE fini INT DEFAULT 0;
+	DECLARE plat_id INT;
+	DECLARE les_plats CURSOR FOR
+		SELECT id_plat FROM contenir WHERE id_menu = NEW.id_menu;
+
+	DECLARE CONTINUE HANDLER FOR NOT FOUND SET fini = 1;
+
+	OPEN les_plats;
+	read_loop: LOOP
+		FETCH les_plats INTO plat_id;
+		IF fini = 1 THEN
+			LEAVE read_loop;
+		END IF;
+		IF (select sur_place from commandes where id_commande = NEW.id_commande) THEN
+			IF (SELECT stock_reservation FROM plats WHERE id_plat = plat_id) - NEW.quantite >= 0 THEN
+				UPDATE plats SET stock_reservation = stock_reservation - NEW.quantite WHERE id_plat = plat_id;
+			ELSE
+				SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Stock insuffisant pour le plat';
+			END IF;
+		ELSE
+			IF (SELECT stock_directe FROM plats WHERE id_plat = plat_id) - NEW.quantite >= 0 THEN
+				UPDATE plats SET stock_directe = stock_directe - NEW.quantite WHERE id_plat = plat_id;
+			ELSE
+				SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Stock insuffisant pour le plat';
+			END IF;
+		END IF;
+	END LOOP;
+	CLOSE les_plats;
+END;''')
+
 event.listen(APPARTENIR_MENUS.__table__, 'after_create', trigger_update_stock_menus)
+
+trigger_insert_commande = DDL('''
+CREATE TRIGGER trg_insert_commande
+BEFORE INSERT ON commandes
+FOR EACH ROW
+BEGIN
+	if (select sum(nombre_personnes) from commandes where date_commande = NEW.date_commande and sur_place = 1) + NEW.nombre_personnes > 12 then
+		SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Nombre maximum de personnes dépassé';
+	end if;
+END;''')
+
+event.listen(APPARTENIR_MENUS.__table__, 'after_create', trigger_insert_commande)
+
+trigger_update_commande = DDL('''
+CREATE TRIGGER trg_update_commande
+BEFORE UPDATE ON commandes
+FOR EACH ROW
+BEGIN
+	if (select sum(nombre_personnes) from commandes where date_commande = NEW.date_commande and sur_place = 1) + NEW.nombre_personnes > 12 then
+		SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Nombre maximum de personnes dépassé';
+	end if;
+END;''')
+
+event.listen(APPARTENIR_MENUS.__table__, 'after_create', trigger_update_commande)
+
+trigger_insert_calcule_montant_total_plats = DDL('''
+CREATE TRIGGER trg_calcule_montant_total_plats
+AFTER INSERT ON appartenir_plats
+FOR EACH ROW
+BEGIN
+	UPDATE commandes
+	SET montant_total = montant_total + ((select prix from plats where id_plat = NEW.id_plat) * NEW.quantite)
+	WHERE id_commande = NEW.id_commande;
+END;''')
+
+event.listen(APPARTENIR_PLATS.__table__, 'after_create', trigger_insert_calcule_montant_total_plats)
+
+trigger_update_calcule_montant_total_plats = DDL('''
+CREATE TRIGGER trg_update_calcule_montant_total_plats
+AFTER UPDATE ON appartenir_plats
+FOR EACH ROW
+BEGIN
+	UPDATE commandes
+	SET montant_total = montant_total - ((select prix from plats where id_plat = OLD.id_plat) * OLD.quantite) + ((select prix from plats where id_plat = NEW.id_plat) * NEW.quantite)
+	WHERE id_commande = NEW.id_commande;
+END;''')
+
+event.listen(APPARTENIR_PLATS.__table__, 'after_create', trigger_update_calcule_montant_total_plats)
+
+trigger_insert_calcule_montant_total_menus = DDL('''
+CREATE TRIGGER trg_insert_calcule_montant_total_menus
+AFTER INSERT ON appartenir_menus
+FOR EACH ROW
+BEGIN
+	UPDATE commandes
+	SET montant_total = montant_total + ((select prix from menu where id_menu = NEW.id_menu) * NEW.quantite)
+	WHERE id_commande = NEW.id_commande;
+END;''')
+
+event.listen(APPARTENIR_MENUS.__table__, 'after_create', trigger_insert_calcule_montant_total_menus)
+
+trigger_update_calcule_montant_total_menus = DDL('''
+CREATE TRIGGER trg_update_calcule_montant_total_menus
+AFTER UPDATE ON appartenir_menus
+FOR EACH ROW
+BEGIN
+	UPDATE commandes
+	SET montant_total = montant_total - ((select prix from menu where id_menu = OLD.id_menu) * OLD.quantite) + ((select prix from menu where id_menu = NEW.id_menu) * NEW.quantite)
+	WHERE id_commande = NEW.id_commande;
+END;''')
+
+event.listen(APPARTENIR_MENUS.__table__, 'after_create', trigger_update_calcule_montant_total_menus)

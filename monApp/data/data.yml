@@ -78,17 +78,14 @@ clients:
   - id_client: 1
     nom_client: "Wang"
     prenom_client: "Mei"
-    email: "mei.wang@example.com"
     telephone: "+33123456789"
   - id_client: 2
     nom_client: "Dupont"
     prenom_client: "Jean"
-    email: "jean.dupont@example.com"
     telephone: "+33699887766"
   - id_client: 3
     nom_client: "Martin"
     prenom_client: "Sophie"
-    email: "sophie.martin@example.com"
     telephone: "+33611223344"
 
 reservations:
@@ -143,25 +140,20 @@ appartenir_plats:
   - id_commande: 1
     id_plat: 5
     quantite: 1
-    prix_unitaire: 9.00
   - id_commande: 1
     id_plat: 7
     quantite: 1
-    prix_unitaire: 2.50
   - id_commande: 2
     id_plat: 3
     quantite: 1
-    prix_unitaire: 32.00
   - id_commande: 2
     id_plat: 5
     quantite: 1
-    prix_unitaire: 9.00
 
 appartenir_menus:
   - id_commande: 1
     id_menu: 1
     quantite: 1
-    prix_unitaire: 14.00
 
 avis:
   - id_avis: 1

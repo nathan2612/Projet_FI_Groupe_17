@@ -81,7 +81,6 @@ def loaddb(filename):
             id_client=entry.get('id_client'),
             nom_client=entry.get('nom_client'),
             prenom_client=entry.get('prenom_client'),
-            email=entry.get('email'),
             telephone=entry.get('telephone'),
             banni=entry.get('banni', False)
         )
@@ -128,7 +127,6 @@ def loaddb(filename):
             id_commande=entry.get('id_commande'),
             id_plat=entry.get('id_plat'),
             quantite=entry.get('quantite'),
-            prix_unitaire=entry.get('prix_unitaire')
         )
         db.session.merge(obj)
     db.session.commit()
@@ -139,7 +137,6 @@ def loaddb(filename):
             id_commande=entry.get('id_commande'),
             id_menu=entry.get('id_menu'),
             quantite=entry.get('quantite'),
-            prix_unitaire=entry.get('prix_unitaire')
         )
         db.session.merge(obj)
     db.session.commit()
