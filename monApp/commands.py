@@ -68,8 +68,6 @@ def loaddb(filename):
             nom_plat=entry.get('nom_plat'),
             description=entry.get('description'),
             prix=entry.get('prix'),
-            stock_reservation=entry.get('stock_reservation'),
-            stock_directe=entry.get('stock_directe'),
             disponible=entry.get('disponible', True)
         )
         db.session.merge(obj)
@@ -113,6 +111,7 @@ def loaddb(filename):
             id_commande=entry.get('id_commande'),
             id_client=entry.get('id_client'),
             date_commande=parse_date(entry.get('date_commande')),
+            time_commande=parse_time(entry.get('time_commande')),
             statut=entry.get('statut'),
             montant_total=entry.get('montant_total'),
             sur_place=entry.get('sur_place'),

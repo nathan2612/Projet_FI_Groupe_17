@@ -1,5 +1,5 @@
 from flask_sqlalchemy import SQLAlchemy
-from datetime import date, time
+from datetime import date, datetime
 from .app import db,login_manager
 from sqlalchemy import event, DDL
 from flask_login import UserMixin
@@ -23,8 +23,6 @@ class PLAT(db.Model):
 	nom_plat = db.Column(db.String(150))
 	description = db.Column(db.Text)
 	prix = db.Column(db.Numeric(10, 2))
-	stock_reservation = db.Column(db.Integer)
-	stock_directe = db.Column(db.Integer)
 	disponible = db.Column(db.Boolean, default=True)
 
 	categorie = db.relationship('CATEGORIE', back_populates='plats')
@@ -57,7 +55,8 @@ class COMMANDE(db.Model):
 	__tablename__ = 'commandes'
 	id_commande = db.Column(db.Integer, primary_key=True)
 	id_client = db.Column(db.Integer, db.ForeignKey('clients.id_client'))
-	date_commande = db.Column(db.Date)
+	date_commande = db.Column(db.Date, default=date.today)
+	time_commande = db.Column(db.Time, default=lambda: datetime.now().time())
 	statut = db.Column(db.String(50), default='En attente')
 	montant_total = db.Column(db.Numeric(10, 2),default=0.00)
 	sur_place = db.Column(db.Boolean, default=False)
@@ -65,6 +64,7 @@ class COMMANDE(db.Model):
 
 	__table_args__ = (
 		db.CheckConstraint('nombre_personnes <= 12', name='chk_nombre_personnes'),
+		db.CheckConstraint("statut IN ('En attente', 'En préparation', 'Prêt','non récupéré','récupéré')", name='chk_statut_valide'),
 	)
 
 	client = db.relationship('CLIENT', back_populates='commandes')
@@ -177,7 +177,7 @@ BEGIN
 	END IF;
 END;''')
 
-event.listen(APPARTENIR_PLATS.__table__, 'after_create', trigger_insert_stock_plats)
+#event.listen(APPARTENIR_PLATS.__table__, 'after_create', trigger_insert_stock_plats)
 
 trigger_update_stock_plats = DDL('''
 CREATE TRIGGER trg_update_stock_plats
@@ -199,7 +199,7 @@ BEGIN
 	END IF;
 END;''')
 
-event.listen(APPARTENIR_PLATS.__table__, 'after_create', trigger_update_stock_plats)
+#event.listen(APPARTENIR_PLATS.__table__, 'after_create', trigger_update_stock_plats)
 
 trigger_insert_stock_menus = DDL('''
 CREATE TRIGGER trg_insert_stock_menus
@@ -236,7 +236,7 @@ BEGIN
 	CLOSE les_plats;
 END;''')
 
-event.listen(APPARTENIR_MENUS.__table__, 'after_create', trigger_insert_stock_menus)
+#event.listen(APPARTENIR_MENUS.__table__, 'after_create', trigger_insert_stock_menus)
 
 trigger_update_stock_menus = DDL('''
 CREATE TRIGGER trg_update_stock_menus
@@ -273,7 +273,7 @@ BEGIN
 	CLOSE les_plats;
 END;''')
 
-event.listen(APPARTENIR_MENUS.__table__, 'after_create', trigger_update_stock_menus)
+#event.listen(APPARTENIR_MENUS.__table__, 'after_create', trigger_update_stock_menus)
 
 trigger_insert_commande = DDL('''
 CREATE TRIGGER trg_insert_commande
@@ -285,7 +285,7 @@ BEGIN
 	end if;
 END;''')
 
-event.listen(APPARTENIR_MENUS.__table__, 'after_create', trigger_insert_commande)
+#event.listen(APPARTENIR_MENUS.__table__, 'after_create', trigger_insert_commande)
 
 trigger_update_commande = DDL('''
 CREATE TRIGGER trg_update_commande
@@ -297,7 +297,7 @@ BEGIN
 	end if;
 END;''')
 
-event.listen(APPARTENIR_MENUS.__table__, 'after_create', trigger_update_commande)
+#event.listen(APPARTENIR_MENUS.__table__, 'after_create', trigger_update_commande)
 
 trigger_insert_calcule_montant_total_plats = DDL('''
 CREATE TRIGGER trg_calcule_montant_total_plats
@@ -309,7 +309,7 @@ BEGIN
 	WHERE id_commande = NEW.id_commande;
 END;''')
 
-event.listen(APPARTENIR_PLATS.__table__, 'after_create', trigger_insert_calcule_montant_total_plats)
+#event.listen(APPARTENIR_PLATS.__table__, 'after_create', trigger_insert_calcule_montant_total_plats)
 
 trigger_update_calcule_montant_total_plats = DDL('''
 CREATE TRIGGER trg_update_calcule_montant_total_plats
@@ -321,7 +321,7 @@ BEGIN
 	WHERE id_commande = NEW.id_commande;
 END;''')
 
-event.listen(APPARTENIR_PLATS.__table__, 'after_create', trigger_update_calcule_montant_total_plats)
+#event.listen(APPARTENIR_PLATS.__table__, 'after_create', trigger_update_calcule_montant_total_plats)
 
 trigger_insert_calcule_montant_total_menus = DDL('''
 CREATE TRIGGER trg_insert_calcule_montant_total_menus
@@ -333,7 +333,7 @@ BEGIN
 	WHERE id_commande = NEW.id_commande;
 END;''')
 
-event.listen(APPARTENIR_MENUS.__table__, 'after_create', trigger_insert_calcule_montant_total_menus)
+#event.listen(APPARTENIR_MENUS.__table__, 'after_create', trigger_insert_calcule_montant_total_menus)
 
 trigger_update_calcule_montant_total_menus = DDL('''
 CREATE TRIGGER trg_update_calcule_montant_total_menus
@@ -345,4 +345,4 @@ BEGIN
 	WHERE id_commande = NEW.id_commande;
 END;''')
 
-event.listen(APPARTENIR_MENUS.__table__, 'after_create', trigger_update_calcule_montant_total_menus)
+#event.listen(APPARTENIR_MENUS.__table__, 'after_create', trigger_update_calcule_montant_total_menus)
