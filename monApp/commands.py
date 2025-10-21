@@ -169,31 +169,3 @@ def syncdb():
     '''Creates all missing tables. '''
     db.create_all()
     lg.warning('Database synchronized!')
-
-#@app.cli.command()
-#@click.argument('login')
-#@click.argument('pwd')
-#def newuser (login, pwd):
-#    '''Adds a new user'''
-#    from . models import User
-#    unUser = User(login, pwd)
-#    db.session.add(unUser)
-#    db.session.commit()
-#    lg.warning('User ' + login + ' created!')
-#
-#@app.cli.command()
-#@click.argument('login')
-#@click.argument('pwd')
-#def newpassword (login, pwd):
-#    '''Change the password of an existing user'''
-#    from . models import User
-#    from hashlib import sha256
-#    user = db.session.get(User, login)
-#    if user is None:
-#        lg.warning('User ' + login + ' does not exist!')
-#        return
-#    m = sha256()
-#    m.update(pwd.encode())
-#    user.Password = m.hexdigest()
-#    db.session.commit()
-#    lg.warning('User ' + login + ' password updated!')

@@ -1,7 +1,8 @@
 from flask_sqlalchemy import SQLAlchemy
 from datetime import date, time
-from .app import db
+from .app import db,login_manager
 from sqlalchemy import event, DDL
+from flask_login import UserMixin
 
 class CATEGORIE(db.Model):
 	__tablename__ = 'categories'
@@ -35,7 +36,7 @@ class PLAT(db.Model):
 		return f"<Plat {self.nom_plat} ({self.id_plat})>"
 
 
-class CLIENT(db.Model):
+class CLIENT(db.Model,UserMixin):
 	__tablename__ = 'clients'
 	id_client = db.Column(db.Integer, primary_key=True)
 	nom_client = db.Column(db.String(100))
@@ -45,6 +46,9 @@ class CLIENT(db.Model):
 
 	commandes = db.relationship('COMMANDE', back_populates='client')
 	avis = db.relationship('AVIS', back_populates='client')
+
+	def get_id(self):
+		return self.id_client
 
 	def __repr__(self):
 		return f"<Client {self.nom_client} {self.prenom_client} ({self.id_client})>"
@@ -146,6 +150,10 @@ class DEFINIR_STOCK(db.Model):
 
 	def __repr__(self):
 		return f"<DefinirStock plat={self.id_plat} jour={self.jour} stock={self.stock}>"
+
+@login_manager.user_loader
+def load_user(username):
+    return db.session.get(CLIENT, username)
 	
 
 # DDL trigger creation for MySQL/MariaDB: create trigger after table creation
