@@ -18,7 +18,7 @@ def test_plat_repr(testapp):
 def test_commande_repr(testapp):
     with testapp.app_context():
         commande = db.session.get(COMMANDE, 1)
-        assert repr(commande) == "<Commande 1 client=1 statut=Confirmée>"
+        assert repr(commande) == "<Commande 1 client=1 statut=En attente>"
 
 def test_menu_repr(testapp):
     with testapp.app_context():
@@ -47,8 +47,8 @@ def test_appartenir_menus_repr(testapp):
 
 def test_definir_stock_repr(testapp):
     with testapp.app_context():
-        definir_stock = db.session.get(DEFINIR_STOCK, (1, date(2025,10,20)))
-        assert repr(definir_stock) == "<DefinirStock plat=1 jour=2025-10-20 stock=40>"
+        definir_stock = db.session.get(DEFINIR_STOCK, (1, date(2025,10,21)))
+        assert repr(definir_stock) == "<DefinirStock plat=1 jour=2025-10-21 stock=34>"
 
 def test_categorie_repr(testapp):
     with testapp.app_context():

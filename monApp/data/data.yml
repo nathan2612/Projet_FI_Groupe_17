@@ -22,57 +22,41 @@ plats:
     nom_plat: "Nems végétariens"
     description: "Nems croustillants aux légumes"
     prix: 4.50
-    stock_reservation: 50
-    stock_directe: 50
   - id_plat: 2
     id_categorie: 1
     nom_plat: "Raviolis vapeur (Jiaozi)"
     description: "Raviolis vapeur à la viande et légumes"
     prix: 5.00
-    stock_reservation: 60
-    stock_directe: 60
   - id_plat: 3
     id_categorie: 2
     nom_plat: "Canard laqué (Peking Duck) - demi"
     description: "Canard laqué servi avec crêpes et condiments"
     prix: 32.00
-    stock_reservation: 8
-    stock_directe: 8
   - id_plat: 4
     id_categorie: 2
     nom_plat: "Porc aigre-doux"
     description: "Porc sauté sauce aigre-douce"
     prix: 12.50
-    stock_reservation: 25
-    stock_directe: 25
   - id_plat: 5
     id_categorie: 2
     nom_plat: "Riz cantonnais"
     description: "Riz sauté aux œufs, petits pois et jambon"
     prix: 9.00
-    stock_reservation: 40
-    stock_directe: 40
   - id_plat: 6
     id_categorie: 3
     nom_plat: "Pudding de mangue"
     description: "Pudding à la mangue, dessert frais"
     prix: 4.00
-    stock_reservation: 20
-    stock_directe: 20
   - id_plat: 7
     id_categorie: 4
     nom_plat: "Thé au jasmin"
     description: "Thé vert parfumé au jasmin"
     prix: 2.50
-    stock_reservation: 100
-    stock_directe: 100
   - id_plat: 8
     id_categorie: 4
     nom_plat: "Bière Tsingtao 33cl"
     description: "Bière chinoise importée"
     prix: 4.00
-    stock_reservation: 60
-    stock_directe: 60
 
 clients:
   - id_client: 1
@@ -88,30 +72,18 @@ clients:
     prenom_client: "Sophie"
     telephone: "+33611223344"
 
-reservations:
-  - id_reservation: 1
-    id_client: 2
-    date_reservation: "2025-10-21"
-    heure_reservation: "19:00:00"
-    nombre_personnes: 4
-  - id_reservation: 2
-    id_client: 3
-    date_reservation: "2025-10-22"
-    heure_reservation: "12:30:00"
-    nombre_personnes: 2
-
 commandes:
   - id_commande: 1
     id_client: 1
-    date_commande: "2025-10-20"
+    date_commande: "2025-10-21 13:00:00"
     statut: "En attente"
     montant_total: 21.50
     sur_place: false
     nombre_personnes: 1
   - id_commande: 2
     id_client: 2
-    date_commande: "2025-10-20"
-    statut: "Confirmée"
+    date_commande: "2025-10-21 12:00:00"
+    statut: "En préparation"
     montant_total: 41.00
     sur_place: true
     nombre_personnes: 2
@@ -167,26 +139,26 @@ avis:
 
 definir_stock:
   - id_plat: 1
-    jour: "2025-10-20"
+    jour: "2025-10-21"
     stock: 50
   - id_plat: 2
-    jour: "2025-10-20"
+    jour: "2025-10-21"
     stock: 60
   - id_plat: 3
-    jour: "2025-10-20"
-    stock: 8
+    jour: "2025-10-21"
+    stock: 50
   - id_plat: 4
-    jour: "2025-10-20"
-    stock: 25
+    jour: "2025-10-21"
+    stock: 50
   - id_plat: 5
-    jour: "2025-10-20"
+    jour: "2025-10-21"
     stock: 40
   - id_plat: 6
-    jour: "2025-10-20"
-    stock: 20
+    jour: "2025-10-21"
+    stock: 50
   - id_plat: 7
-    jour: "2025-10-20"
+    jour: "2025-10-21"
     stock: 100
   - id_plat: 8
-    jour: "2025-10-20"
+    jour: "2025-10-21"
     stock: 60

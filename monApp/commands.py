@@ -68,9 +68,17 @@ def loaddb(filename):
             nom_plat=entry.get('nom_plat'),
             description=entry.get('description'),
             prix=entry.get('prix'),
-            stock_reservation=entry.get('stock_reservation'),
-            stock_directe=entry.get('stock_directe'),
             disponible=entry.get('disponible', True)
+        )
+        db.session.merge(obj)
+    db.session.commit()
+
+    # 11) definir_stock
+    for entry in data.get('definir_stock', []) or []:
+        obj = DEFINIR_STOCK(
+            id_plat=entry.get('id_plat'),
+            jour=parse_date(entry.get('jour')),
+            stock=entry.get('stock')
         )
         db.session.merge(obj)
     db.session.commit()
@@ -112,7 +120,7 @@ def loaddb(filename):
         obj = COMMANDE(
             id_commande=entry.get('id_commande'),
             id_client=entry.get('id_client'),
-            date_commande=parse_date(entry.get('date_commande')),
+            date_commande=datetime.strptime(entry.get('date_commande'), '%Y-%m-%d %H:%M:%S'),
             statut=entry.get('statut'),
             montant_total=entry.get('montant_total'),
             sur_place=entry.get('sur_place'),
@@ -148,16 +156,6 @@ def loaddb(filename):
             id_client=entry.get('id_client'),
             note=entry.get('note'),
             commentaire=entry.get('commentaire')
-        )
-        db.session.merge(obj)
-    db.session.commit()
-
-    # 11) definir_stock
-    for entry in data.get('definir_stock', []) or []:
-        obj = DEFINIR_STOCK(
-            id_plat=entry.get('id_plat'),
-            jour=parse_date(entry.get('jour')),
-            stock=entry.get('stock')
         )
         db.session.merge(obj)
     db.session.commit()

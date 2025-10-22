@@ -12,14 +12,12 @@ def test_categorie_init():
     assert cat.description == 'Plats d\'entrée'
 
 def test_plat_init():
-    plat = PLAT(id_plat=1, id_categorie=1, nom_plat='Salade César', description='Salade avec poulet, croûtons et parmesan', prix=9.99, stock_reservation=50, stock_directe=20, disponible=True)
+    plat = PLAT(id_plat=1, id_categorie=1, nom_plat='Salade César', description='Salade avec poulet, croûtons et parmesan', prix=9.99, disponible=True)
     assert plat.id_plat == 1
     assert plat.id_categorie == 1
     assert plat.nom_plat == 'Salade César'
     assert plat.description == 'Salade avec poulet, croûtons et parmesan'
     assert plat.prix == 9.99
-    assert plat.stock_reservation == 50
-    assert plat.stock_directe == 20
     assert plat.disponible is True
 
 def test_client_init():
@@ -29,6 +27,7 @@ def test_client_init():
     assert client.prenom_client == 'John'
     assert client.telephone == '0123456789'
     assert client.banni is False
+    assert client.get_id() == 1
 
 def test_menu_init():
     menu = MENU(id_menu=1, nom_menu='Menu Déjeuner', description='Entrée + Plat + Dessert', prix=19.99)
