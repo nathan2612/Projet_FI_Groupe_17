@@ -4,17 +4,20 @@ context:
 
 categories:
   - id_categorie: 1
-    nom_categorie: "Entrées"
+    nom_categorie: "Plats chauds"
     description: "Petites entrées chaudes et froides typiques"
   - id_categorie: 2
-    nom_categorie: "Plats"
+    nom_categorie: "Plats froids"
     description: "Plats principaux cuisinés maison"
   - id_categorie: 3
-    nom_categorie: "Desserts"
+    nom_categorie: "Suschis"
     description: "Desserts sucrés chinois et maisons"
   - id_categorie: 4
-    nom_categorie: "Boissons"
+    nom_categorie: "Desserts"
     description: "Boissons chaudes et froides"
+  - id_categorie: 5
+    nom_categorie: "Tous"
+    description: ""
 
 plats:
   - id_plat: 1

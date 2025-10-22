@@ -1,0 +1,50 @@
+{% extends "base.html" %}
+
+{% block styles %}
+    <link rel="stylesheet" href="{{ url_for('static', filename='produits.css') }}">
+{% endblock %}
+
+{% block main %}
+
+    <header class="top-bar">
+        <div class="search-bar">
+            <i class="fa-solid fa-bars"></i>
+            <span>Plats</span>
+            <i class="fa-solid fa-magnifying-glass"></i>
+        </div>
+
+        <nav class="category-nav">
+            <ul>
+                {% for category in categories %}
+                <li class="{% if category.id_categorie == cat_id %}active{% endif %}">
+                    <a href="{{ url_for('produits', cat_id=category.id_categorie) }}">
+                        <i class="fa-solid fa-hotdog"></i>
+                        <span>{{ category.nom_categorie }}</span>
+                    </a>
+                </li>
+                {% endfor %}
+            </ul>
+        </nav>
+    </header>
+
+    <main class="container">
+        <h1>Notre carte</h1>
+
+        <section class="menu-grid">
+            {% for produit in produits %}
+            <article class="menu-card">
+                <img src="{{ url_for('static', filename=produit.image_url) }}" alt="{{ produit.nom }}">
+                <div class="card-content">
+                    <h2>{{ produit.nom_plat }}</h2>
+                    <p>{{ produit.description }}</p>
+                    <button class="order-button">
+                        <i class="fa-regular fa-circle-plus"></i>
+                        <span>Commander</span>
+                    </button>
+                </div>
+            </article>
+            {% endfor %}
+        </section>
+    </main>
+
+{% endblock %}

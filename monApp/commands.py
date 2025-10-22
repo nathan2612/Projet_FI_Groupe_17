@@ -68,7 +68,8 @@ def loaddb(filename):
             nom_plat=entry.get('nom_plat'),
             description=entry.get('description'),
             prix=entry.get('prix'),
-            disponible=entry.get('disponible', True)
+            disponible=entry.get('disponible', True),
+            image_url=entry.get('image_url', 'images/default-plat.jpg')
         )
         db.session.merge(obj)
     db.session.commit()

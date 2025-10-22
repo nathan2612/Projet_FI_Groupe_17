@@ -24,6 +24,7 @@ class PLAT(db.Model):
 	description = db.Column(db.Text)
 	prix = db.Column(db.Numeric(10, 2))
 	disponible = db.Column(db.Boolean, default=True)
+	image_url = db.Column(db.String(255), default='images/default-plat.jpg')
 
 	categorie = db.relationship('CATEGORIE', back_populates='plats')
 	stock = db.relationship('DEFINIR_STOCK', back_populates='plat')
