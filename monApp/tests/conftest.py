@@ -13,7 +13,7 @@ def testapp():
     # Use a dedicated test database. You can override with TEST_DATABASE_URL env var.
     app.config.update({
         "TESTING": True,
-        "SQLALCHEMY_DATABASE_URI":'mysql+pymysql://louis:louis@localhost:3306/oumami?charset=utf8mb4',
+        "SQLALCHEMY_DATABASE_URI":'mysql+pymysql://joubert:joubert@servinfo-maria:3306/DBjoubert?charset=utf8mb4',
         "WTF_CSRF_ENABLED": False
     })
 
@@ -141,8 +141,8 @@ def client(testapp):
     return testapp.test_client()    
 
 
-def pytest_sessionfinish(session, exitstatus):
-    """Called after whole test run finishes.
-    Prints a short summary message (exit status and number of collected tests).
-    """
-    os.system("flask loaddb monApp/data/data.yml")
+#def pytest_sessionfinish(session, exitstatus):
+#    """Called after whole test run finishes.
+#    Prints a short summary message (exit status and number of collected tests).
+#    """
+#    os.system("flask loaddb monApp/data/data.yml")

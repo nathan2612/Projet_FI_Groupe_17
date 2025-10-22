@@ -27,6 +27,7 @@ def test_client_init():
     assert client.prenom_client == 'John'
     assert client.telephone == '0123456789'
     assert client.banni is False
+    assert client.get_id() == 1
 
 def test_menu_init():
     menu = MENU(id_menu=1, nom_menu='Menu Déjeuner', description='Entrée + Plat + Dessert', prix=19.99)

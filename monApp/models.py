@@ -26,7 +26,7 @@ class PLAT(db.Model):
 	disponible = db.Column(db.Boolean, default=True)
 
 	categorie = db.relationship('CATEGORIE', back_populates='plats')
-	recettes = db.relationship('DEFINIR_STOCK', back_populates='plat')
+	stock = db.relationship('DEFINIR_STOCK', back_populates='plat')
 	details_commandes = db.relationship('APPARTENIR_PLATS', back_populates='plat')
 	contenirs = db.relationship('CONTENIR', back_populates='plat')
 
@@ -147,7 +147,7 @@ class DEFINIR_STOCK(db.Model):
 	jour = db.Column(db.Date, primary_key=True)
 	stock = db.Column(db.Integer)
 
-	plat = db.relationship('PLAT', back_populates='recettes')
+	plat = db.relationship('PLAT', back_populates='stock')
 
 	def __repr__(self):
 		return f"<DefinirStock plat={self.id_plat} jour={self.jour} stock={self.stock}>"
@@ -290,6 +290,18 @@ END;''')
 
 event.listen(APPARTENIR_PLATS.__table__, 'after_create', trigger_update_calcule_montant_total_plats)
 
+trigger_delete_calcule_montant_total_plats = DDL('''
+CREATE TRIGGER trg_delete_calcule_montant_total_plats
+AFTER DELETE ON appartenir_plats
+FOR EACH ROW
+BEGIN
+	UPDATE commandes
+	SET montant_total = montant_total - ((select prix from plats where id_plat = OLD.id_plat) * OLD.quantite)
+	WHERE id_commande = OLD.id_commande;
+END;''')
+
+event.listen(APPARTENIR_PLATS.__table__, 'after_create', trigger_delete_calcule_montant_total_plats)
+
 trigger_insert_calcule_montant_total_menus = DDL('''
 CREATE TRIGGER trg_insert_calcule_montant_total_menus
 AFTER INSERT ON appartenir_menus
@@ -313,3 +325,27 @@ BEGIN
 END;''')
 
 event.listen(APPARTENIR_MENUS.__table__, 'after_create', trigger_update_calcule_montant_total_menus)
+
+trigger_delete_calcule_montant_total_menus = DDL('''
+CREATE TRIGGER trg_delete_calcule_montant_total_menus
+AFTER DELETE ON appartenir_menus
+FOR EACH ROW
+BEGIN
+	UPDATE commandes
+	SET montant_total = montant_total - ((select prix from menu where id_menu = OLD.id_menu) * OLD.quantite)
+	WHERE id_commande = OLD.id_commande;
+END;''')
+
+event.listen(APPARTENIR_MENUS.__table__, 'after_create', trigger_delete_calcule_montant_total_menus)
+
+trigger_banni = DDL('''
+CREATE TRIGGER trg_update_banni
+BEFORE INSERT ON commandes
+FOR EACH ROW
+BEGIN
+	if (select banni from clients where id_client = NEW.id_client) then
+		SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Client banni ne peut pas passer de commande';
+	end if;
+END;''')
+
+event.listen(COMMANDE.__table__, 'after_create', trigger_banni)
