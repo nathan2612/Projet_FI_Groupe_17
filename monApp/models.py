@@ -64,7 +64,7 @@ class COMMANDE(db.Model):
 	__table_args__ = (
 		db.CheckConstraint('nombre_personnes <= 12', name='chk_nombre_personnes'),
 		db.CheckConstraint("statut IN ('En attente', 'En préparation', 'Prêt','non récupéré','récupéré')", name='chk_statut_valide'),
-	db.CheckConstraint("(TIME(date_commande) BETWEEN '11:30:00' AND '14:00:00') OR (TIME(date_commande) BETWEEN '17:00:00' AND '20:00:00')", name='chk_heure_valide'),
+		db.CheckConstraint("(TIME(date_commande) BETWEEN '11:30:00' AND '14:00:00') OR ((TIME(date_commande) BETWEEN '17:00:00' AND '20:00:00' AND sur_place=0))", name='chk_heure_valide'),
 		db.CheckConstraint("WEEKDAY(DATE(date_commande)) IN (1, 2, 3, 4, 5)", name='chk_commande_jour_valide'),
 	)
 
@@ -158,6 +158,7 @@ def load_user(username):
 	
 
 # DDL trigger creation for MySQL/MariaDB: create trigger after table creation
+# * triggers gestion stock plats
 trigger_insert_stock_plats = DDL('''
 CREATE TRIGGER trg_insert_stock_plats
 BEFORE INSERT ON appartenir_plats
@@ -242,6 +243,7 @@ END;''')
 
 event.listen(APPARTENIR_MENUS.__table__, 'after_create', trigger_update_stock_menus)
 
+# * triggers gestion commande sur_place
 trigger_insert_commande_sur_place = DDL('''
 CREATE TRIGGER trg_insert_commande_sur_place
 BEFORE INSERT ON commandes
@@ -266,6 +268,7 @@ END;''')
 
 event.listen(APPARTENIR_MENUS.__table__, 'after_create', trigger_update_commande_sur_place)
 
+# * triggers calcule montant total plats
 trigger_insert_calcule_montant_total_plats = DDL('''
 CREATE TRIGGER trg_calcule_montant_total_plats
 AFTER INSERT ON appartenir_plats
@@ -302,6 +305,7 @@ END;''')
 
 event.listen(APPARTENIR_PLATS.__table__, 'after_create', trigger_delete_calcule_montant_total_plats)
 
+# * triggers calcule montant total menus
 trigger_insert_calcule_montant_total_menus = DDL('''
 CREATE TRIGGER trg_insert_calcule_montant_total_menus
 AFTER INSERT ON appartenir_menus
@@ -338,6 +342,7 @@ END;''')
 
 event.listen(APPARTENIR_MENUS.__table__, 'after_create', trigger_delete_calcule_montant_total_menus)
 
+# * trigger bannir client
 trigger_banni = DDL('''
 CREATE TRIGGER trg_update_banni
 BEFORE INSERT ON commandes

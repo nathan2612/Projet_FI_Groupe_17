@@ -141,8 +141,8 @@ def client(testapp):
     return testapp.test_client()    
 
 
-#def pytest_sessionfinish(session, exitstatus):
-#    """Called after whole test run finishes.
-#    Prints a short summary message (exit status and number of collected tests).
-#    """
-#    os.system("flask loaddb monApp/data/data.yml")
+def pytest_sessionfinish(session, exitstatus):
+    """Called after whole test run finishes.
+    Prints a short summary message (exit status and number of collected tests).
+    """
+    os.system("flask loaddb monApp/data/data.yml")
