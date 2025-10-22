@@ -1,0 +1,67 @@
+
+{% block base %}
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>{% block title %}{% endblock %}</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <link rel="icon" type="image/png" href="{{ url_for('static', filename='images/logo.png') }}">
+    </head>
+    <body>
+        {% block navbar %}
+        <div class="navbar-complet">
+            <div class="nav-logo">
+                <li>
+                    <a href="/"><img src="{{ url_for('static', filename='images/logo.png') }}" alt="Logo Oumami" class="logo"></a>
+                </li>
+            </div>
+            <nav class="navbar">
+                <ul>
+                    <li>
+                        <a href="/index">Accueil</a>
+                    </li>
+                    <li>
+                        <a href="/apropos">A propos</a>
+                    </li>
+                    <li>
+                        <a href="/nouveautes">Nouveautés</a>
+                    </li>
+                    <li>
+                        <a href="/contact">Contact</a>
+                    </li>
+                    <li>
+                        <a href="/produits">Nos produits</a>
+                    </li>
+                </ul>
+            </nav>
+        </div>
+        {% endblock %}
+        {% block content %}
+        <main id="main" role="main" class="container">
+            {% block main %}{% endblock %}
+        </main>
+        {% endblock %}
+        <footer>
+            {% block footer %}
+            <ul aria-label="Coordonnées">
+                <li>Oumami</li>
+                <li>4 place de la Halle, 41250 Bracieux</li>
+                <li>Télephone 02.54.79.05.48</li>
+            </ul>
+            <ul aria-label="Horaires d'ouverture">
+                <li>Horaires</li>
+                <li>Du mardi au samedi</li>
+                <li>11h30 - 14h (la vente à emporter et la restauration sur place)</li>
+                <li>17h - 20h (la vente à emporter uniquement)</li>
+            </ul>
+            <ul aria-label="Informations légales">
+                <li>Mentions légales</li>
+                <li>© 2014-2025 Oumami - Tous droits réservés.</li>
+                <li>Crédit site : <a href="https://github.com/nathan2612/Projet_FI_Groupe_17.git">Github</a></li>
+            </ul>
+            {% endblock %}
+        </footer>
+    </body>
+</html>
+{% endblock %}

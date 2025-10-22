@@ -1,0 +1,177 @@
+/* ===== GLOBAL ===== */
+body {
+    display: flex;
+    flex-direction: column;
+    font-family: Arial, sans-serif;
+}
+/* ===== NAVBAR ===== */
+.navbar-complet {
+    display: flex;
+    align-items: center;
+}
+.nav-logo li {
+    display: flex;
+    align-items: center;
+}
+.nav-logo .logo {
+    height: 6rem;
+}
+
+.navbar {
+    display: flex;
+    flex: 1;
+    justify-content: center;
+    width: auto;
+}
+
+.navbar ul {
+    display: flex;
+    list-style-type: none;
+    padding: 18px;
+    background-color: #F3EDF7;
+    border-radius: 70px;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+}
+
+.navbar ul li a {
+    display: block;
+    padding: 18px 28px;
+    text-decoration: none;
+    color: #000000;
+    border-radius: 38px;
+    font-size: 1.15rem;
+}
+
+.navbar ul li a.active {
+    background-color: #e6e0f8;
+    color: #6a5acd;
+}
+
+.navbar ul li a:hover:not(.active) {
+    background-color: #E8DEF8;
+}
+
+/* ===== INDEX (homepage list) ===== */
+.index-list{
+    list-style:none;
+    padding:0;
+    margin: 30px 0;
+    margin-left:12vw;
+}
+
+.index-list h1{
+    font-size:60px;
+}
+
+.index-list p{
+    color:#666;
+    font-size:20px;
+}
+
+.btn-commander{
+    display:inline-block;
+    background:#000;
+    color: #ffffff;
+    padding:12px 20px;
+    border-radius:10px;
+    text-decoration:none;
+    
+}
+
+.btn-commander:hover{ background:#222;
+     transform:translateY(-2px); 
+}
+
+.hero{
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    height:70vh;
+    overflow:hidden;
+}
+
+/* ===== MENU (container & grid) ===== */
+.menu.container{
+    max-width: 1500px;
+    margin: auto;
+}
+
+.menu h2{
+    font-size:50px;
+}
+
+.menu-grid{
+    display:grid;
+    gap: 20px;
+}
+
+.menu-card{
+    display:flex;
+    flex-direction:column;
+    gap:12px;
+    flex: 0 0 calc((100% - 40px)/3); /* methode trouver pour avoir 3 cartes par ligne  */
+
+
+}
+
+.menu-card img{
+    height: 300px;
+    object-fit: cover;
+    display: block; 
+}
+.menu-card h3{
+    margin:12px 0 6px 0;
+    font-size:18px;
+    text-transform:uppercase;
+}
+.menu-card p{
+     margin:0; 
+     color:#666; 
+}
+
+.menu-grid{
+        display:flex;
+        flex-wrap:wrap;
+        justify-content:center; 
+        
+    }
+
+
+
+
+
+/* ===== FOOTER ===== */
+footer {
+    display: flex;
+    justify-content: space-around;
+    flex-wrap: wrap;
+    padding: 56px 24px;
+    font-size: 1.05rem;
+}
+
+footer ul {
+    list-style-type: none;
+    padding: 0;
+    margin: 12px 24px;
+    min-width: 300px;
+}
+
+footer ul li:first-child {
+    font-weight: bold;
+    margin-bottom: 12px;
+    font-size: 1.05rem;
+    color: #333;
+}
+
+footer ul li {
+    margin-bottom: 8px;
+}
+
+footer ul li a {
+    color: #6a5acd;
+    text-decoration: none;
+}
+
+footer ul li a:hover {
+    text-decoration: underline;
+}
