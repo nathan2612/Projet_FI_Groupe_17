@@ -1,5 +1,10 @@
 {% extends "base.html" %}
 
+{% block styles %}
+  <link rel="stylesheet" href="{{ url_for('static', filename='index.css') }}">
+
+{% endblock %}
+
 {% block main %}
 <ul class="index-list">
   <li>
@@ -12,6 +17,7 @@
     <a href="/plat" class="btn-commander">Commander</a>
   </li>
 </ul>
+
 <section class="hero">
   <img src="{{ url_for('static', filename='images/image.jpg') }}" alt="Image d'accueil" class="index-image">
 </section>

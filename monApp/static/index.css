@@ -1,0 +1,85 @@
+
+/* ===== INDEX (homepage list) ===== */
+.index-list{
+    list-style:none;
+    padding:0;
+    margin: 30px 0;
+    margin-left:12vw;
+}
+
+.index-list h1{
+    font-size:60px;
+}
+
+.index-list p{
+    color:#666;
+    font-size:20px;
+}
+
+.btn-commander{
+    display:inline-block;
+    background:#000;
+    color: #ffffff;
+    padding:12px 20px;
+    border-radius:10px;
+    text-decoration:none;
+    
+}
+
+.btn-commander:hover{ background:#222;
+     transform:translateY(-2px); 
+}
+
+.hero{
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    overflow:hidden;
+}
+
+/* ===== MENU (container & grid) ===== */
+.menu.container{
+    max-width: 1500px;
+    margin: auto;
+    padding: 100px;
+}
+
+.menu h2{
+    font-size:50px;
+}
+
+.menu-grid{
+    display:grid;
+    gap: 20px;
+}
+
+.menu-card{
+    display:flex;
+    flex-direction:column;
+    gap:12px;
+    flex: 0 0 calc((100% - 40px)/3); /* methode trouver pour avoir 3 cartes par ligne  */
+
+
+}
+
+.menu-card img{
+    height: 300px;
+    object-fit: cover;
+    display: block; 
+}
+.menu-card h3{
+    margin:12px 0 6px 0;
+    font-size:18px;
+    text-transform:uppercase;
+}
+.menu-card p{
+     margin:0; 
+     color:#666; 
+}
+
+.menu-grid{
+        display:flex;
+        flex-wrap:wrap;
+        justify-content:center; 
+        
+    }
