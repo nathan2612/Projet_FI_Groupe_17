@@ -1,0 +1,43 @@
+{% extends "base.html" %}
+
+{% block styles %}
+    {# On change le nom du fichier CSS ici #}
+    <link rel="stylesheet" href="{{ url_for('static', filename='nouveaute.css') }}">
+{% endblock %}
+
+{% block main %}
+    <div class="page-content-wrapper"> 
+
+        {# Colonne de gauche pour l'image (le calendrier) #}
+        <div class="nouveaute-image-container">
+            {# Assurez-vous que le nom du fichier image est correct #}
+            <img src="{{ url_for('static', filename='images/calendrier.png') }}" alt="Calendrier d'ouverture de fin d'année Oumami">
+        </div>
+
+        {# Colonne de droite pour le texte #}
+        <div class="nouveaute-text-container">
+            <h1>Repas de la Saint-Sylvestre</h1>
+            <p class="date-event">4 décembre 2023</p>
+
+            <p>Le magasin Oumami vous propose un repas de la Saint-Sylvestre à <strong>32,50 € / personne</strong>.</p>
+
+            <div class="menu-separator">+++</div>
+
+            <ul class="menu-list">
+                <li>Sushi 9 pièces</li>
+                <li>Brochette de poulet au caramel</li>
+                <li>Salade de crevettes</li>
+                <li>Soupe miso</li>
+                <li>Œuf mollet à la façon thermale</li>
+                <li>Carpaccio de bœuf</li>
+                <li>Bière japonaise (33cl) ou boisson sans alcool OFFERTE !</li>
+            </ul>
+
+            <div class="menu-separator">+++</div>
+
+            <p>Plateau à emporter uniquement sur réservation.</p>
+            <p>Merci de commander jusqu’au <strong>28 décembre</strong> et de venir chercher de <strong>11h30 à 14h du 31 décembre</strong>.</p>
+        </div>
+
+    </div>
+{% endblock %}
