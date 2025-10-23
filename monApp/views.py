@@ -11,5 +11,11 @@ def index():
 def contact():
     return render_template("contact.html")
 
+@app.route('/apropos/')
+def propos():
+    return render_template("propos.html")
+
+
+
 if __name__ == "__main__":
     app.run()
