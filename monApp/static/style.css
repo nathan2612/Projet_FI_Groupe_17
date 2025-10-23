@@ -3,7 +3,10 @@ body {
     display: flex;
     flex-direction: column;
     font-family: Arial, sans-serif;
+    margin: 0;
+    left: 0;
 }
+
 /* ===== NAVBAR ===== */
 .navbar-complet {
     display: flex;
@@ -27,7 +30,7 @@ body {
 .navbar ul {
     display: flex;
     list-style-type: none;
-    padding: 18px;
+    padding: 5px;
     background-color: #F3EDF7;
     border-radius: 70px;
     box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
@@ -86,7 +89,6 @@ body {
     display:flex;
     align-items:center;
     justify-content:center;
-    height:70vh;
     overflow:hidden;
 }
 
@@ -94,6 +96,7 @@ body {
 .menu.container{
     max-width: 1500px;
     margin: auto;
+    padding: 100px;
 }
 
 .menu h2{
@@ -136,23 +139,23 @@ body {
         
     }
 
-
-
-
-
 /* ===== FOOTER ===== */
 footer {
     display: flex;
     justify-content: space-around;
     flex-wrap: wrap;
-    padding: 56px 24px;
     font-size: 1.05rem;
+    background: #ff6d41;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    
 }
+
 
 footer ul {
     list-style-type: none;
     padding: 0;
-    margin: 12px 24px;
     min-width: 300px;
 }
 
