@@ -22,8 +22,15 @@ body {
     line-height: 1.5;
 }
 
+html {
+    overflow-y: scroll;
+    /* Reserve space for the scrollbar to avoid layout shifts when it appears/disappears */
+    scrollbar-gutter: stable both-edges;
+}
+
 .container {
     max-width: 1200px;
+    width: 100%;
     margin: 0 auto;
     padding: 20px;
 }
@@ -61,13 +68,13 @@ img {
     margin-left: 20px; /* Espace entre "Plats" et l'icône */
 }
 
-.category-nav ul {
+.categorie-nav ul {
     display: flex;
     list-style: none;
-    gap: 25px;
+    gap: 12px; /* reduced gap between categories */
 }
 
-.category-nav li {
+.categorie-nav li {
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -76,40 +83,132 @@ img {
     color: var(--muted-text-color);
     font-size: 0.85rem;
     font-weight: 500;
-    padding: 8px 12px;
+    padding: 6px 8px; /* slightly reduced padding to compact items */
     border-radius: var(--border-radius-m);
     transition: all 0.3s ease;
 }
 
-.category-nav li i {
+.categorie-nav li i {
     font-size: 1.6rem;
 }
 
-.category-nav li:hover {
+.categorie-nav li:hover {
     color: var(--primary-color);
 }
 
-.category-nav li.active {
+.categorie-nav li.active {
     background-color: var(--light-purple-bg);
     color: var(--primary-color);
 }
 
-/* Make category links look like plain buttons (no underline) */
-.category-nav li a {
+/* Make categorie links look like plain buttons (no underline) */
+.categorie-nav li a {
     text-decoration: none;
     color: inherit; /* keep color inherited from the li */
     display: inline-flex;
     align-items: center;
 }
 
-.category-nav li a:hover {
+.categorie-nav li a:hover {
     color: var(--primary-color);
     text-decoration: none;
 }
 
-.category-nav li.active a {
+.categorie-nav li.active a {
     text-decoration: none;
     color: inherit;
+}
+
+.categorie-nav ul li a {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 3px; /* reduced gap between thumbnail and category name */
+    text-decoration: none;
+    color: inherit;
+}
+
+.categorie-thumb {
+    width: 24px;
+    height: 24px;
+    object-fit: cover;
+    border-radius: 4px;
+    margin-bottom: 0px; /* slight visual separation tweak */
+}
+
+/* Filters checklist styles */
+.filters {
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+    align-items: flex-start;
+    margin: 12px 0;
+}
+.filters label {
+    display: block;
+    padding: 6px 8px;
+    cursor: pointer;
+}
+
+/* Dropdown wrapper */
+.filters-container {
+    position: relative;
+    margin-left: 12px;
+}
+.filters-toggle {
+    background: #fff;
+    border: 1px solid #eee;
+    padding: 8px 12px;
+    border-radius: 8px;
+    cursor: pointer;
+}
+.filters-menu {
+    position: absolute;
+    left: 0;
+    top: calc(100% + 8px);
+    background: #fff;
+    border: 1px solid #eee;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.06);
+    border-radius: 8px;
+    padding: 8px;
+    z-index: 40;
+    min-width: 220px;
+}
+.filters-menu form {
+    display: flex;
+    flex-direction: column;
+}
+
+/* Actions inside filters dropdown */
+.filters-actions button {
+    font-weight: 600;
+    font-size: 0.9rem;
+    padding: 8px 12px;
+    border-radius: 8px;
+    cursor: pointer;
+}
+
+.filters-save {
+    background: var(--primary-color);
+    color: #fff;
+    border: 1px solid var(--primary-color);
+}
+.filters-save:hover,
+.filters-save:focus {
+    background: #5638d6; /* slightly darker */
+    border-color: #5638d6;
+    outline: none;
+}
+
+.filters-cancel {
+    background: transparent;
+    color: var(--muted-text-color);
+    border: 1px solid #e6e6e6;
+}
+.filters-cancel:hover,
+.filters-cancel:focus {
+    background: #f7f7f8;
+    outline: none;
 }
 
 /* --- Contenu Principal --- */
@@ -123,8 +222,10 @@ main h1 {
 .menu-grid {
     display: grid;
     /* Crée 3 colonnes de taille égale */
-    grid-template-columns: repeat(3, 1fr);
+    grid-template-columns: repeat(3, 1fr); 
     gap: 30px;
+    /* let items size naturally and avoid stretching that makes some cards oversized */
+    align-items: start;
 }
 
 /* --- Carte de Plat Individuelle --- */
@@ -134,6 +235,8 @@ main h1 {
     overflow: hidden; /* Pour que l'image respecte les coins arrondis */
     box-shadow: var(--card-shadow);
     transition: transform 0.3s ease, box-shadow 0.3s ease;
+    display: flex;
+    flex-direction: column;
 }
 
 .menu-card:hover {
@@ -143,8 +246,9 @@ main h1 {
 
 .menu-card img {
     width: 100%;
-    height: 220px;
-    object-fit: cover; /* Assure que l'image remplit l'espace sans se déformer */
+    height: 200px; /* fixed height for all images */
+    object-fit: cover; /* crop/scale to fill */
+    display: block;
 }
 
 .card-content {
@@ -196,10 +300,17 @@ main h1 {
 @media (max-width: 992px) {
     .menu-grid {
         grid-template-columns: repeat(2, 1fr); /* 2 colonnes */
+        /* no forced min-height on tablet - content determines height */
+        align-items: start;
     }
 
     .top-bar {
         justify-content: center; /* Centre les éléments quand ils passent l'un sous l'autre */
+    }
+
+    /* reduce image height on tablet to avoid very tall cards */
+    .menu-card img {
+        height: 200px; /* keep fixed height on tablet too */
     }
 }
 
@@ -207,6 +318,7 @@ main h1 {
 @media (max-width: 768px) {
     .menu-grid {
         grid-template-columns: 1fr; /* 1 seule colonne */
+        min-height: 220px;
     }
 
     main h1 {
@@ -214,8 +326,82 @@ main h1 {
         font-size: 2rem;
     }
 
-    .category-nav ul {
+    .categorie-nav ul {
         justify-content: space-around;
         width: 100%;
     }
+
+    /* smaller images on mobile */
+    .menu-card img {
+        height: 200px; /* fixed height on mobile */
+    }
+}
+
+/* --- Pagination styles --- */
+.pagination {
+    margin: 24px 0;
+    text-align: center;
+}
+.pagination ul {
+    list-style: none;
+    display: inline-flex;
+    gap: 8px;
+    padding: 0;
+    align-items: center;
+}
+    .pagination .page-item > a,
+    .pagination .page-item > span {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        padding: 8px 12px;
+        border-radius: 8px;
+        text-decoration: none;
+        color: var(--primary-color);
+        background: #fff;
+        border: 1px solid #eee;
+    }
+    .pagination .page-item.active > span {
+        background: var(--primary-color);
+        color: #fff;
+        border-color: var(--primary-color);
+    }
+    .pagination .page-item.disabled > span {
+        color: #bbb;
+        border-color: #f5f5f5;
+    }
+.pagination .ellipsis {
+    display: inline-flex;
+    align-items: center;
+    padding: 0 6px;
+    color: #999;
+}
+
+/* pager arrow images inside the pagination links */
+.pager-arrow {
+    width: 18px;
+    height: 18px;
+    object-fit: contain;
+    vertical-align: middle;
+}
+.pager-arrow.left {
+    margin-right: 8px;
+}
+.pager-arrow.right {
+    margin-left: 8px;
+}
+.pager-label {
+    display: inline-block;
+    vertical-align: middle;
+}
+.page-item.disabled .pager-arrow.disabled {
+    opacity: 0.4;
+}
+
+/* Ensure only the parent link/span shows the rectangle border */
+.pagination .page-item img {
+    border: none;
+    background: transparent;
+    padding: 0;
+    margin: 0;
 }

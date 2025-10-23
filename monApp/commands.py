@@ -55,7 +55,7 @@ def loaddb(filename):
         obj = CATEGORIE(
             id_categorie=entry.get('id_categorie'),
             nom_categorie=entry.get('nom_categorie'),
-            description=entry.get('description')
+            image_categorie=entry.get('image_categorie', 'default_categorie.png')
         )
         db.session.merge(obj)
     db.session.commit()
@@ -69,7 +69,7 @@ def loaddb(filename):
             description=entry.get('description'),
             prix=entry.get('prix'),
             disponible=entry.get('disponible', True),
-            image_url=entry.get('image_url', 'images/default-plat.jpg')
+            image_url=entry.get('image_url', 'default_plat.png')
         )
         db.session.merge(obj)
     db.session.commit()

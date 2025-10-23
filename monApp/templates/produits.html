@@ -13,16 +13,75 @@
             <i class="fa-solid fa-magnifying-glass"></i>
         </div>
 
-        <nav class="category-nav">
+        {# Filters checklist: vegetarian, vegan, gluten_free, dairy_free, nuts_free, shellfish_free #}
+        <form class="filters" method="get" action="{{ url_for('produits') }}" id="filters-form">
+            {# preserve category filter if present #}
+            {% if cat_id is not none %}
+                <input type="hidden" name="cat_id" value="{{ cat_id }}">
+            {% endif %}
+            <input type="hidden" name="page" value="1">
+
+            <div class="filter-item">
+                <label>
+                    <input type="checkbox" name="vegetarian" value="1" {% if request.args.get('vegetarian') %}checked{% endif %}>
+                    <strong>Végétarien</strong>
+                </label>
+            </div>
+
+            <div class="filter-item">
+                <label>
+                    <input type="checkbox" name="vegan" value="1" {% if request.args.get('vegan') %}checked{% endif %}>
+                    <strong>Végétalien (Végan)</strong>
+                </label>
+            </div>
+
+            <div class="filter-item">
+                <label>
+                    <input type="checkbox" name="gluten_free" value="1" {% if request.args.get('gluten_free') %}checked{% endif %}>
+                    <strong>Sans gluten</strong>
+                </label>
+            </div>
+
+            <div class="filter-item">
+                <label>
+                    <input type="checkbox" name="dairy_free" value="1" {% if request.args.get('dairy_free') %}checked{% endif %}>
+                    <strong>Sans produits laitiers</strong>
+                </label>
+            </div>
+
+            <div class="filter-item">
+                <label>
+                    <input type="checkbox" name="nuts_free" value="1" {% if request.args.get('nuts_free') %}checked{% endif %}>
+                    <strong>Sans fruits à coque</strong>
+                </label>
+            </div>
+
+            <div class="filter-item">
+                <label>
+                    <input type="checkbox" name="shellfish_free" value="1" {% if request.args.get('shellfish_free') %}checked{% endif %}>
+                    <strong>Sans crustacés</strong>
+                </label>
+            </div>
+        </form>
+
+        <nav class="categorie-nav">
             <ul>
-                {% for category in categories %}
-                <li class="{% if category.id_categorie == cat_id %}active{% endif %}">
-                    <a href="{{ url_for('produits', cat_id=category.id_categorie) }}">
+                {% for categorie in categories %}
+                <li class="{% if categorie.id_categorie == cat_id %}active{% endif %}">
+                    <a href="{{ url_for('produits', cat_id=categorie.id_categorie) }}">
+                        <img class="categorie-thumb" src="../static/images/{{ categorie.image_categorie }}">
                         <i class="fa-solid fa-hotdog"></i>
-                        <span>{{ category.nom_categorie }}</span>
+                        <span>{{ categorie.nom_categorie }}</span>
                     </a>
                 </li>
                 {% endfor %}
+                <li class="{% if cat_id == None %}active{% endif %}">
+                    <a href="{{ url_for('produits') }}">
+                        <img class="categorie-thumb" src="../static/images/menu.png">
+                        <i class="fa-solid fa-hotdog"></i>
+                        <span>Tous</span>
+                    </a>
+                </li>
             </ul>
         </nav>
     </header>
@@ -33,7 +92,7 @@
         <section class="menu-grid">
             {% for produit in produits %}
             <article class="menu-card">
-                <img src="{{ url_for('static', filename=produit.image_url) }}" alt="{{ produit.nom }}">
+                <img src="../static/images/{{ produit.image_url }}" alt="{{ produit.nom }}">
                 <div class="card-content">
                     <h2>{{ produit.nom_plat }}</h2>
                     <p>{{ produit.description }}</p>
@@ -45,6 +104,54 @@
             </article>
             {% endfor %}
         </section>
+
+        <nav class="pagination" aria-label="Pagination">
+            <ul>
+                <li class="page-item {% if page == 1 %}disabled{% endif %}">
+                    {% if page > 1 %}
+                        <a href="{{ url_for('produits', cat_id=cat_id, page=page-1) }}">
+                            <img class="pager-arrow left" src="{{ url_for('static', filename='images/arrow-big-left-dash.png') }}" alt="Précédent">
+                            <span class="pager-label">Précédent</span>
+                        </a>
+                    {% else %}
+                        <span>Précédent</span>
+                    {% endif %}
+                </li>
+
+                {% set start = page - 2 if page - 2 > 1 else 1 %}
+                {% set end = page + 2 if page + 2 < total_pages else total_pages %}
+                {% if start > 1 %}
+                    <li class="page-item"><a href="{{ url_for('produits', cat_id=cat_id, page=1) }}">1</a></li>
+                    {% if start > 2 %}<li class="ellipsis">…</li>{% endif %}
+                {% endif %}
+
+                {% for p in range(start, end + 1) %}
+                    <li class="page-item {% if p == page %}active{% endif %}">
+                        {% if p == page %}
+                            <span>{{ p }}</span>
+                        {% else %}
+                            <a href="{{ url_for('produits', cat_id=cat_id, page=p) }}">{{ p }}</a>
+                        {% endif %}
+                    </li>
+                {% endfor %}
+
+                {% if end < total_pages %}
+                    {% if end < total_pages -1 %}<li class="ellipsis">…</li>{% endif %}
+                    <li class="page-item"><a href="{{ url_for('produits', cat_id=cat_id, page=total_pages) }}">{{ total_pages }}</a></li>
+                {% endif %}
+
+                <li class="page-item {% if page >= total_pages %}disabled{% endif %}">
+                    {% if page < total_pages %}
+                        <a href="{{ url_for('produits', cat_id=cat_id, page=page+1) }}">
+                            <span class="pager-label">Suivant</span>
+                            <img class="pager-arrow right" src="{{ url_for('static', filename='images/arrow-big-right-dash.png') }}" alt="Suivant">
+                        </a>
+                    {% else %}
+                        <span>Suivant</span>
+                    {% endif %}
+                </li>
+            </ul>
+        </nav>
     </main>
 
 {% endblock %}
