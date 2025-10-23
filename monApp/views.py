@@ -15,6 +15,10 @@ def contact():
 def propos():
     return render_template("propos.html")
 
+@app.route('/nouveautes/')
+def nouveaute():
+    return render_template("nouveaute.html")
+
 
 
 if __name__ == "__main__":
