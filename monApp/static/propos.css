@@ -1,0 +1,74 @@
+/* Fichier : static/a-propos.css */
+
+/* C'est cette règle la plus importante !
+  Elle dit au conteneur principal de diviser son contenu
+  en colonnes (flexbox).
+*/
+.page-content-wrapper {
+    display: flex;
+    flex-wrap: wrap; /* Permet aux colonnes de passer à la ligne sur mobile */
+    gap: 2rem; /* Espace entre le texte et l'image */
+    padding: 2rem; 
+    max-width: 1200px; 
+    margin: 2rem auto; 
+    align-items: flex-start; /* Aligne le haut des colonnes */
+}
+
+/* Colonne de gauche (texte) */
+.about-text-container {
+    flex: 3; /* On donne 3 parts d'espace au texte */
+    min-width: 300px; 
+}
+
+/* Colonne de droite (image) */
+.about-image-container {
+    flex: 2; /* On donne 2 parts d'espace à l'image */
+    min-width: 300px; 
+}
+
+/* --- Styles pour le contenu (similaires à l'image) --- */
+
+.about-text-container h1 {
+    font-size: 2.8rem;
+    margin-bottom: 0.5rem;
+}
+
+.about-text-container h2 {
+    font-size: 1.3rem;
+    font-weight: 300; 
+    color: #555;
+    margin-bottom: 2rem;
+    font-style: italic;
+}
+
+.about-text-container p {
+    font-size: 1rem;
+    line-height: 1.7;
+    margin-bottom: 1.5rem;
+    color: #333;
+}
+
+.bottom-text {
+    margin-top: 3rem; 
+    padding-top: 2rem;
+    border-top: 1px solid #eee; /* Ligne de séparation */
+}
+
+.bottom-text p {
+    font-size: 0.95rem;
+}
+
+.about-image-container img {
+    width: 100%; 
+    height: auto;
+    border-radius: 8px; /* Bords arrondis */
+    box-shadow: 0 6px 15px rgba(0,0,0,0.1); /* Ombre discrète */
+}
+
+/* Pour que ça reste joli sur mobile */
+@media (max-width: 768px) {
+    .page-content-wrapper {
+        /* Empile les colonnes verticalement */
+        flex-direction: column; 
+    }
+}

@@ -55,7 +55,7 @@ def loaddb(filename):
         obj = CATEGORIE(
             id_categorie=entry.get('id_categorie'),
             nom_categorie=entry.get('nom_categorie'),
-            description=entry.get('description')
+            image_categorie=entry.get('image_categorie', 'default_categorie.png')
         )
         db.session.merge(obj)
     db.session.commit()
@@ -68,7 +68,14 @@ def loaddb(filename):
             nom_plat=entry.get('nom_plat'),
             description=entry.get('description'),
             prix=entry.get('prix'),
-            disponible=entry.get('disponible', True)
+            disponible=entry.get('disponible', True),
+            image_url=entry.get('image_url', 'default_plat.png'),
+            vegetarien=entry.get('vegetarien', False),
+            vegan=entry.get('vegan', False),
+            sans_gluten=entry.get('sans_gluten', False),
+            sans_lactose=entry.get('sans_lactose', False),
+            sans_fruit_a_coque=entry.get('sans_fruit_a_coque', False),
+            sans_crustaces=entry.get('sans_crustaces', False)
         )
         db.session.merge(obj)
     db.session.commit()
