@@ -1,64 +1,63 @@
-{% extends "base.html" %}
+{% extends 'base.html' %}
+
+{% block styles %}
+	<link rel="stylesheet" href="{{ url_for('static', filename='index.css') }}">
+{% endblock %}
+
+{% block header %}
+	<div class="header-content header-with-bg">
+		<ul class="index-list">
+			<li>
+				<h1>Oumami</h1>
+			</li>
+			<li>
+				<p>Traiteur et plat à emporter</p>
+			</li>
+			<li>
+				<a href="/plat" class="btn-commander">Commander</a>
+			</li>
+		</ul>
+	</div>
+{% endblock %}
 
 {% block styles %}
 <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 {% endblock %}
 
 {% block main %}
-<ul class="index-list">
-  <li>
-    <h1>Oumami</h1>
-  </li>
-  <li>
-    <p>Traiteur et plat à emporter</p>
-  </li>
-  <li>
-    <a href="/plat" class="btn-commander">Commander</a>
-  </li>
-</ul>
-<section class="hero">
-  <img src="{{ url_for('static', filename='images/image.jpg') }}" alt="Image d'accueil" class="index-image">
-</section>
+	<section class="menu container">
+		<h2>Nos plats à emporter</h2>
 
+		<div class="menu-grid">
+			<article class="menu-card">
+				<img src="{{ url_for('static', filename='images/image-sushi1.webp') }}" alt="Plats chauds">
+				<h3>Plats chauds</h3>
+				<p>Body text for whatever you'd like to add more to the subheading.</p>
+			</article>
 
+			<article class="menu-card">
+				<img src="{{ url_for('static', filename='images/image-sushi2.webp') }}" alt="Sushis">
+				<h3>Sushis</h3>
+				<p>Body text for whatever you'd like to expand on the main point.</p>
+			</article>
 
+			<article class="menu-card">
+				<img src="{{ url_for('static', filename='images/image-sushi3.webp') }}" alt="Plats froids">
+				<h3>Plats froids</h3>
+				<p>Body text for whatever you'd like to share more.</p>
+			</article>
 
-<section class="menu container">
-  <h2>Nos plats à emporter</h2>
-  <div class="menu-grid">
-    <article class="menu-card">
-      <img src="{{ url_for('static', filename='images/image-sushi1.webp') }}" alt="Plats chauds">
-      <h3>Plats chauds</h3>
-      <p>Body text for whatever you'd like to add more to the subheading.</p>
-    </article>
+			<article class="menu-card">
+				<img src="{{ url_for('static', filename='images/image-sushi4.webp') }}" alt="Desserts">
+				<h3>Desserts</h3>
+				<p>Body text for whatever you'd like to add more to the subheading.</p>
+			</article>
 
-    <article class="menu-card">
-      <img src="{{ url_for('static', filename='images/image-sushi2.webp') }}" alt="Sushis">
-      <h3>Sushis</h3>
-      <p>Body text for whatever you'd like to expand on the main point.</p>
-    </article>
-
-    <article class="menu-card">
-      <img src="{{ url_for('static', filename='images/image-sushi3.webp') }}" alt="Plats froids">
-      <h3>Plats froids</h3>
-      <p>Body text for whatever you'd like to share more.</p>
-    </article>
-
-    <article class="menu-card">
-      <img src="{{ url_for('static', filename='images/image-sushi4.webp') }}" alt="Desserts">
-      <h3>Desserts</h3>
-      <p>Body text for whatever you'd like to add more to the subheading.</p>
-    </article>
-
-    <article class="menu-card">
-      <img src="{{ url_for('static', filename='images/image-sushi5.webp') }}" alt="Plats sur commande">
-      <h3>Plats sur commande</h3>
-      <p>Body text for whatever you'd like to expand the main point.</p>
-    </article>
-  </div>
-</section>
-
-
-
-
+			<article class="menu-card">
+				<img src="{{ url_for('static', filename='images/image-sushi5.webp') }}" alt="Plats sur commande">
+				<h3>Plats sur commande</h3>
+				<p>Body text for whatever you'd like to expand the main point.</p>
+			</article>
+		</div>
+	</section>
 {% endblock %}

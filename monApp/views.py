@@ -70,8 +70,8 @@ def contact():
     return render_template("contact.html")
 
 @app.route('/apropos/')
-def propos():
-    return render_template("propos.html")
+def apropos():
+    return render_template("apropos.html")
 
 @app.route('/nouveautes/')
 def nouveaute():
