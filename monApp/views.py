@@ -71,7 +71,7 @@ def contact():
 
 @app.route('/apropos/')
 def apropos():
-    return render_template("apropos.html")
+    return render_template("propos.html")
 
 @app.route('/nouveautes/')
 def nouveaute():
