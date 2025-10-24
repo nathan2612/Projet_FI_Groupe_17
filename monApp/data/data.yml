@@ -4,23 +4,24 @@ context:
 
 categories:
   - id_categorie: 1
-    nom_categorie: "Entrées"
-    description: "Petites entrées chaudes et froides typiques"
+    nom_categorie: "Plats chauds"
+    image_categorie: "Plats chauds.png"
   - id_categorie: 2
-    nom_categorie: "Plats"
-    description: "Plats principaux cuisinés maison"
+    nom_categorie: "Plats froids"
+    image_categorie: "Plats froids.png"
   - id_categorie: 3
-    nom_categorie: "Desserts"
-    description: "Desserts sucrés chinois et maisons"
+    nom_categorie: "Sushis"
+    image_categorie: "Sushi.png"
   - id_categorie: 4
-    nom_categorie: "Boissons"
-    description: "Boissons chaudes et froides"
+    nom_categorie: "Desserts"
+    image_categorie: "Dessert.png"
 
 plats:
   - id_plat: 1
     id_categorie: 1
     nom_plat: "Nems végétariens"
     description: "Nems croustillants aux légumes"
+    vegetarien: true
     prix: 4.50
   - id_plat: 2
     id_categorie: 1
@@ -57,6 +58,166 @@ plats:
     nom_plat: "Bière Tsingtao 33cl"
     description: "Bière chinoise importée"
     prix: 4.00
+  - id_plat: 9
+    id_categorie: 4
+    nom_plat: "Louis Maillet"
+    description: "Un epileptique francais"
+    prix: 9.50
+  - id_plat: 10
+    id_categorie: 4
+    nom_plat: "Mehdi Akbar"
+    description: "Un etudiant en IUT"
+    prix: 17.30
+  - id_plat: 11
+    id_categorie: 1
+    nom_plat: "Poulet Kung Pao"
+    description: "Poulet sauté aux cacahuètes et piments"
+    prix: 11.50
+  - id_plat: 12
+    id_categorie: 1
+    nom_plat: "Bœuf au gingembre"
+    description: "Fines tranches de bœuf sautées au gingembre"
+    prix: 13.00
+  - id_plat: 13
+    id_categorie: 1
+    nom_plat: "Crevettes sautées à l'ail"
+    description: "Crevettes fraîches sautées à l'ail et sauce soja"
+    prix: 14.00
+  - id_plat: 14
+    id_categorie: 1
+    nom_plat: "Soupe Wonton"
+    description: "Bouillon clair avec wontons farcis"
+    prix: 6.50
+  - id_plat: 15
+    id_categorie: 1
+    nom_plat: "Nouilles sautées au poulet"
+    description: "Nouilles chinoises aux légumes et poulet"
+    prix: 9.50
+  - id_plat: 16
+    id_categorie: 1
+    nom_plat: "Mapo Tofu"
+    description: "Tofu épicé à la sichuanaise"
+    prix: 10.00
+  - id_plat: 17
+    id_categorie: 2
+    nom_plat: "Salade de concombre vinaigrée"
+    description: "Concombres croquants assaisonnés au vinaigre"
+    prix: 4.50
+  - id_plat: 18
+    id_categorie: 2
+    nom_plat: "Salade de papaye"
+    description: "Salade fraîche acidulée façon asiatique"
+    prix: 5.50
+  - id_plat: 19
+    id_categorie: 2
+    nom_plat: "Carpaccio de saumon mariné"
+    description: "Saumon mariné au sésame et citron"
+    prix: 12.00
+  - id_plat: 20
+    id_categorie: 2
+    nom_plat: "Entrée froide de tofu"
+    description: "Tofu froid avec ciboulette et sauce soja"
+    prix: 5.00
+  - id_plat: 21
+    id_categorie: 3
+    nom_plat: "California Roll"
+    description: "Makis aux avocats, surimi et concombre"
+    prix: 7.50
+  - id_plat: 22
+    id_categorie: 3
+    nom_plat: "Nigiri saumon (2 pièces)"
+    description: "Tranches de saumon sur riz vinaigré"
+    prix: 6.00
+  - id_plat: 23
+    id_categorie: 3
+    nom_plat: "Maki thon épicé (6 pièces)"
+    description: "Maki au thon, sauce pimentée"
+    prix: 8.00
+  - id_plat: 24
+    id_categorie: 3
+    nom_plat: "Sashimi mixte"
+    description: "Assortiment de tranches de poissons crus"
+    prix: 15.00
+  - id_plat: 25
+    id_categorie: 3
+    nom_plat: "Tempura roll"
+    description: "Roll frit garni de crevettes tempura"
+    prix: 9.00
+  - id_plat: 26
+    id_categorie: 4
+    nom_plat: "Perles de coco"
+    description: "Boulettes de riz gluant fourrées à la pâte de haricot"
+    prix: 4.50
+  - id_plat: 27
+    id_categorie: 4
+    nom_plat: "Beignets au sésame"
+    description: "Beignets croustillants saupoudrés de sésame"
+    prix: 3.50
+  - id_plat: 28
+    id_categorie: 4
+    nom_plat: "Glace au thé vert"
+    description: "Glace crémeuse parfumée au matcha"
+    prix: 3.80
+  - id_plat: 29
+    id_categorie: 4
+    nom_plat: "Riz gluant à la mangue"
+    description: "Riz sucré servi avec mangue fraîche"
+    prix: 5.50
+  - id_plat: 30
+    id_categorie: 1
+    nom_plat: "Canard croustillant"
+    description: "Filets de canard à la peau caramélisée"
+    prix: 18.00
+  - id_plat: 31
+    id_categorie: 1
+    nom_plat: "Porc Char Siu"
+    description: "Porc laqué tendre et sucré"
+    prix: 11.00
+  - id_plat: 32
+    id_categorie: 2
+    nom_plat: "Nouilles froides au sésame"
+    description: "Nouilles servies froides avec sauce tahini"
+    prix: 7.00
+  - id_plat: 33
+    id_categorie: 3
+    nom_plat: "Dragon Roll"
+    description: "Roll garni d'avocat et tempura, sauce spéciale"
+    prix: 10.50
+  - id_plat: 34
+    id_categorie: 3
+    nom_plat: "Hosomaki concombre (6 pièces)"
+    description: "Petits makis fins au concombre"
+    prix: 5.00
+  - id_plat: 35
+    id_categorie: 4
+    nom_plat: "Fondant au thé jasmin"
+    description: "Gâteau moelleux parfumé au jasmin"
+    prix: 4.20
+  - id_plat: 36
+    id_categorie: 1
+    nom_plat: "Légumes sautés au tofu"
+    description: "Mélange de légumes croquants et tofu"
+    prix: 9.00
+  - id_plat: 37
+    id_categorie: 2
+    nom_plat: "Assiette de sashimi froid"
+    description: "Sashimi servi froid en entrée"
+    prix: 13.50
+  - id_plat: 38
+    id_categorie: 4
+    nom_plat: "Cookie fortune (4 pièces)"
+    description: "Biscuits croquants avec message"
+    prix: 2.50
+  - id_plat: 39
+    id_categorie: 1
+    nom_plat: "Aubergines Sichuan"
+    description: "Aubergines mijotées sauce piquante"
+    prix: 8.50
+  - id_plat: 40
+    id_categorie: 3
+    nom_plat: "Chirashi bowl"
+    description: "Bol de riz vinaigré garni de poissons variés"
+    prix: 14.50
 
 clients:
   - id_client: 1
