@@ -54,7 +54,7 @@ img {
     flex: 0 0 260px;
     display: flex;
     flex-direction: column;
-    margin-top: 5%;
+    margin-top: 10%;
     gap: 18px;
 }
 

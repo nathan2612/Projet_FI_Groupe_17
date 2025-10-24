@@ -10,9 +10,11 @@ body {
 .navbar-complet {
     display: flex;
     align-items: center;
+    justify-content: space-between;
     position: relative;
     width: 100%;
     background-color: black;
+    padding: 0 18px;
 }
 
 .nav-logo {
@@ -24,10 +26,11 @@ body {
 }
 
 .navbar {
-    position: absolute;
-    left: 50%;
-    transform: translateX(-50%);
+    /* center navigation links; allow flex layout to position logo and actions */
     text-align: center;
+    flex: 1 1 auto;
+    display: flex;
+    justify-content: center;
 }
 
 .navbar ul {
@@ -37,6 +40,55 @@ body {
     list-style: none;
     margin: 0;
     padding: 0;
+}
+
+.nav-actions {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+}
+
+.nav-actions a {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    text-decoration: none;
+}
+
+.btn-connexion,
+.btn-panier {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    padding: 8px 14px;
+    border-radius: 999px;
+    font-weight: 700;
+    color: #fff;
+    background: rgba(255,255,255,0.06);
+    border: 1px solid rgba(255,255,255,0.06);
+    transition: background 160ms ease, transform 120ms ease, box-shadow 160ms ease;
+}
+.btn-connexion:hover,
+.btn-panier:hover {
+    background: #fff;
+    color: #000;
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(0,0,0,0.2);
+}
+.btn-panier {
+    background: #ff7a00; /* use theme primary color */
+    color: white;
+    border: 1px solid rgba(0,0,0,0.06);
+}
+.btn-panier:hover {
+    background: #e55a00;
+    color: #fff;
+}
+
+.icon {
+    width: 18px;
+    height: 18px;
+    object-fit: contain;
 }
 
 .navbar ul li a {
@@ -53,6 +105,8 @@ body {
 .navbar ul li a:focus {
     color: #ff6d41;
 }
+
+
 
 /* ===== SITE HEADER ===== */
 .site-header {
