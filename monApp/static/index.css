@@ -1,86 +1,91 @@
-/* ===== INDEX (homepage list) ===== */
-.index-list{
-    list-style:none;
-    padding:0;
+/* ===== INDEX HEADER BACKGROUND ===== */
+.site-header:has(.header-with-bg) {
+    background-image: url('/static/images/imageNoir.png');
+    background-size: cover;
+    background-position: center center;
+    min-height: 500px;
+}
+
+.site-header:has(.header-with-bg) .navbar-complet {
+    background-color: transparent;
+}
+
+.site-header:has(.header-with-bg) .navbar ul li a {
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
+}
+
+/* ===== INDEX LIST (homepage hero) ===== */
+.index-list {
+    list-style: none;
+    padding: 0;
     margin: 30px 0;
-    margin-left:12vw;
+    margin-left: 12vw;
 }
 
-.index-list h1{
-    font-size:60px;
+.index-list h1 {
+    font-size: 60px;
 }
 
-.index-list p{
-    color:#666;
-    font-size:20px;
+.index-list p {
+    color: #666;
+    font-size: 20px;
 }
 
-.btn-commander{
-    display:inline-block;
-    background:#ffffff;
+/* ===== BOUTON COMMANDER ===== */
+.btn-commander {
+    display: inline-block;
+    background: #ffffff;
     color: #000000;
-    padding:12px 20px;
-    border-radius:10px;
-    text-decoration:none;
+    padding: 12px 20px;
+    border-radius: 10px;
+    text-decoration: none;
     transition: background-color 160ms ease, color 160ms ease, transform 160ms ease;
 }
 
-.btn-commander:hover{
-    background: #ff6d41; /* solid orange on hover */
+.btn-commander:hover {
+    background: #ff6d41;
     color: #ffffff;
     transform: translateY(-2px);
 }
 
-.image-accueil{
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    overflow:hidden;
-}
-
-/* ===== MENU (container & grid) ===== */
-.menu.container{
+/* ===== MENU SECTION ===== */
+.menu.container {
     max-width: 1500px;
     margin: auto;
     padding: 100px;
 }
 
-.menu h2{
-    font-size:50px;
+.menu h2 {
+    font-size: 50px;
 }
 
-.menu-grid{
-    display:grid;
+.menu-grid {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
     gap: 20px;
 }
 
-.menu-card{
-    display:flex;
-    flex-direction:column;
-    gap:12px;
-    flex: 0 0 calc((100% - 40px)/3); /* methode trouver pour avoir 3 cartes par ligne  */
-
-
+.menu-card {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    flex: 0 0 calc((100% - 40px) / 3);
 }
 
-.menu-card img{
+.menu-card img {
     height: 300px;
     object-fit: cover;
-    display: block; 
-}
-.menu-card h3{
-    margin:12px 0 6px 0;
-    font-size:18px;
-    text-transform:uppercase;
-}
-.menu-card p{
-     margin:0; 
-     color:#666; 
+    display: block;
 }
 
-.menu-grid{
-        display:flex;
-        flex-wrap:wrap;
-        justify-content:center; 
-        
-    }
+.menu-card h3 {
+    margin: 12px 0 6px 0;
+    font-size: 18px;
+    text-transform: uppercase;
+}
+
+.menu-card p {
+    margin: 0;
+    color: #666;
+}

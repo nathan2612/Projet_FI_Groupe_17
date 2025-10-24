@@ -1,1 +1,0 @@
-.s2c-0 { --header-bg: url('{{ url_for('static', filename='images/imageNoir.png') }}') }

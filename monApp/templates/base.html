@@ -12,18 +12,18 @@
 		{% block styles %}{% endblock %}
 	</head>
 	<body>
-		<header class="site-header" style="--header-bg: url('{{ url_for('static', filename='images/imageNoir.png') }}')">
+		<header class="site-header">
 			<div class="navbar-complet">
 				<div class="nav-logo">
-					<li>
-						<a href="/"><img src="{{ url_for('static', filename='images/logo.png') }}" alt="Logo Oumami" class="logo"></a>
-					</li>
+					<a href="/">
+						<img src="{{ url_for('static', filename='images/logo.png') }}" alt="Logo Oumami" class="logo">
+					</a>
 				</div>
 
 				<nav class="navbar">
 					<ul>
-						<li><a href="/index.html">Accueil</a></li>
-						<li><a href="/apropos.html">A propos</a></li>
+						<li><a href="/index">Accueil</a></li>
+						<li><a href="/apropos">A propos</a></li>
 						<li><a href="/nouveautes">Nouveautés</a></li>
 						<li><a href="/contact">Contact</a></li>
 						<li><a href="/produits">Nos produits</a></li>
