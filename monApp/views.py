@@ -64,6 +64,20 @@ def produits():
             'sans_crustaces': sans_crustaces,
         }
     )
+                       
+@app.route('/contact/')
+def contact():
+    return render_template("contact.html")
+
+@app.route('/apropos/')
+def propos():
+    return render_template("propos.html")
+
+@app.route('/nouveautes/')
+def nouveaute():
+    return render_template("nouveaute.html")
+
+
 
 if __name__ == "__main__":
     app.run()

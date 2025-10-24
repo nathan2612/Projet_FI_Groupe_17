@@ -1,0 +1,123 @@
+/* Fichier : static/nouveaute.css */
+
+.page-content-wrapper {
+    display: flex;
+    flex-wrap: wrap; 
+    gap: 3rem; /* Espace entre les colonnes */
+    padding: 2rem; 
+    max-width: 1200px; 
+    margin: 2rem auto; 
+    /* IMPORTANT: Fait en sorte que les deux colonnes s'étirent à la même hauteur */
+    align-items: stretch; 
+}
+
+/* Colonne de gauche pour l'image (calendrier) */
+.nouveaute-image-container {
+    flex: 3; /* Donne 3 parts à l'image (plus grande) */
+    min-width: 450px; /* Largeur min avant de passer sur mobile */
+    padding-right: 1.5rem; 
+    box-sizing: border-box; 
+    min-height: 500px; /* Hauteur minimale pour que l'image ait de la place */
+    
+    /* Centrage de l'image dans son conteneur */
+    display: flex; 
+    justify-content: center;
+    align-items: center;
+}
+
+.nouveaute-image-container img {
+    width: 100%; /* L'image prend 100% de la largeur du conteneur */
+    height: 100%; /* L'image prend 100% de la hauteur du conteneur */
+    
+    /* IMPORTANT: Agrandit l'image pour remplir le conteneur SANS la déformer */
+    object-fit: contain; 
+    
+    display: block; 
+    border-radius: 8px; 
+    box-shadow: 0 6px 15px rgba(0,0,0,0.1); 
+}
+
+/* Colonne de droite pour le texte */
+.nouveaute-text-container {
+    flex: 1.5; /* Donne 1.5 parts au texte (plus étroit) */
+    min-width: 300px; /* Largeur min avant de passer sur mobile */
+    padding-left: 1.5rem; 
+    box-sizing: border-box;
+}
+
+/* --- Styles pour le texte --- */
+
+.nouveaute-text-container h1 {
+    font-size: 2.5rem; 
+    margin-bottom: 0.5rem;
+    color: #333;
+}
+
+.nouveaute-text-container .date-event {
+    font-size: 1.1rem;
+    color: #888;
+    margin-bottom: 2rem;
+    font-style: italic;
+}
+
+.nouveaute-text-container p {
+    font-size: 1.1rem;
+    line-height: 1.8;
+    margin-bottom: 1.5rem;
+    color: #444;
+}
+
+/* Séparateur '+++' */
+.menu-separator {
+    text-align: center;
+    font-size: 1.5rem;
+    color: #999;
+    margin: 2.5rem 0; 
+    font-weight: bold;
+}
+
+/* Liste du menu */
+.menu-list {
+    list-style: none; 
+    padding: 0;
+    margin-bottom: 2.5rem;
+}
+
+.menu-list li {
+    font-size: 1.1rem;
+    line-height: 1.8;
+    color: #444;
+    padding-left: 1.5rem; 
+    position: relative;
+    margin-bottom: 0.5rem;
+}
+
+.menu-list li::before {
+    content: "•"; 
+    color: #d1b28d; /* Couleur "or" pour la puce */
+    font-weight: bold;
+    display: inline-block;
+    width: 1em;
+    margin-left: -1.5em; 
+    position: absolute;
+    left: 0;
+}
+
+/* Pour les écrans mobiles */
+@media (max-width: 900px) { 
+    .page-content-wrapper {
+        flex-direction: column; /* Empile les colonnes */
+        gap: 2rem; 
+    }
+
+    .nouveaute-image-container,
+    .nouveaute-text-container {
+        padding: 0; /* Supprime le padding latéral */
+        min-height: auto; /* Réinitialise la hauteur min */
+    }
+
+    .nouveaute-image-container {
+        order: -1; /* Place l'image en haut sur mobile */
+        margin-bottom: 2rem;
+    }
+}
