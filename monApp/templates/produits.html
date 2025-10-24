@@ -6,87 +6,53 @@
 
 {% block main %}
 
-    <header class="top-bar">
-        <div class="search-bar">
-            <i class="fa-solid fa-bars"></i>
-            <span>Plats</span>
-            <i class="fa-solid fa-magnifying-glass"></i>
-        </div>
+    <div class="layout">
+        <aside class="sidebar">
 
-        {# Filters checklist: vegetarian, vegan, gluten_free, dairy_free, nuts_free, shellfish_free #}
-        <form class="filters" method="get" action="{{ url_for('produits') }}" id="filters-form">
-            {# preserve category filter if present #}
-            {% if cat_id is not none %}
-                <input type="hidden" name="cat_id" value="{{ cat_id }}">
-            {% endif %}
-            <input type="hidden" name="page" value="1">
+            <section class="panel categories-block">
+                <h3>Catégories</h3>
+                <nav class="categorie-nav sidebar-categories">
+                    <ul>
+                        <li class="{% if cat_id == None %}active{% endif %}">
+                            <a href="{{ url_for('produits') }}">
+                                <img class="categorie-thumb" src="../static/images/menu.png">
+                                <span>Tous</span>
+                            </a>
+                        </li>
+                        {% for categorie in categories %}
+                        <li class="{% if categorie.id_categorie == cat_id %}active{% endif %}">
+                            <a href="{{ url_for('produits', cat_id=categorie.id_categorie) }}">
+                                <img class="categorie-thumb" src="../static/images/{{ categorie.image_categorie }}">
+                                <span>{{ categorie.nom_categorie }}</span>
+                            </a>
+                        </li>
+                        {% endfor %}
+                    </ul>
+                </nav>
+            </section>
 
-            <div class="filter-item">
-                <label>
-                    <input type="checkbox" name="vegetarian" value="1" {% if request.args.get('vegetarian') %}checked{% endif %}>
-                    <strong>Végétarien</strong>
-                </label>
-            </div>
+            <section class="panel preferences-block">
+                <h3>Préférences</h3>
+                <form method="get" action="{{ url_for('produits') }}" class="filters-form sidebar-filters">
+                    {% if cat_id is not none %}
+                        <input type="hidden" name="cat_id" value="{{ cat_id }}">
+                    {% endif %}
+                    <input type="hidden" name="page" value="1">
 
-            <div class="filter-item">
-                <label>
-                    <input type="checkbox" name="vegan" value="1" {% if request.args.get('vegan') %}checked{% endif %}>
-                    <strong>Végétalien (Végan)</strong>
-                </label>
-            </div>
+                    <label><input type="checkbox" name="vegetarien" value="1" {% if filters.vegetarien %}checked{% endif %}> Végétarien</label>
+                    <label><input type="checkbox" name="vegan" value="1" {% if filters.vegan %}checked{% endif %}> Végétalien</label>
+                    <label><input type="checkbox" name="sans_gluten" value="1" {% if filters.sans_gluten %}checked{% endif %}> Sans gluten</label>
+                    <label><input type="checkbox" name="sans_lactose" value="1" {% if filters.sans_lactose %}checked{% endif %}> Sans produits laitiers</label>
+                    <label><input type="checkbox" name="sans_fruits_a_coque" value="1" {% if filters.sans_fruits_a_coque %}checked{% endif %}> Sans fruits à coque</label>
+                    <label><input type="checkbox" name="sans_crustaces" value="1" {% if filters.sans_crustaces %}checked{% endif %}> Sans crustacés</label>
 
-            <div class="filter-item">
-                <label>
-                    <input type="checkbox" name="gluten_free" value="1" {% if request.args.get('gluten_free') %}checked{% endif %}>
-                    <strong>Sans gluten</strong>
-                </label>
-            </div>
+                    <button type="submit" class="btn">Appliquer</button>
+                </form>
+            </section>
 
-            <div class="filter-item">
-                <label>
-                    <input type="checkbox" name="dairy_free" value="1" {% if request.args.get('dairy_free') %}checked{% endif %}>
-                    <strong>Sans produits laitiers</strong>
-                </label>
-            </div>
+        </aside>
 
-            <div class="filter-item">
-                <label>
-                    <input type="checkbox" name="nuts_free" value="1" {% if request.args.get('nuts_free') %}checked{% endif %}>
-                    <strong>Sans fruits à coque</strong>
-                </label>
-            </div>
-
-            <div class="filter-item">
-                <label>
-                    <input type="checkbox" name="shellfish_free" value="1" {% if request.args.get('shellfish_free') %}checked{% endif %}>
-                    <strong>Sans crustacés</strong>
-                </label>
-            </div>
-        </form>
-
-        <nav class="categorie-nav">
-            <ul>
-                {% for categorie in categories %}
-                <li class="{% if categorie.id_categorie == cat_id %}active{% endif %}">
-                    <a href="{{ url_for('produits', cat_id=categorie.id_categorie) }}">
-                        <img class="categorie-thumb" src="../static/images/{{ categorie.image_categorie }}">
-                        <i class="fa-solid fa-hotdog"></i>
-                        <span>{{ categorie.nom_categorie }}</span>
-                    </a>
-                </li>
-                {% endfor %}
-                <li class="{% if cat_id == None %}active{% endif %}">
-                    <a href="{{ url_for('produits') }}">
-                        <img class="categorie-thumb" src="../static/images/menu.png">
-                        <i class="fa-solid fa-hotdog"></i>
-                        <span>Tous</span>
-                    </a>
-                </li>
-            </ul>
-        </nav>
-    </header>
-
-    <main class="container">
+        <main class="container content">
         <h1>Notre carte</h1>
 
         <section class="menu-grid">
@@ -152,6 +118,7 @@
                 </li>
             </ul>
         </nav>
-    </main>
+        </main>
+    </div>
 
 {% endblock %}

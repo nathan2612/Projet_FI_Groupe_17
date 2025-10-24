@@ -25,6 +25,12 @@ class PLAT(db.Model):
 	prix = db.Column(db.Numeric(10, 2))
 	disponible = db.Column(db.Boolean, default=True)
 	image_url = db.Column(db.String(255), default='default_plat.png')
+	vegetarien = db.Column(db.Boolean, default=False)
+	vegan = db.Column(db.Boolean, default=False)
+	sans_gluten = db.Column(db.Boolean, default=False)
+	sans_lactose = db.Column(db.Boolean, default=False)
+	sans_fruit_a_coque = db.Column(db.Boolean, default=False)
+	sans_crustaces = db.Column(db.Boolean, default=False)
 
 	categorie = db.relationship('CATEGORIE', back_populates='plats')
 	stock = db.relationship('DEFINIR_STOCK', back_populates='plat')

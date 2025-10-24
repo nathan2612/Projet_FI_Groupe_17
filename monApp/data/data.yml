@@ -21,6 +21,7 @@ plats:
     id_categorie: 1
     nom_plat: "Nems végétariens"
     description: "Nems croustillants aux légumes"
+    vegetarien: true
     prix: 4.50
   - id_plat: 2
     id_categorie: 1

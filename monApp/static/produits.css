@@ -1,7 +1,7 @@
 /* --- Variables et Styles Généraux --- */
 :root {
-    --primary-color: #6a49f2; /* Violet principal (pour les boutons) */
-    --light-purple-bg: #f0edfC; /* Fond violet très clair */
+    --primary-color: #ff7a00;
+    --light-purple-bg: #fff4e6;
     --text-color: #333;
     --muted-text-color: #777;
     --card-shadow: 0 8px 24px rgba(0, 0, 0, 0.05);
@@ -24,7 +24,6 @@ body {
 
 html {
     overflow-y: scroll;
-    /* Reserve space for the scrollbar to avoid layout shifts when it appears/disappears */
     scrollbar-gutter: stable both-edges;
 }
 
@@ -40,175 +39,165 @@ img {
     display: block;
 }
 
-/* --- En-tête (Top Bar) --- */
-.top-bar {
+/* --- Layout: sidebar left, content right --- */
+.layout {
     display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 20px;
+    gap: 24px;
     max-width: 1200px;
     margin: 0 auto;
-    flex-wrap: wrap; /* Pour la réactivité */
-    gap: 20px;
+    padding: 20px;
+    align-items: flex-start;
 }
 
-.search-bar {
-    display: flex;
-    align-items: center;
-    gap: 15px;
-    background-color: var(--light-purple-bg);
-    border-radius: var(--border-radius-l);
-    padding: 12px 20px;
-    font-weight: 500;
-    color: #555;
-}
-
-.search-bar .fa-magnifying-glass {
-    color: var(--muted-text-color);
-    margin-left: 20px; /* Espace entre "Plats" et l'icône */
-}
-
-.categorie-nav ul {
-    display: flex;
-    list-style: none;
-    gap: 12px; /* reduced gap between categories */
-}
-
-.categorie-nav li {
+.sidebar {
+    width: 260px;
+    flex: 0 0 260px;
     display: flex;
     flex-direction: column;
+    margin-top: 5%;
+    gap: 18px;
+}
+
+.content {
+    flex: 1 1 auto;
+}
+
+/* Panel blocks inside sidebar */
+.sidebar .panel {
+    background: #fff;
+    border: 1px solid #f0f0f3;
+    border-radius: 12px;
+    padding: 12px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.03);
+}
+
+.sidebar .panel h3 {
+    font-size: 1.05rem;
+    margin: 0 0 10px 0;
+    padding: 0;
+    color: var(--text-color);
+}
+
+.sidebar .panel.categories-block .categorie-nav ul {
+    margin: 0;
+}
+
+.sidebar .panel.preferences-block .filters-form {
+    margin: 0;
+    background: transparent;
+    border: none;
+    padding: 0;
+    box-shadow: none;
+}
+
+/* Sidebar filters: vertical layout */
+.sidebar .filters-form {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.sidebar .filters-form label {
+    padding: 8px 10px;
+    border-radius: 8px;
+    width: 100%;
+    justify-content: flex-start;
+    gap: 10px;
+    display: inline-flex;
     align-items: center;
-    gap: 5px;
     cursor: pointer;
-    color: var(--muted-text-color);
-    font-size: 0.85rem;
-    font-weight: 500;
-    padding: 6px 8px; /* slightly reduced padding to compact items */
+    transition: background 120ms ease, transform 120ms ease;
+}
+
+.sidebar .filters-form label:hover {
+    background: #fbfbff;
+    transform: translateY(-1px);
+}
+
+.sidebar .filters-form input[type="checkbox"] {
+    width: 18px;
+    height: 18px;
+    accent-color: var(--primary-color);
+    cursor: pointer;
+}
+
+.sidebar .filters-form .btn {
+    align-self: stretch;
+    background: var(--primary-color);
+    color: #fff;
+    border: none;
+    padding: 8px 14px;
+    border-radius: 10px;
+    font-weight: 700;
+    cursor: pointer;
+    box-shadow: 0 6px 18px rgba(255,122,0,0.12);
+    transition: transform 120ms ease, background 120ms ease;
+}
+
+.sidebar .filters-form .btn:hover {
+    transform: translateY(-2px);
+    background: #e55a00;
+}
+
+.sidebar .filters-form .btn:focus {
+    outline: 3px solid rgba(255,122,0,0.18);
+}
+
+/* Sidebar category nav: vertical */
+.sidebar .categorie-nav ul {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    list-style: none;
+    padding: 0;
+}
+
+.sidebar .categorie-nav li {
+    width: 100%;
+    padding: 8px 10px;
     border-radius: var(--border-radius-m);
     transition: all 0.3s ease;
 }
 
-.categorie-nav li i {
-    font-size: 1.6rem;
-}
-
-.categorie-nav li:hover {
+.sidebar .categorie-nav li:hover {
     color: var(--primary-color);
 }
 
-.categorie-nav li.active {
+.sidebar .categorie-nav li.active {
     background-color: var(--light-purple-bg);
     color: var(--primary-color);
 }
 
-/* Make categorie links look like plain buttons (no underline) */
-.categorie-nav li a {
-    text-decoration: none;
-    color: inherit; /* keep color inherited from the li */
+.sidebar .categorie-nav li a {
     display: inline-flex;
     align-items: center;
-}
-
-.categorie-nav li a:hover {
-    color: var(--primary-color);
-    text-decoration: none;
-}
-
-.categorie-nav li.active a {
+    gap: 10px;
+    width: 100%;
     text-decoration: none;
     color: inherit;
 }
 
-.categorie-nav ul li a {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 3px; /* reduced gap between thumbnail and category name */
-    text-decoration: none;
-    color: inherit;
-}
-
-.categorie-thumb {
-    width: 24px;
-    height: 24px;
+.sidebar .categorie-thumb {
+    width: 36px;
+    height: 36px;
     object-fit: cover;
-    border-radius: 4px;
-    margin-bottom: 0px; /* slight visual separation tweak */
-}
-
-/* Filters checklist styles */
-.filters {
-    display: flex;
-    gap: 12px;
-    flex-wrap: wrap;
-    align-items: flex-start;
-    margin: 12px 0;
-}
-.filters label {
-    display: block;
-    padding: 6px 8px;
-    cursor: pointer;
-}
-
-/* Dropdown wrapper */
-.filters-container {
-    position: relative;
-    margin-left: 12px;
-}
-.filters-toggle {
-    background: #fff;
-    border: 1px solid #eee;
-    padding: 8px 12px;
     border-radius: 8px;
-    cursor: pointer;
-}
-.filters-menu {
-    position: absolute;
-    left: 0;
-    top: calc(100% + 8px);
-    background: #fff;
-    border: 1px solid #eee;
-    box-shadow: 0 8px 24px rgba(0,0,0,0.06);
-    border-radius: 8px;
-    padding: 8px;
-    z-index: 40;
-    min-width: 220px;
-}
-.filters-menu form {
-    display: flex;
-    flex-direction: column;
 }
 
-/* Actions inside filters dropdown */
-.filters-actions button {
-    font-weight: 600;
-    font-size: 0.9rem;
-    padding: 8px 12px;
-    border-radius: 8px;
-    cursor: pointer;
-}
-
-.filters-save {
-    background: var(--primary-color);
-    color: #fff;
-    border: 1px solid var(--primary-color);
-}
-.filters-save:hover,
-.filters-save:focus {
-    background: #5638d6; /* slightly darker */
-    border-color: #5638d6;
-    outline: none;
-}
-
-.filters-cancel {
-    background: transparent;
-    color: var(--muted-text-color);
-    border: 1px solid #e6e6e6;
-}
-.filters-cancel:hover,
-.filters-cancel:focus {
-    background: #f7f7f8;
-    outline: none;
+/* Responsive: stack on small screens */
+@media (max-width: 992px) {
+    .layout {
+        flex-direction: column;
+        padding: 12px;
+    }
+    .sidebar {
+        width: 100%;
+        flex: none;
+        order: 0;
+    }
+    .content {
+        order: 1;
+    }
 }
 
 /* --- Contenu Principal --- */
@@ -221,10 +210,8 @@ main h1 {
 /* --- Grille des Plats --- */
 .menu-grid {
     display: grid;
-    /* Crée 3 colonnes de taille égale */
-    grid-template-columns: repeat(3, 1fr); 
+    grid-template-columns: repeat(3, 1fr);
     gap: 30px;
-    /* let items size naturally and avoid stretching that makes some cards oversized */
     align-items: start;
 }
 
@@ -232,7 +219,7 @@ main h1 {
 .menu-card {
     background-color: #fff;
     border-radius: var(--border-radius-m);
-    overflow: hidden; /* Pour que l'image respecte les coins arrondis */
+    overflow: hidden;
     box-shadow: var(--card-shadow);
     transition: transform 0.3s ease, box-shadow 0.3s ease;
     display: flex;
@@ -246,8 +233,8 @@ main h1 {
 
 .menu-card img {
     width: 100%;
-    height: 200px; /* fixed height for all images */
-    object-fit: cover; /* crop/scale to fill */
+    height: 200px;
+    object-fit: cover;
     display: block;
 }
 
@@ -282,42 +269,109 @@ main h1 {
     font-weight: 600;
     font-size: 0.9rem;
     cursor: pointer;
-    margin-left: auto; /* Aligne le bouton à droite */
+    margin-left: auto;
     transition: background-color 0.3s ease;
 }
 
 .order-button:hover {
-    background-color: #e0d9fa; /* Un violet un peu plus foncé au survol */
+    background-color: #e0d9fa;
 }
 
 .order-button i {
     font-size: 1.1rem;
 }
 
-/* --- Réactivité (Media Queries) --- */
+/* --- Pagination --- */
+.pagination {
+    margin: 24px 0;
+    text-align: center;
+}
 
-/* Pour les tablettes */
+.pagination ul {
+    list-style: none;
+    display: inline-flex;
+    gap: 8px;
+    padding: 0;
+    align-items: center;
+}
+
+.pagination .page-item > a,
+.pagination .page-item > span {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 12px;
+    border-radius: 8px;
+    text-decoration: none;
+    color: var(--primary-color);
+    background: #fff;
+    border: 1px solid #eee;
+}
+
+.pagination .page-item.active > span {
+    background: var(--primary-color);
+    color: #fff;
+    border-color: var(--primary-color);
+}
+
+.pagination .page-item.disabled > span {
+    color: #bbb;
+    border-color: #f5f5f5;
+}
+
+.pagination .ellipsis {
+    display: inline-flex;
+    align-items: center;
+    padding: 0 6px;
+    color: #999;
+}
+
+.pager-arrow {
+    width: 18px;
+    height: 18px;
+    object-fit: contain;
+    vertical-align: middle;
+}
+
+.pager-arrow.left {
+    margin-right: 8px;
+}
+
+.pager-arrow.right {
+    margin-left: 8px;
+}
+
+.pager-label {
+    display: inline-block;
+    vertical-align: middle;
+}
+
+.page-item.disabled .pager-arrow {
+    opacity: 0.4;
+}
+
+.pagination .page-item img {
+    border: none;
+    background: transparent;
+    padding: 0;
+    margin: 0;
+}
+
+/* --- Réactivité (Media Queries) --- */
 @media (max-width: 992px) {
     .menu-grid {
-        grid-template-columns: repeat(2, 1fr); /* 2 colonnes */
-        /* no forced min-height on tablet - content determines height */
+        grid-template-columns: repeat(2, 1fr);
         align-items: start;
     }
 
-    .top-bar {
-        justify-content: center; /* Centre les éléments quand ils passent l'un sous l'autre */
-    }
-
-    /* reduce image height on tablet to avoid very tall cards */
     .menu-card img {
-        height: 200px; /* keep fixed height on tablet too */
+        height: 200px;
     }
 }
 
-/* Pour les téléphones */
 @media (max-width: 768px) {
     .menu-grid {
-        grid-template-columns: 1fr; /* 1 seule colonne */
+        grid-template-columns: 1fr;
         min-height: 220px;
     }
 
@@ -326,82 +380,7 @@ main h1 {
         font-size: 2rem;
     }
 
-    .categorie-nav ul {
-        justify-content: space-around;
-        width: 100%;
-    }
-
-    /* smaller images on mobile */
     .menu-card img {
-        height: 200px; /* fixed height on mobile */
+        height: 200px;
     }
-}
-
-/* --- Pagination styles --- */
-.pagination {
-    margin: 24px 0;
-    text-align: center;
-}
-.pagination ul {
-    list-style: none;
-    display: inline-flex;
-    gap: 8px;
-    padding: 0;
-    align-items: center;
-}
-    .pagination .page-item > a,
-    .pagination .page-item > span {
-        display: inline-flex;
-        align-items: center;
-        gap: 8px;
-        padding: 8px 12px;
-        border-radius: 8px;
-        text-decoration: none;
-        color: var(--primary-color);
-        background: #fff;
-        border: 1px solid #eee;
-    }
-    .pagination .page-item.active > span {
-        background: var(--primary-color);
-        color: #fff;
-        border-color: var(--primary-color);
-    }
-    .pagination .page-item.disabled > span {
-        color: #bbb;
-        border-color: #f5f5f5;
-    }
-.pagination .ellipsis {
-    display: inline-flex;
-    align-items: center;
-    padding: 0 6px;
-    color: #999;
-}
-
-/* pager arrow images inside the pagination links */
-.pager-arrow {
-    width: 18px;
-    height: 18px;
-    object-fit: contain;
-    vertical-align: middle;
-}
-.pager-arrow.left {
-    margin-right: 8px;
-}
-.pager-arrow.right {
-    margin-left: 8px;
-}
-.pager-label {
-    display: inline-block;
-    vertical-align: middle;
-}
-.page-item.disabled .pager-arrow.disabled {
-    opacity: 0.4;
-}
-
-/* Ensure only the parent link/span shows the rectangle border */
-.pagination .page-item img {
-    border: none;
-    background: transparent;
-    padding: 0;
-    margin: 0;
 }
