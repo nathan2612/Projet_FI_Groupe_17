@@ -1,0 +1,114 @@
+/* * =========================================
+ * STYLES ISOLÉS POUR LA PAGE DE CONNEXION
+ * =========================================
+ * * Tous les styles ici sont préfixés par .login-page-specific
+ * pour éviter tout conflit avec vos autres fichiers CSS.
+*/
+
+/* * Conteneur principal pleine page.
+ * Il remplace le style de la balise <BODY>
+*/
+.login-page-specific {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    background-color: #f0f2f5;
+    color: #333;
+    
+    /* Techniques de centrage */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 60vh; /* Prend au moins toute la hauteur de l'écran */
+    padding: 1rem; /* Un peu d'espace sur mobile */
+
+    /* Réinitialisation du box-sizing UNIQUEMENT pour cette section */
+    box-sizing: border-box;
+}
+
+/* * Réinitialisation légère pour les éléments
+ * UNIQUEMENT à l'intérieur de notre conteneur.
+*/
+.login-page-specific *,
+.login-page-specific *::before,
+.login-page-specific *::after {
+    box-sizing: inherit; /* Hérite du box-sizing: border-box; ci-dessus */
+    margin: 0;
+    padding: 0;
+}
+
+
+/* La carte / boîte blanche du formulaire */
+.login-page-specific .login-form-container {
+    background-color: #ffffff;
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+    padding: 2rem;
+    width: 100%;
+    max-width: 400px;
+}
+
+/* Groupe pour label + champ */
+.login-page-specific .login-form-group {
+    margin-bottom: 1.5rem;
+}
+
+.login-page-specific .login-form-group label {
+    display: block;
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+    font-size: 0.9rem;
+}
+
+/* Champ de saisie spécifique */
+.login-page-specific .login-form-input {
+    width: 100%;
+    padding: 0.75rem;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-size: 1rem;
+    line-height: 1.4; /* Améliore la lisibilité */
+}
+
+.login-page-specific .login-form-input::placeholder {
+    color: #aaa;
+}
+
+/* Bouton de connexion spécifique */
+.login-page-specific .login-form-button {
+    width: 100%;
+    padding: 0.75rem;
+    border: none;
+    border-radius: 4px;
+    background-color: #282828;
+    color: #ffffff;
+    font-size: 1rem;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.login-page-specific .login-form-button:hover {
+    background-color: #444;
+}
+
+/* Small info / signup link between password and submit */
+.login-page-specific .login-form-info {
+    text-align: center;
+    margin-bottom: 1rem;
+}
+
+.login-page-specific .signup-text {
+    font-size: 0.95rem;
+    color: #555;
+}
+
+.login-page-specific .signup-link {
+    color: #1a73e8;
+    text-decoration: none;
+    font-weight: 600;
+    margin-left: 0.25rem;
+}
+
+.login-page-specific .signup-link:hover {
+    text-decoration: underline;
+}

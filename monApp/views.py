@@ -1,7 +1,10 @@
-from monApp.models import PLAT,CATEGORIE
+from monApp.models import PLAT,CATEGORIE,CLIENT
 from .app import app
-from flask import render_template, request, url_for
+from flask import render_template, request, url_for, redirect
 from .app import db
+from .forms import InscriptionForm, ConnexionForm
+from flask_login import login_user
+from hashlib import sha256
 from math import ceil
 
 @app.route('/')
@@ -77,6 +80,45 @@ def apropos():
 def nouveaute():
     return render_template("nouveaute.html")
 
+@app.route('/connexion/', methods=['GET', 'POST'])
+def connexion():
+    form = ConnexionForm()
+    error = None
+    if form.validate_on_submit():
+        telephone = form.telephone.data
+        passwd = form.mot_de_passe.data
+        client = db.session.query(CLIENT).filter_by(telephone=telephone).first()
+        if client and not client.banni:
+            m = sha256()
+            m.update(passwd.encode())
+            if m.hexdigest() == client.mot_de_passe:
+                login_user(client)
+                return redirect(url_for('index'))
+        error = 'Téléphone ou mot de passe invalide'
+    return render_template("connexion.html", form=form, error=error)
+
+@app.route('/panier/')
+def panier():
+    return render_template("index.html")
+
+@app.route('/inscription/', methods=['GET', 'POST'])
+def inscription():
+    form = InscriptionForm()
+    if form.validate_on_submit():
+        if not db.session.query(CLIENT).filter_by(telephone=form.telephone.data).first() and form.mot_de_passe.data == form.confirmation_mot_de_passe.data:
+            from hashlib import sha256
+            m = sha256()
+            m.update(form.mot_de_passe.data.encode())
+            new_client = CLIENT(
+                prenom=form.prenom.data,
+                nom=form.nom.data,
+                telephone=form.telephone.data,
+                mot_de_passe=m.hexdigest()
+            )
+            db.session.add(new_client)
+            db.session.commit()
+        return redirect(url_for('connexion'))
+    return render_template("inscription.html", form=form)
 
 
 if __name__ == "__main__":
