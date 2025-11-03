@@ -3,7 +3,7 @@ from .app import app
 from flask import render_template, request, url_for, redirect
 from .app import db
 from .forms import InscriptionForm, ConnexionForm
-from flask_login import login_user
+from flask_login import login_user,logout_user,login_required
 from hashlib import sha256
 from math import ceil
 

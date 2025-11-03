@@ -58,6 +58,10 @@ class CLIENT(db.Model,UserMixin):
 
 	def __repr__(self):
 		return f"<Client {self.nom_client} {self.prenom_client} ({self.id_client})>"
+	
+@login_manager.user_loader
+def load_user(telephone):
+    return db.session.get(CLIENT,telephone)
 
 class COMMANDE(db.Model):
 	__tablename__ = 'commandes'
