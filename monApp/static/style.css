@@ -15,38 +15,16 @@ body {
     width: 100%;
     background-color: black;
     padding: 0 18px;
-}
-
-/* Prevent header children from causing horizontal overflow
-   on small screens: ensure flex children can shrink and use
-   border-box sizing so padding is included in width calculations. */
-.navbar-complet {
-    box-sizing: border-box;
+    box-sizing: border-box; /* keep sizing consistent when padding is applied */
 }
 
 .navbar {
-    /* allow this flex child to shrink when space is limited */
+    /* allow this flex child to shrink when space is limited and center nav links */
     flex: 1 1 auto;
     min-width: 0; /* allow children to overflow internally instead of forcing container wider */
-}
-
-.nav-actions {
-    /* keep actions from growing and pushing the header wider */
-    flex: 0 0 auto;
-}
-
-.navbar ul {
-    /* prevent long nav links from expanding the header; clip overflow */
-    overflow: hidden;
-}
-
-.navbar ul li a {
-    /* make links truncate instead of expanding on very small widths */
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    max-width: 12rem;
-    display: inline-block;
+    text-align: center;
+    display: flex;
+    justify-content: center;
 }
 
 .nav-logo {
@@ -57,24 +35,39 @@ body {
     height: 120px;
 }
 
-.navbar {
-    /* center navigation links; allow flex layout to position logo and actions */
-    text-align: center;
-    flex: 1 1 auto;
-    display: flex;
-    justify-content: center;
-}
-
 .navbar ul {
+    /* prevent long nav links from expanding the header; clip overflow */
     display: inline-flex;
     gap: 0.6rem;
     align-items: center;
     list-style: none;
     margin: 0;
     padding: 0;
+    overflow: hidden;
+}
+
+.navbar ul li a {
+    /* make links truncate instead of expanding on very small widths */
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 12rem;
+    display: inline-block;
+    padding: 12px 18px;
+    text-decoration: none;
+    color: white;
+    font-size: 1.05rem;
+    font-weight: 700;
+}
+
+.navbar ul li a:hover,
+.navbar ul li a:focus {
+    color: #ff6d41;
 }
 
 .nav-actions {
+    /* keep actions from growing and pushing the header wider */
+    flex: 0 0 auto;
     display: flex;
     gap: 10px;
     align-items: center;
@@ -85,6 +78,12 @@ body {
     align-items: center;
     gap: 8px;
     text-decoration: none;
+}
+
+.icon {
+    width: 18px;
+    height: 18px;
+    object-fit: contain;
 }
 
 .btn-connexion,
@@ -107,62 +106,6 @@ body {
     transform: translateY(-2px);
     box-shadow: 0 8px 20px rgba(0,0,0,0.2);
 }
-
-.icon {
-    width: 18px;
-    height: 18px;
-    object-fit: contain;
-}
-
-.navbar ul li a {
-    display: inline-block;
-    padding: 12px 18px;
-    text-decoration: none;
-    color: white;
-    font-size: 1.05rem;
-    font-weight: 700;
-    white-space: nowrap;
-}
-
-.navbar ul li a:hover,
-.navbar ul li a:focus {
-    color: #ff6d41;
-}
-
-/* Stronger, high-specificity rules to keep nav action buttons consistent
-   even if page-specific CSS uses generic button selectors. These target
-   the actions inside the main navbar (.navbar-complet) to avoid
-   accidental overrides from other page styles. */
-.navbar-complet .nav-actions {
-    display: flex;
-    gap: 10px;
-    align-items: center;
-}
-.navbar-complet .nav-actions a {
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
-    text-decoration: none;
-}
-.navbar-complet .nav-actions a.btn-connexion,
-.navbar-complet .nav-actions a.btn-panier {
-    padding: 8px 14px;
-    border-radius: 999px;
-    font-weight: 700;
-    color: #000;
-    background: #ffffff;
-    border: 1px solid rgba(0,0,0,0.06);
-    transition: background 160ms ease, transform 120ms ease, box-shadow 160ms ease, color 160ms ease;
-}
-.navbar-complet .nav-actions a.btn-connexion:hover,
-.navbar-complet .nav-actions a.btn-panier:hover {
-    background: #ff6d41;
-    color: #fff;
-    transform: translateY(-2px);
-    box-shadow: 0 8px 20px rgba(0,0,0,0.2);
-}
-
-
 
 /* ===== SITE HEADER ===== */
 .site-header {
