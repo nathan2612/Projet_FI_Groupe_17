@@ -17,6 +17,38 @@ body {
     padding: 0 18px;
 }
 
+/* Prevent header children from causing horizontal overflow
+   on small screens: ensure flex children can shrink and use
+   border-box sizing so padding is included in width calculations. */
+.navbar-complet {
+    box-sizing: border-box;
+}
+
+.navbar {
+    /* allow this flex child to shrink when space is limited */
+    flex: 1 1 auto;
+    min-width: 0; /* allow children to overflow internally instead of forcing container wider */
+}
+
+.nav-actions {
+    /* keep actions from growing and pushing the header wider */
+    flex: 0 0 auto;
+}
+
+.navbar ul {
+    /* prevent long nav links from expanding the header; clip overflow */
+    overflow: hidden;
+}
+
+.navbar ul li a {
+    /* make links truncate instead of expanding on very small widths */
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 12rem;
+    display: inline-block;
+}
+
 .nav-logo {
     list-style: none;
 }
@@ -104,6 +136,48 @@ body {
 .navbar ul li a:hover,
 .navbar ul li a:focus {
     color: #ff6d41;
+}
+
+/* Stronger, high-specificity rules to keep nav action buttons consistent
+   even if page-specific CSS uses generic button selectors. These target
+   the actions inside the main navbar (.navbar-complet) to avoid
+   accidental overrides from other page styles. */
+.navbar-complet .nav-actions {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+}
+.navbar-complet .nav-actions a {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    text-decoration: none;
+}
+.navbar-complet .nav-actions a.btn-connexion,
+.navbar-complet .nav-actions a.btn-panier {
+    padding: 8px 14px;
+    border-radius: 999px;
+    font-weight: 700;
+    color: #fff;
+    background: rgba(255,255,255,0.06);
+    border: 1px solid rgba(255,255,255,0.06);
+    transition: background 160ms ease, transform 120ms ease, box-shadow 160ms ease;
+}
+.navbar-complet .nav-actions a.btn-connexion:hover,
+.navbar-complet .nav-actions a.btn-panier:hover {
+    background: #fff;
+    color: #000;
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(0,0,0,0.2);
+}
+.navbar-complet .nav-actions a.btn-panier {
+    background: #ff7a00;
+    color: white;
+    border: 1px solid rgba(0,0,0,0.06);
+}
+.navbar-complet .nav-actions a.btn-panier:hover {
+    background: #e55a00;
+    color: #fff;
 }
 
 
