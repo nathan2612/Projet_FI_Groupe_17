@@ -6,6 +6,7 @@ from .forms import InscriptionForm, ConnexionForm
 from flask_login import login_user,logout_user,login_required
 from hashlib import sha256
 from math import ceil
+import logging as lg
 
 @app.route('/')
 @app.route('/index/')
@@ -80,22 +81,22 @@ def apropos():
 def nouveaute():
     return render_template("nouveaute.html")
 
-@app.route('/connexion/', methods=['GET', 'POST'])
+@app.route('/connexion/',  methods =("GET","POST" ,))
 def connexion():
+    lg.warning('connexion à la page de connexion')
     form = ConnexionForm()
-    error = None
-    if form.validate_on_submit():
-        telephone = form.telephone.data
-        passwd = form.mot_de_passe.data
-        client = db.session.query(CLIENT).filter_by(telephone=telephone).first()
-        if client and not client.banni:
-            m = sha256()
-            m.update(passwd.encode())
-            if m.hexdigest() == client.mot_de_passe:
-                login_user(client)
-                return redirect(url_for('index'))
-        error = 'Téléphone ou mot de passe invalide'
-    return render_template("connexion.html", form=form, error=error)
+    client = None
+    if not form.is_submitted():
+        lg.warning('Formulaire non soumis, récupération du paramètre next')
+        form.next.data = request.args.get('next')
+    elif form.validate_on_submit():
+        lg.warning('Formulaire soumis et valide, tentative de connexion')
+        client = form.get_authenticated_client()
+        if client:
+            lg.warning(f"Connexion réussie pour: {client.prenom} {client.nom}")
+            login_user(client)
+            return redirect(url_for('index'))
+    return render_template("connexion.html", form=form)
 
 @app.route('/panier/')
 def panier():
