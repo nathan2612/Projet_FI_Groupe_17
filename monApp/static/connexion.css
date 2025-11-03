@@ -1,114 +1,96 @@
-/* * =========================================
- * STYLES ISOLÉS POUR LA PAGE DE CONNEXION
- * =========================================
- * * Tous les styles ici sont préfixés par .login-page-specific
- * pour éviter tout conflit avec vos autres fichiers CSS.
-*/
+/* ==================================================
+   Connexion page styles — clean, responsive, no Bootstrap
+   Apply to the existing HTML structure (form-horizontal)
+   ================================================== */
 
-/* * Conteneur principal pleine page.
- * Il remplace le style de la balise <BODY>
-*/
-.login-page-specific {
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-    background-color: #f0f2f5;
-    color: #333;
-    
-    /* Techniques de centrage */
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    min-height: 60vh; /* Prend au moins toute la hauteur de l'écran */
-    padding: 1rem; /* Un peu d'espace sur mobile */
+:root{
+    --bg: #f6f7fb;
+    --card: #ffffff;
+    --muted: #6b7280;
+    --accent: #0d6efd; /* blue */
+    --success: #28a745;
+    --error: #d9534f;
+    --radius: 10px;
+}
 
-    /* Réinitialisation du box-sizing UNIQUEMENT pour cette section */
+/* Page container centered */
+.login-page-specific{
+    min-height: 70vh;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    padding:2rem 1rem;
+    background: var(--bg);
+    font-family: Inter, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial;
+    color: #111827;
     box-sizing: border-box;
 }
 
-/* * Réinitialisation légère pour les éléments
- * UNIQUEMENT à l'intérieur de notre conteneur.
-*/
-.login-page-specific *,
-.login-page-specific *::before,
-.login-page-specific *::after {
-    box-sizing: inherit; /* Hérite du box-sizing: border-box; ci-dessus */
-    margin: 0;
-    padding: 0;
+.login-form-container{
+    width:100%;
+    max-width:520px;
+    background: var(--card);
+    border-radius: var(--radius);
+    box-shadow: 0 10px 30px rgba(15,23,42,0.06);
+    border: 1px solid rgba(15,23,42,0.04);
+    padding: 26px 28px;
 }
 
-
-/* La carte / boîte blanche du formulaire */
-.login-page-specific .login-form-container {
-    background-color: #ffffff;
-    border: 1px solid #e0e0e0;
-    border-radius: 8px;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
-    padding: 2rem;
-    width: 100%;
-    max-width: 400px;
+/* Form layout that mimics Bootstrap's horizontal form
+   without requiring Bootstrap CSS. */
+.form-horizontal .form-group{
+    display:flex;
+    align-items:flex-start;
+    gap:12px;
+    margin-bottom:16px;
+}
+.form-horizontal .form-group.row{
+    align-items:center;
 }
 
-/* Groupe pour label + champ */
-.login-page-specific .login-form-group {
-    margin-bottom: 1.5rem;
+.col-sm-2{ flex: 0 0 110px; max-width:110px; }
+.control-label{ font-weight:600; color:#111827; font-size:0.95rem; }
+.col-sm-10{ flex:1 1 auto; }
+
+/* Inputs */
+.form-control, input.form-control, textarea.form-control{
+    width:100%;
+    padding:10px 12px;
+    border-radius:8px;
+    border:1px solid rgba(15,23,42,0.08);
+    background: #fff;
+    font-size:0.95rem;
+    color: #111827;
+    box-shadow: inset 0 1px 0 rgba(255,255,255,0.6);
+}
+.form-control:focus{ outline:none; border-color: var(--accent); box-shadow: 0 0 0 4px rgba(13,110,253,0.08); }
+
+.field-errors{ color: var(--error); font-size:0.88rem; margin-top:6px; }
+
+/* Submit button */
+.btn{ display:inline-flex; align-items:center; justify-content:center; gap:8px; cursor:pointer; }
+.btn-success{ background: var(--success); color:#fff; border:none; padding:10px 16px; border-radius:8px; font-weight:700; }
+.btn-success:hover{ background:#218838; transform:translateY(-1px); }
+
+/* small helper text */
+.login-form-info{ text-align:center; margin-top:10px; font-size:0.95rem; color:var(--muted); }
+.signup-link{ color:var(--accent); font-weight:600; text-decoration:none; }
+.signup-link:hover{ text-decoration:underline; }
+
+/* Mobile: stack labels above inputs */
+@media (max-width:680px){
+    .form-horizontal .form-group{ flex-direction:column; align-items:stretch; }
+    .col-sm-2{ max-width:none; width:100%; }
+    .col-sm-10{ width:100%; }
+    .login-form-container{ padding:20px; }
 }
 
-.login-page-specific .login-form-group label {
-    display: block;
-    font-weight: 600;
-    margin-bottom: 0.5rem;
-    font-size: 0.9rem;
-}
+/* Accessibility: focus-visible styles */
+.form-control:focus-visible{ outline: 2px solid rgba(13,110,253,0.14); outline-offset:2px; }
 
-/* Champ de saisie spécifique */
-.login-page-specific .login-form-input {
-    width: 100%;
-    padding: 0.75rem;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-    font-size: 1rem;
-    line-height: 1.4; /* Améliore la lisibilité */
-}
+/* compatibility for previous custom classes */
+.login-form-input{ composes: form-control; }
+.login-form-button{ composes: btn btn-success; width:100%; padding:12px; border-radius:8px; }
 
-.login-page-specific .login-form-input::placeholder {
-    color: #aaa;
-}
-
-/* Bouton de connexion spécifique */
-.login-page-specific .login-form-button {
-    width: 100%;
-    padding: 0.75rem;
-    border: none;
-    border-radius: 4px;
-    background-color: #282828;
-    color: #ffffff;
-    font-size: 1rem;
-    font-weight: bold;
-    cursor: pointer;
-    transition: background-color 0.3s ease;
-}
-
-.login-page-specific .login-form-button:hover {
-    background-color: #444;
-}
-
-/* Small info / signup link between password and submit */
-.login-page-specific .login-form-info {
-    text-align: center;
-    margin-bottom: 1rem;
-}
-
-.login-page-specific .signup-text {
-    font-size: 0.95rem;
-    color: #555;
-}
-
-.login-page-specific .signup-link {
-    color: #1a73e8;
-    text-decoration: none;
-    font-weight: 600;
-    margin-left: 0.25rem;
-}
-
-.login-page-specific .signup-link:hover {
-    text-decoration: underline;
-}
+/* Ensure error text under inputs uses same layout spacing */
+.form-group .field-errors{ margin-left:0; }

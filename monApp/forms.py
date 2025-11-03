@@ -1,5 +1,5 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, HiddenField, SelectField
+from wtforms.fields import StringField, HiddenField, SelectField, PasswordField
 from wtforms.validators import DataRequired
 from monApp import db
 
@@ -8,9 +8,21 @@ class InscriptionForm(FlaskForm):
     prenom = StringField('Prénom', validators=[DataRequired()])
     nom = StringField('Nom', validators=[DataRequired()])
     telephone = StringField('Téléphone', validators=[DataRequired()])
-    mot_de_passe = StringField('Mot de passe', validators=[DataRequired()])
-    confirmation_mot_de_passe = StringField('Confirmer le mot de passe', validators=[DataRequired()])
+    mot_de_passe = PasswordField('Mot de passe', validators=[DataRequired()])
+    confirmation_mot_de_passe = PasswordField('Confirmer le mot de passe', validators=[DataRequired()])
 
 class ConnexionForm(FlaskForm):
-    telephone = StringField('Téléphone', validators=[DataRequired()])
-    mot_de_passe = StringField('Mot de passe', validators=[DataRequired()])
+    telephone = StringField('Téléphone')
+    mot_de_passe = PasswordField('Mot de passe')
+    next = HiddenField()
+
+    def get_authenticated_client(self):
+        from hashlib import sha256
+        from .models import CLIENT 
+        unClient = db.session.query(CLIENT).filter_by(telephone=self.telephone.data).first()
+        if unClient is None:
+            return None
+        m = sha256()
+        m.update(self.mot_de_passe.data.encode())
+        passwd = m.hexdigest()
+        return unClient if passwd == unClient.mot_de_passe else None
