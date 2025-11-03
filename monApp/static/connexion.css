@@ -1,96 +1,134 @@
-/* ==================================================
-   Connexion page styles — clean, responsive, no Bootstrap
-   Apply to the existing HTML structure (form-horizontal)
-   ================================================== */
+/* Connexion page — site-aligned styles
+   Scoped under .login-page-specific to avoid global collisions
+*/
 
-:root{
-    --bg: #f6f7fb;
+:root {
+    --primary: #ff7a00;
+    --primary-dark: #ff6d41;
+    --bg: #fafafc;
     --card: #ffffff;
     --muted: #6b7280;
-    --accent: #0d6efd; /* blue */
-    --success: #28a745;
-    --error: #d9534f;
-    --radius: 10px;
+    --text: #111827;
+    --radius: 12px;
 }
 
-/* Page container centered */
-.login-page-specific{
+.login-page-specific {
     min-height: 70vh;
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    padding:2rem 1rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 3rem 1rem;
     background: var(--bg);
-    font-family: Inter, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial;
-    color: #111827;
     box-sizing: border-box;
 }
 
-.login-form-container{
-    width:100%;
-    max-width:520px;
+.login-form-container {
+    width: 100%;
+    max-width: 520px;
     background: var(--card);
     border-radius: var(--radius);
-    box-shadow: 0 10px 30px rgba(15,23,42,0.06);
-    border: 1px solid rgba(15,23,42,0.04);
-    padding: 26px 28px;
+    box-shadow: 0 12px 36px rgba(0,0,0,0.06);
+    border: 1px solid rgba(0,0,0,0.04);
+    padding: 28px;
 }
 
-/* Form layout that mimics Bootstrap's horizontal form
-   without requiring Bootstrap CSS. */
-.form-horizontal .form-group{
-    display:flex;
-    align-items:flex-start;
-    gap:12px;
-    margin-bottom:16px;
-}
-.form-horizontal .form-group.row{
-    align-items:center;
+.login-form-container h2 {
+    margin: 0 0 12px 0;
+    font-size: 1.25rem;
+    color: var(--text);
 }
 
-.col-sm-2{ flex: 0 0 110px; max-width:110px; }
-.control-label{ font-weight:600; color:#111827; font-size:0.95rem; }
-.col-sm-10{ flex:1 1 auto; }
+/* Horizontal form layout (desktop) but stacks on mobile */
+.login-page-specific .form-horizontal .form-group {
+    display: flex;
+    gap: 12px;
+    align-items: flex-start;
+    margin-bottom: 14px;
+}
+.login-page-specific .form-horizontal .form-group.row {
+    align-items: center;
+}
+
+.login-page-specific .col-sm-2 { flex: 0 0 110px; max-width: 110px; }
+.login-page-specific .control-label { font-weight: 700; color: var(--text); font-size: 0.95rem; }
+.login-page-specific .col-sm-10 { flex: 1 1 auto; min-width: 0; }
 
 /* Inputs */
-.form-control, input.form-control, textarea.form-control{
-    width:100%;
-    padding:10px 12px;
-    border-radius:8px;
-    border:1px solid rgba(15,23,42,0.08);
+.login-page-specific .form-control,
+.login-page-specific input.form-control,
+.login-page-specific textarea.form-control {
+    width: 100%;
+    padding: 10px 12px;
+    border-radius: 10px;
+    border: 1px solid rgba(15,23,42,0.08);
     background: #fff;
-    font-size:0.95rem;
-    color: #111827;
-    box-shadow: inset 0 1px 0 rgba(255,255,255,0.6);
+    font-size: 0.95rem;
+    color: var(--text);
 }
-.form-control:focus{ outline:none; border-color: var(--accent); box-shadow: 0 0 0 4px rgba(13,110,253,0.08); }
-
-.field-errors{ color: var(--error); font-size:0.88rem; margin-top:6px; }
-
-/* Submit button */
-.btn{ display:inline-flex; align-items:center; justify-content:center; gap:8px; cursor:pointer; }
-.btn-success{ background: var(--success); color:#fff; border:none; padding:10px 16px; border-radius:8px; font-weight:700; }
-.btn-success:hover{ background:#218838; transform:translateY(-1px); }
-
-/* small helper text */
-.login-form-info{ text-align:center; margin-top:10px; font-size:0.95rem; color:var(--muted); }
-.signup-link{ color:var(--accent); font-weight:600; text-decoration:none; }
-.signup-link:hover{ text-decoration:underline; }
-
-/* Mobile: stack labels above inputs */
-@media (max-width:680px){
-    .form-horizontal .form-group{ flex-direction:column; align-items:stretch; }
-    .col-sm-2{ max-width:none; width:100%; }
-    .col-sm-10{ width:100%; }
-    .login-form-container{ padding:20px; }
+.login-page-specific .form-control:focus {
+    outline: none;
+    border-color: var(--primary);
+    box-shadow: 0 0 0 6px rgba(255,122,0,0.08);
 }
 
-/* Accessibility: focus-visible styles */
-.form-control:focus-visible{ outline: 2px solid rgba(13,110,253,0.14); outline-offset:2px; }
+.login-page-specific .field-errors {
+    color: #d9534f;
+    font-size: 0.88rem;
+    margin-top: 6px;
+}
 
-/* compatibility for previous custom classes */
-.login-form-input{ composes: form-control; }
-.login-form-button{ composes: btn btn-success; width:100%; padding:12px; border-radius:8px; }
+/* Submit button styled like site: white -> orange on hover */
+.login-page-specific .btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    cursor: pointer;
+}
+.login-page-specific .btn-success,
+.login-page-specific input[type="submit"].btn-success {
+    background: #ffffff;
+    color: #000;
+    padding: 10px 16px;
+    border-radius: 10px;
+    border: 1px solid rgba(0,0,0,0.06);
+    font-weight: 700;
+    transition: background 160ms ease, color 160ms ease, transform 120ms ease, box-shadow 160ms ease;
+}
+.login-page-specific .btn-success:hover,
+.login-page-specific input[type="submit"].btn-success:hover {
+    background: var(--primary-dark);
+    color: #fff;
+    transform: translateY(-2px);
+    box-shadow: 0 12px 30px rgba(255,109,65,0.14);
+}
 
-/* Ensure error text under inputs uses same layout spacing */
-.form-group .field-errors{ margin-left:0; }
+.login-form-info { text-align: center; margin-top: 10px; color: var(--muted); }
+.login-form-info .signup-link { color: var(--primary); font-weight: 700; text-decoration: none; }
+.login-form-info .signup-link:hover { text-decoration: underline; }
+
+/* Mobile stacking */
+@media (max-width: 680px) {
+    .login-page-specific .form-horizontal .form-group { flex-direction: column; align-items: stretch; }
+    .login-page-specific .col-sm-2 { max-width: none; width: 100%; }
+    .login-page-specific .col-sm-10 { width: 100%; }
+    .login-form-container { padding: 18px; }
+}
+
+/* Accessibility */
+.login-page-specific .form-control:focus-visible { outline: 3px solid rgba(255,122,0,0.14); outline-offset: 2px; }
+
+/* Compatibility helpers (non-invasive) */
+.login-page-specific .login-form-input { /* duplicate visual of .form-control */
+    width: 100%;
+    padding: 10px 12px;
+    border-radius: 10px;
+    border: 1px solid rgba(15,23,42,0.08);
+    background: #fff;
+    font-size: 0.95rem;
+    color: var(--text);
+}
+.login-page-specific .login-form-button { width: 100%; display: inline-flex; justify-content:center; padding:10px 16px; border-radius:10px; }
+
+/* ensure spacing under errors */
+.login-page-specific .form-group .field-errors { margin-left: 0; }

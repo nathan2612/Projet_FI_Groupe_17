@@ -95,26 +95,17 @@ body {
     padding: 8px 14px;
     border-radius: 999px;
     font-weight: 700;
-    color: #fff;
-    background: rgba(255,255,255,0.06);
-    border: 1px solid rgba(255,255,255,0.06);
-    transition: background 160ms ease, transform 120ms ease, box-shadow 160ms ease;
+    color: #000;
+    background: #ffffff;
+    border: 1px solid rgba(0,0,0,0.06);
+    transition: background 160ms ease, transform 120ms ease, box-shadow 160ms ease, color 160ms ease;
 }
 .btn-connexion:hover,
 .btn-panier:hover {
-    background: #fff;
-    color: #000;
+    background: #ff6d41; /* match btn-commander hover */
+    color: #ffffff;
     transform: translateY(-2px);
     box-shadow: 0 8px 20px rgba(0,0,0,0.2);
-}
-.btn-panier {
-    background: #ff7a00; /* use theme primary color */
-    color: white;
-    border: 1px solid rgba(0,0,0,0.06);
-}
-.btn-panier:hover {
-    background: #e55a00;
-    color: #fff;
 }
 
 .icon {
@@ -158,26 +149,17 @@ body {
     padding: 8px 14px;
     border-radius: 999px;
     font-weight: 700;
-    color: #fff;
-    background: rgba(255,255,255,0.06);
-    border: 1px solid rgba(255,255,255,0.06);
-    transition: background 160ms ease, transform 120ms ease, box-shadow 160ms ease;
+    color: #000;
+    background: #ffffff;
+    border: 1px solid rgba(0,0,0,0.06);
+    transition: background 160ms ease, transform 120ms ease, box-shadow 160ms ease, color 160ms ease;
 }
 .navbar-complet .nav-actions a.btn-connexion:hover,
 .navbar-complet .nav-actions a.btn-panier:hover {
-    background: #fff;
-    color: #000;
+    background: #ff6d41;
+    color: #fff;
     transform: translateY(-2px);
     box-shadow: 0 8px 20px rgba(0,0,0,0.2);
-}
-.navbar-complet .nav-actions a.btn-panier {
-    background: #ff7a00;
-    color: white;
-    border: 1px solid rgba(0,0,0,0.06);
-}
-.navbar-complet .nav-actions a.btn-panier:hover {
-    background: #e55a00;
-    color: #fff;
 }
 
 
