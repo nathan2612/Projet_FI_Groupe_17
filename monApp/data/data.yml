@@ -221,17 +221,20 @@ plats:
 
 clients:
   - id_client: 1
-    nom_client: "Wang"
-    prenom_client: "Mei"
+    nom: "Wang"
+    prenom: "Mei"
     telephone: "+33123456789"
+    mot_de_passe: "hashed_password_1"
   - id_client: 2
-    nom_client: "Dupont"
-    prenom_client: "Jean"
+    nom: "Dupont"
+    prenom: "Jean"
     telephone: "+33699887766"
+    mot_de_passe: "hashed_password_2"
   - id_client: 3
-    nom_client: "Martin"
-    prenom_client: "Sophie"
+    nom: "Martin"
+    prenom: "Sophie"
     telephone: "+33611223344"
+    mot_de_passe: "hashed_password_3"
 
 commandes:
   - id_commande: 1

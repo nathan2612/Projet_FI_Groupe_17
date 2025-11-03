@@ -1,0 +1,43 @@
+{% extends "base.html" %}
+
+{% block styles %}
+    <link rel="stylesheet" href="{{ url_for('static', filename='connexion.css') }}">
+{% endblock %}
+
+{% block main %}
+    <div class="login-page-specific">
+
+        <div class="login-form-container">
+            <form method="post" action="{{ url_for('connexion') }}">
+                {% if error %}
+                    <div class="field-errors">{{ error }}</div>
+                {% endif %}
+
+                <div class="login-form-group">
+                    {{ form.telephone.label }}
+                    {{ form.telephone(class="login-form-input") }}
+                    {% if form.telephone.errors %}
+                        <div class="field-errors">{{ form.telephone.errors[0] }}</div>
+                    {% endif %}
+                </div>
+                
+                <div class="login-form-group">
+                    {{ form.mot_de_passe.label }}
+                    {{ form.mot_de_passe(class="login-form-input") }}
+                    {% if form.mot_de_passe.errors %}
+                        <div class="field-errors">{{ form.mot_de_passe.errors[0] }}</div>
+                    {% endif %}
+                </div>
+
+                <div class="login-form-info">
+                    <p class="signup-text">Vous inscrire, <a class="signup-link" href="{{ url_for('inscription') }}">cliquer ici</a></p>
+                </div>
+
+                <button type="submit" class="login-form-button">
+                    Se connecter
+                </button>
+            </form>
+        </div>
+
+    </div>
+{% endblock %}

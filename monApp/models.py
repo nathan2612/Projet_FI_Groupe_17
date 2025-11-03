@@ -44,9 +44,10 @@ class PLAT(db.Model):
 class CLIENT(db.Model,UserMixin):
 	__tablename__ = 'clients'
 	id_client = db.Column(db.Integer, primary_key=True)
-	nom_client = db.Column(db.String(100))
-	prenom_client = db.Column(db.String(100))
+	nom = db.Column(db.String(100))
+	prenom = db.Column(db.String(100))
 	telephone = db.Column(db.String(15))
+	mot_de_passe = db.Column(db.String(255))
 	banni = db.Column(db.Boolean, default=False)
 
 	commandes = db.relationship('COMMANDE', back_populates='client')
@@ -57,6 +58,10 @@ class CLIENT(db.Model,UserMixin):
 
 	def __repr__(self):
 		return f"<Client {self.nom_client} {self.prenom_client} ({self.id_client})>"
+	
+@login_manager.user_loader
+def load_user(telephone):
+    return db.session.get(CLIENT,telephone)
 
 class COMMANDE(db.Model):
 	__tablename__ = 'commandes'

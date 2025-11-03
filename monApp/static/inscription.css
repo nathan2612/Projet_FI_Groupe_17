@@ -1,0 +1,108 @@
+.signup-page-specific {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    background-color: #f8f8f8; /* Fond très légèrement gris */
+    color: #333;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    padding: 1rem;
+    box-sizing: border-box; /* Assure une gestion cohérente des tailles */
+}
+
+/* Réinitialisation légère pour les éléments internes */
+.signup-page-specific *,
+.signup-page-specific *::before,
+.signup-page-specific *::after {
+    box-sizing: inherit;
+    margin: 0;
+    padding: 0;
+}
+
+.signup-page-specific .signup-form-container {
+    background-color: #ffffff;
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+    padding: 2.5rem;
+    width: 100%;
+    max-width: 600px; 
+}
+
+/*
+ * GRILLE DU FORMULAIRE
+ * C'est le cœur de la mise en page.
+*/
+.signup-page-specific .signup-form-grid {
+    display: grid;
+    /* Crée 2 colonnes de taille égale */
+    grid-template-columns: 1fr 1fr;
+    /* Espace entre les lignes et les colonnes */
+    gap: 1.75rem;
+}
+
+/* Classe utilitaire pour qu'un élément prenne 2 colonnes */
+.signup-page-specific .form-span-2 {
+    grid-column: 1 / -1; /* S'étend de la ligne 1 à la dernière */
+}
+
+
+/* Groupe Label + Input */
+.signup-page-specific .signup-form-group {
+    /* Pas besoin de margin-bottom, le 'gap' de la grille s'en charge */
+}
+
+.signup-page-specific .signup-form-group label {
+    display: block;
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+    font-size: 0.9rem;
+}
+
+/* Champ de saisie spécifique */
+.signup-page-specific .signup-form-input {
+    width: 100%;
+    padding: 0.85rem;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-size: 1rem;
+    line-height: 1.4;
+}
+
+.signup-page-specific .signup-form-input::placeholder {
+    color: #aaa;
+}
+
+/* Bouton d'inscription (S'inscrire) */
+.signup-page-specific .signup-form-button {
+    width: 100%;
+    padding: 0.85rem;
+    border: none;
+    border-radius: 4px;
+    background-color: #000000; /* Noir profond */
+    color: #ffffff;
+    font-size: 1rem;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    /* Le 'gap' de la grille ajoute de l'espace au-dessus */
+}
+
+.signup-page-specific .signup-form-button:hover {
+    background-color: #333; /* Noir un peu plus clair au survol */
+}
+
+/*
+ * RESPONSIVE: Pour les petits écrans (mobiles)
+ * On repasse tout sur 1 seule colonne.
+*/
+@media (max-width: 600px) {
+    .signup-page-specific .signup-form-grid {
+        grid-template-columns: 1fr; /* 1 seule colonne */
+        gap: 1.25rem; /* Espace réduit entre les champs */
+    }
+
+    .signup-page-specific .signup-form-container {
+        padding: 1.5rem; /* Moins de padding sur petit écran */
+    }
+}

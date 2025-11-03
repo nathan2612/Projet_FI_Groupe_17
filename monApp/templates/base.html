@@ -21,7 +21,7 @@
 				</div>
 
 				<nav class="navbar">
-					<ul>
+					<ul class="nav-links">
 						<li><a href="/index">Accueil</a></li>
 						<li><a href="/apropos">A propos</a></li>
 						<li><a href="/nouveautes">Nouveautés</a></li>
@@ -29,9 +29,19 @@
 						<li><a href="/produits">Nos produits</a></li>
 					</ul>
 				</nav>
+
+				<div class="nav-actions">
+					<a href="{{ url_for('connexion') }}" class="btn-connexion">
+						<img src="{{ url_for('static', filename='images/account.png') }}" alt="Icône utilisateur" class="icon icon-user">
+						Connexion
+					</a>
+					<a href="{{ url_for('panier') }}" class="btn-panier">
+						<img src="{{ url_for('static', filename='images/shop.png') }}" alt="Icône panier" class="icon icon-panier">
+						Panier
+					</a>
+				</div>
 			</div>
 
-			{# page-specific header content (hero / title / commander CTA) should go here #}
 			{% block header %}{% endblock %}
 		</header>
 
