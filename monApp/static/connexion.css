@@ -1,114 +1,151 @@
-/* * =========================================
- * STYLES ISOLÉS POUR LA PAGE DE CONNEXION
- * =========================================
- * * Tous les styles ici sont préfixés par .login-page-specific
- * pour éviter tout conflit avec vos autres fichiers CSS.
+/* Connexion page — site-aligned styles
+   Scoped under .login-page-specific to avoid global collisions
 */
 
-/* * Conteneur principal pleine page.
- * Il remplace le style de la balise <BODY>
-*/
+/* Color and sizing literals inlined per request (no :root variables) */
+
 .login-page-specific {
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-    background-color: #f0f2f5;
-    color: #333;
-    
-    /* Techniques de centrage */
+    min-height: 70vh;
     display: flex;
-    justify-content: center;
     align-items: center;
-    min-height: 60vh; /* Prend au moins toute la hauteur de l'écran */
-    padding: 1rem; /* Un peu d'espace sur mobile */
-
-    /* Réinitialisation du box-sizing UNIQUEMENT pour cette section */
+    justify-content: center;
+    padding: 3rem 1rem;
+    background: #fafafc;
     box-sizing: border-box;
 }
 
-/* * Réinitialisation légère pour les éléments
- * UNIQUEMENT à l'intérieur de notre conteneur.
-*/
-.login-page-specific *,
-.login-page-specific *::before,
-.login-page-specific *::after {
-    box-sizing: inherit; /* Hérite du box-sizing: border-box; ci-dessus */
-    margin: 0;
-    padding: 0;
-}
-
-
-/* La carte / boîte blanche du formulaire */
-.login-page-specific .login-form-container {
-    background-color: #ffffff;
-    border: 1px solid #e0e0e0;
-    border-radius: 8px;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
-    padding: 2rem;
+.login-form-container {
     width: 100%;
-    max-width: 400px;
+    max-width: 520px;
+    background: #ffffff;
+    border-radius: 12px;
+    box-shadow: 0 12px 36px rgba(0,0,0,0.06);
+    border: 1px solid rgba(0,0,0,0.04);
+    padding: 28px;
 }
 
-/* Groupe pour label + champ */
-.login-page-specific .login-form-group {
-    margin-bottom: 1.5rem;
+.login-form-container h2 {
+    margin: 0 0 12px 0;
+    font-size: 1.25rem;
+    color: #111827;
 }
 
-.login-page-specific .login-form-group label {
-    display: block;
-    font-weight: 600;
-    margin-bottom: 0.5rem;
-    font-size: 0.9rem;
+/* Horizontal form layout (desktop) but stacks on mobile */
+.login-page-specific .form-horizontal .form-group {
+    display: flex;
+    gap: 12px;
+    align-items: flex-start;
+    margin-bottom: 14px;
+}
+.login-page-specific .form-horizontal .form-group.row {
+    align-items: center;
 }
 
-/* Champ de saisie spécifique */
-.login-page-specific .login-form-input {
+.login-page-specific .col-sm-2 { flex: 0 0 110px; max-width: 110px; }
+.login-page-specific .control-label { font-weight: 700; color: #111827; font-size: 0.95rem; }
+.login-page-specific .col-sm-10 { flex: 1 1 auto; min-width: 0; }
+
+/* Make input fields slightly narrower on desktop for nicer visual balance
+    but allow them to be full-width on small screens (see media query below). */
+.login-page-specific .col-sm-10 { display: flex; justify-content: center; }
+.login-page-specific .col-sm-10 .form-control { max-width: 420px; width: 100%; }
+
+/* Inputs */
+.login-page-specific .form-control,
+.login-page-specific input.form-control,
+.login-page-specific textarea.form-control {
     width: 100%;
-    padding: 0.75rem;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-    font-size: 1rem;
-    line-height: 1.4; /* Améliore la lisibilité */
-}
-
-.login-page-specific .login-form-input::placeholder {
-    color: #aaa;
-}
-
-/* Bouton de connexion spécifique */
-.login-page-specific .login-form-button {
-    width: 100%;
-    padding: 0.75rem;
-    border: none;
-    border-radius: 4px;
-    background-color: #282828;
-    color: #ffffff;
-    font-size: 1rem;
-    font-weight: bold;
-    cursor: pointer;
-    transition: background-color 0.3s ease;
-}
-
-.login-page-specific .login-form-button:hover {
-    background-color: #444;
-}
-
-/* Small info / signup link between password and submit */
-.login-page-specific .login-form-info {
-    text-align: center;
-    margin-bottom: 1rem;
-}
-
-.login-page-specific .signup-text {
+    padding: 10px 12px;
+    border-radius: 10px;
+    border: 1px solid rgba(15,23,42,0.08);
+    background: #fff;
     font-size: 0.95rem;
-    color: #555;
+    color: #111827;
+}
+.login-page-specific .form-control:focus {
+    outline: none;
+    border-color: #ff7a00;
+    box-shadow: 0 0 0 6px rgba(255,122,0,0.08);
 }
 
-.login-page-specific .signup-link {
-    color: #1a73e8;
-    text-decoration: none;
-    font-weight: 600;
-    margin-left: 0.25rem;
+.login-page-specific .field-errors {
+    color: #d9534f;
+    font-size: 0.88rem;
+    margin-top: 6px;
 }
 
-.login-page-specific .signup-link:hover {
-    text-decoration: underline;
+/* Submit button styled like site: white -> orange on hover */
+.login-page-specific .btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    cursor: pointer;
 }
+.login-page-specific .btn-success,
+.login-page-specific input[type="submit"].btn-success {
+    background: #ffffff;
+    color: #000;
+    padding: 10px 16px;
+    border-radius: 10px;
+    border: 1px solid rgba(0,0,0,0.06);
+    font-weight: 700;
+    transition: background 160ms ease, color 160ms ease, transform 120ms ease, box-shadow 160ms ease;
+}
+.login-page-specific .btn-success:hover,
+.login-page-specific input[type="submit"].btn-success:hover {
+    background: #ff6d41;
+    color: #fff;
+    transform: translateY(-2px);
+    box-shadow: 0 12px 30px rgba(255,109,65,0.14);
+}
+
+login-form-info { text-align: center; margin-top: 10px; color: #6b7280; }
+login-form-info .signup-link { color: #ff7a00; font-weight: 700; text-decoration: none; }
+.login-form-info .signup-link:hover { text-decoration: underline; }
+
+/* Mobile stacking */
+@media (max-width: 680px) {
+    .login-page-specific .form-horizontal .form-group { flex-direction: column; align-items: stretch; }
+    .login-page-specific .col-sm-2 { max-width: none; width: 100%; }
+    .login-page-specific .col-sm-10 { width: 100%; }
+    .login-form-container { padding: 18px; }
+    /* remove desktop max-width so inputs fill the available width on mobile */
+    .login-page-specific .col-sm-10 .form-control { max-width: none; }
+}
+
+/* Accessibility */
+.login-page-specific .form-control:focus-visible { outline: 3px solid rgba(255,122,0,0.14); outline-offset: 2px; }
+
+/* Compatibility helpers (non-invasive) */
+.login-page-specific .login-form-input { /* duplicate visual of .form-control */
+    width: 100%;
+    padding: 10px 12px;
+    border-radius: 10px;
+    border: 1px solid rgba(15,23,42,0.08);
+    background: #fff;
+    font-size: 0.95rem;
+    color: var(--text);
+}
+/* Make the primary action stretch full width inside the form; keep visual styles */
+.login-page-specific .login-form-button { width: 100%; display: inline-flex; justify-content:center; padding:10px 16px; border-radius:10px; }
+
+/* Ensure action rows use the full form width so the button doesn't get confined to the input column */
+.login-page-specific .form-group.form-actions,
+.login-page-specific .form-actions {
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 8px;
+    width: 100%;
+}
+
+/* Native submit styling: full width and centered text */
+.login-page-specific input[type="submit"].btn-success {
+    width: 100%;
+    display: inline-block;
+    text-align: center;
+}
+
+/* ensure spacing under errors */
+.login-page-specific .form-group .field-errors { margin-left: 0; }

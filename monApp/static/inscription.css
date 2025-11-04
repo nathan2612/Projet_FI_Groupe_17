@@ -1,108 +1,103 @@
+/* Signup page — harmonised site style
+   Scoped under .signup-page-specific to avoid global interference.
+*/
+
+:root {
+    --primary: #ff7a00;
+    --primary-dark: #ff6d41;
+    --bg: #fafafc;
+    --card: #ffffff;
+    --muted: #6b7280;
+    --text: #111827;
+    --radius: 12px;
+}
+
 .signup-page-specific {
     font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-    background-color: #f8f8f8; /* Fond très légèrement gris */
-    color: #333;
+    background-color: var(--bg);
+    color: var(--text);
     display: flex;
     justify-content: center;
     align-items: center;
-    min-height: 100vh;
-    padding: 1rem;
-    box-sizing: border-box; /* Assure une gestion cohérente des tailles */
+    min-height: 80vh;
+    padding: 2rem 1rem;
+    box-sizing: border-box;
 }
 
-/* Réinitialisation légère pour les éléments internes */
-.signup-page-specific *,
-.signup-page-specific *::before,
-.signup-page-specific *::after {
-    box-sizing: inherit;
-    margin: 0;
-    padding: 0;
-}
+.signup-page-specific * { box-sizing: inherit; }
 
 .signup-page-specific .signup-form-container {
-    background-color: #ffffff;
-    border: 1px solid #e0e0e0;
-    border-radius: 8px;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
-    padding: 2.5rem;
+    background: var(--card);
     width: 100%;
-    max-width: 600px; 
+    max-width: 720px;
+    border-radius: var(--radius);
+    padding: 28px;
+    border: 1px solid rgba(0,0,0,0.04);
+    box-shadow: 0 12px 36px rgba(0,0,0,0.06);
 }
 
-/*
- * GRILLE DU FORMULAIRE
- * C'est le cœur de la mise en page.
-*/
+.signup-page-specific .signup-header {
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    margin-bottom: 18px;
+}
+.signup-page-specific .signup-header h2{ margin:0; font-size:1.25rem; }
+
+/* Grid form layout */
 .signup-page-specific .signup-form-grid {
     display: grid;
-    /* Crée 2 colonnes de taille égale */
     grid-template-columns: 1fr 1fr;
-    /* Espace entre les lignes et les colonnes */
-    gap: 1.75rem;
+    gap: 1.25rem 1.75rem;
 }
-
-/* Classe utilitaire pour qu'un élément prenne 2 colonnes */
-.signup-page-specific .form-span-2 {
-    grid-column: 1 / -1; /* S'étend de la ligne 1 à la dernière */
-}
-
-
-/* Groupe Label + Input */
-.signup-page-specific .signup-form-group {
-    /* Pas besoin de margin-bottom, le 'gap' de la grille s'en charge */
-}
+.signup-page-specific .form-span-2 { grid-column: 1 / -1; }
 
 .signup-page-specific .signup-form-group label {
-    display: block;
-    font-weight: 600;
-    margin-bottom: 0.5rem;
-    font-size: 0.9rem;
+    display:block;
+    font-weight:700;
+    margin-bottom:6px;
+    font-size:0.95rem;
 }
 
-/* Champ de saisie spécifique */
 .signup-page-specific .signup-form-input {
-    width: 100%;
-    padding: 0.85rem;
-    border: 1px solid #ccc;
-    border-radius: 4px;
+    width:100%;
+    padding: 0.85rem 0.9rem;
+    border-radius: 10px;
+    border: 1px solid rgba(15,23,42,0.08);
     font-size: 1rem;
-    line-height: 1.4;
+    color: var(--text);
 }
+.signup-page-specific .signup-form-input::placeholder { color:#9aa0a6; }
 
-.signup-page-specific .signup-form-input::placeholder {
-    color: #aaa;
-}
+.signup-page-specific .field-errors{ color: #d9534f; margin-top:6px; font-size:0.9rem; }
 
-/* Bouton d'inscription (S'inscrire) */
+/* Submit button — site style: white with black text, orange on hover */
 .signup-page-specific .signup-form-button {
     width: 100%;
-    padding: 0.85rem;
-    border: none;
-    border-radius: 4px;
-    background-color: #000000; /* Noir profond */
-    color: #ffffff;
+    padding: 0.9rem 1rem;
+    border-radius: 10px;
+    background: #ffffff;
+    color: #000;
+    border: 1px solid rgba(0,0,0,0.06);
+    font-weight: 700;
     font-size: 1rem;
-    font-weight: bold;
     cursor: pointer;
-    transition: background-color 0.3s ease;
-    /* Le 'gap' de la grille ajoute de l'espace au-dessus */
+    transition: background 160ms ease, color 160ms ease, transform 120ms ease, box-shadow 160ms ease;
+}
+.signup-page-specific .signup-form-button:hover{
+    background: var(--primary-dark);
+    color: #fff;
+    transform: translateY(-2px);
+    box-shadow: 0 12px 30px rgba(255,109,65,0.12);
 }
 
-.signup-page-specific .signup-form-button:hover {
-    background-color: #333; /* Noir un peu plus clair au survol */
+.signup-page-specific .signup-footnote{ margin-top:12px; text-align:center; color:var(--muted); }
+
+/* Mobile: single column */
+@media (max-width: 700px){
+    .signup-page-specific .signup-form-grid { grid-template-columns: 1fr; gap: 1rem; }
+    .signup-page-specific .signup-form-container { padding: 18px; }
 }
 
-/*
- * RESPONSIVE: Pour les petits écrans (mobiles)
- * On repasse tout sur 1 seule colonne.
-*/
-@media (max-width: 600px) {
-    .signup-page-specific .signup-form-grid {
-        grid-template-columns: 1fr; /* 1 seule colonne */
-        gap: 1.25rem; /* Espace réduit entre les champs */
-    }
-
-    .signup-page-specific .signup-form-container {
-        padding: 1.5rem; /* Moins de padding sur petit écran */
-    }
-}
+/* Accessibility */
+.signup-page-specific .signup-form-input:focus-visible{ outline:3px solid rgba(255,122,0,0.14); outline-offset:2px; }
