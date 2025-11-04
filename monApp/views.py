@@ -1,11 +1,12 @@
-from monApp.models import PLAT,CATEGORIE,CLIENT
+from monApp.models import PLAT,CATEGORIE,CLIENT, COMMANDE, APPARTENIR_PLATS, DEFINIR_STOCK
 from .app import app
-from flask import render_template, request, url_for, redirect
+from flask import render_template, request, url_for, redirect, flash, session
 from .app import db
 from .forms import InscriptionForm, ConnexionForm
-from flask_login import login_user,logout_user,login_required
+from flask_login import login_user,logout_user,login_required, current_user
 from hashlib import sha256
 from math import ceil
+from datetime import datetime
 
 @app.route('/')
 @app.route('/index/')
@@ -80,6 +81,137 @@ def apropos():
 def nouveaute():
     return render_template("nouveaute.html")
 
+@app.route('/panier/')
+@login_required
+def panier():
+    commande = None
+    total_general = 0
+
+    # On cherche une commande 'En attente' pour l'utilisateur connecté
+    commande = db.session.query(COMMANDE).filter_by(id_client=current_user.id_client, statut='En attente').first()
+    if commande:
+        total_general = commande.montant_total or 0
+
+    return render_template("panier.html", commande=commande, total_general=total_general)
+
+@app.route('/ajouter-au-panier/', methods=['POST'])
+def ajouter_au_panier():
+    if not current_user.is_authenticated:
+        flash("Veuillez vous connecter pour ajouter des articles au panier.", "info")
+        return redirect(url_for('connexion'))
+
+    id_plat = request.form.get('id_plat')
+    if not id_plat:
+        flash("Aucun plat spécifié.", "error")
+        return redirect(url_for('produits'))
+
+    try:
+        id_plat_int = int(id_plat)
+    except (ValueError, TypeError):
+        flash("Identifiant de plat invalide.", "error")
+        return redirect(url_for('produits'))
+
+    # 1. Trouver ou créer une commande "En attente" pour l'utilisateur
+    commande = db.session.query(COMMANDE).filter_by(id_client=current_user.id_client, statut='En attente').first()
+    if not commande:
+        commande = COMMANDE(
+            id_client=current_user.id_client,
+            date_commande=datetime.now(),
+            statut='En attente'
+        )
+        db.session.add(commande)
+        db.session.commit() # On commit pour que la commande ait un ID
+
+    # 2. Vérifier si le plat est déjà dans la commande
+    item_panier = db.session.query(APPARTENIR_PLATS).filter_by(id_commande=commande.id_commande, id_plat=id_plat_int).first()
+
+    if item_panier:
+        # Si oui, on incrémente la quantité
+        item_panier.quantite += 1
+    else:
+        # Sinon, on crée une nouvelle ligne dans appartenir_plats
+        item_panier = APPARTENIR_PLATS(id_commande=commande.id_commande, id_plat=id_plat_int, quantite=1)
+        db.session.add(item_panier)
+
+    db.session.commit()
+
+    flash("Plat ajouté au panier avec succès !", "success")
+    return redirect(request.referrer or url_for('produits'))
+
+@app.route('/modifier-quantite-panier/', methods=['POST'])
+def modifier_quantite_panier():
+    if not current_user.is_authenticated:
+        flash("Veuillez vous connecter pour modifier votre panier.", "info")
+        return redirect(url_for('connexion'))
+
+    id_plat = request.form.get('id_plat')
+    action = request.form.get('action')
+
+    if not id_plat or not action:
+        flash("Action invalide.", "error")
+        return redirect(url_for('panier'))
+
+    try:
+        id_plat_int = int(id_plat)
+    except (ValueError, TypeError):
+        flash("Identifiant de plat invalide.", "error")
+        return redirect(url_for('panier'))
+
+    commande = db.session.query(COMMANDE).filter_by(id_client=current_user.id_client, statut='En attente').first()
+    if commande:
+        item = db.session.query(APPARTENIR_PLATS).filter_by(id_commande=commande.id_commande, id_plat=id_plat_int).first()
+        if item:
+            if action == 'increase':
+                stock_disponible = db.session.query(DEFINIR_STOCK).filter_by(id_plat=id_plat_int, jour=commande.date_commande.date()).first()
+                if stock_disponible and item.quantite < stock_disponible.stock:
+                    item.quantite += 1
+                    flash("Quantité mise à jour.", "success")
+                else:
+                    flash("Stock insuffisant pour ajouter cet article.", "error")
+            elif action == 'decrease':
+                item.quantite -= 1
+
+            # On vérifie si l'article doit être supprimé
+            if item.quantite <= 0:
+                db.session.delete(item)
+                flash("Plat supprimé du panier.", "success")
+            
+            # On sauvegarde les changements dans tous les cas (augmentation, diminution, suppression)
+            db.session.commit()
+
+    return redirect(url_for('panier'))
+
+@app.route('/supprimer-du-panier/', methods=['POST'])
+def supprimer_du_panier():
+    if not current_user.is_authenticated:
+        flash("Veuillez vous connecter pour modifier votre panier.", "info")
+        return redirect(url_for('connexion'))
+
+    id_plat = request.form.get('id_plat')
+    id_menu = request.form.get('id_menu')
+
+    try:
+        id_plat_int = int(id_plat) if id_plat else None
+    except (ValueError, TypeError):
+        id_plat_int = None
+
+    commande = db.session.query(COMMANDE).filter_by(id_client=current_user.id_client, statut='En attente').first()
+    if commande:
+        if id_plat_int:
+            item = db.session.query(APPARTENIR_PLATS).filter_by(id_commande=commande.id_commande, id_plat=id_plat_int).first()
+            if item:
+                db.session.delete(item)
+                db.session.commit()
+                flash("Plat supprimé du panier.", "success")
+        elif id_menu:
+            item = db.session.query(APPARTENIR_MENUS).filter_by(id_commande=commande.id_commande, id_menu=id_menu).first()
+            if item:
+                db.session.delete(item)
+                db.session.commit()
+                flash("Menu supprimé du panier.", "success")
+
+    return redirect(url_for('panier'))
+
 @app.route('/connexion/', methods=['GET', 'POST'])
 def connexion():
     form = ConnexionForm()
@@ -97,9 +229,6 @@ def connexion():
         error = 'Téléphone ou mot de passe invalide'
     return render_template("connexion.html", form=form, error=error)
 
-@app.route('/panier/')
-def panier():
-    return render_template("index.html")
 
 @app.route('/inscription/', methods=['GET', 'POST'])
 def inscription():
