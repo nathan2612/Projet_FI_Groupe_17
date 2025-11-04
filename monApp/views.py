@@ -1,4 +1,4 @@
-from monApp.models import PLAT,CATEGORIE,CLIENT, COMMANDE, APPARTENIR_PLATS, DEFINIR_STOCK
+from monApp.models import PLAT,CATEGORIE,CLIENT, COMMANDE, APPARTENIR_PLATS, DEFINIR_STOCK, AVIS
 from .app import app
 from flask import render_template, request, url_for, redirect, flash, session
 from .app import db
@@ -12,8 +12,21 @@ import logging as lg
 @app.route('/')
 @app.route('/index/')
 def index():
-    return render_template("index.html")
+    try:
+        avis_list = db.session.query(AVIS).all()
+    except Exception:
+        avis_list = []
 
+    return render_template("index.html", AVIS=avis_list)
+
+@app.route('/avis/', endpoint='avis_page')
+def avis():
+    try:
+        avis = db.session.query(AVIS).all()
+    except Exception:
+        avis = []
+
+    return render_template("avis.html", avis=avis)
 @app.route('/produits/', methods=['POST', 'GET'])
 def produits():
     cat_id = request.args.get('cat_id', type=int)
@@ -74,7 +87,7 @@ def produits():
 def contact():
     return render_template("contact.html")
 
-@app.route('/apropos/')
+@app.route('/propos/')
 def apropos():
     return render_template("propos.html")
 
