@@ -1,12 +1,14 @@
-from monApp.models import PLAT,CATEGORIE,CLIENT
+from monApp.models import PLAT,CATEGORIE,CLIENT,COMMANDE
 from .app import app
-from flask import render_template, request, url_for, redirect
+from flask import render_template, request, url_for, redirect, flash
 from .app import db
 from .forms import InscriptionForm, ConnexionForm
 from flask_login import login_user,logout_user,login_required
+from sqlalchemy import func, desc
 from hashlib import sha256
 from math import ceil
 import logging as lg
+from flask import flash
 
 @app.route('/')
 @app.route('/index/')
@@ -121,6 +123,63 @@ def inscription():
         return redirect(url_for('connexion'))
     return render_template("inscription.html", form=form)
 
+@app.route('/admin/banni/')
+def admin_banni():
+    # Count non-récupéré commandes per client and order desc by count
+    # Note: statut values include 'non récupéré' per model constraint
+    results = (
+        db.session.query(CLIENT, func.count(COMMANDE.id_commande).label('nb_non_recup'))
+        .join(COMMANDE)
+        .filter(COMMANDE.statut == 'non récupéré', CLIENT.banni.is_(False))
+        .group_by(CLIENT.id_client)
+        .order_by(desc('nb_non_recup'))
+        .all()
+    )
+
+    # results is list of (CLIENT, nb_non_recup). Pass to template as list of dicts
+    clients = [
+        {
+            'client': r[0],
+            'nb_non_recup': int(r[1])
+        }
+        for r in results
+    ]
+
+    return render_template("admin_banni.html", clients=clients)
+
+
+@app.route('/admin/ban/<int:client_id>', methods=['POST'])
+def ban_client(client_id):
+    # mark client as banned
+    client = db.session.query(CLIENT).filter_by(id_client=client_id).first()
+    if not client:
+        flash('Client introuvable', 'error')
+        return redirect(url_for('admin_banni'))
+    client.banni = True
+    db.session.add(client)
+    db.session.commit()
+    flash(f"Client {client.prenom} {client.nom} banni.", 'success')
+    return redirect(url_for('admin_banni'))
+
+
+@app.route('/admin/bannis/')
+def admin_bannis():
+    # list clients who are banned
+    clients = db.session.query(CLIENT).filter_by(banni=True).all()
+    return render_template('admin_bannis.html', clients=clients)
+
+
+@app.route('/admin/unban/<int:client_id>', methods=['POST'])
+def unban_client(client_id):
+    client = db.session.query(CLIENT).filter_by(id_client=client_id).first()
+    if not client:
+        flash('Client introuvable', 'error')
+        return redirect(url_for('admin_bannis'))
+    client.banni = False
+    db.session.add(client)
+    db.session.commit()
+    flash(f"Client {client.prenom} {client.nom} débanni.", 'success')
+    return redirect(url_for('admin_bannis'))
 
 if __name__ == "__main__":
     app.run()

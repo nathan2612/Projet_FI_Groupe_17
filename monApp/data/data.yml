@@ -235,22 +235,80 @@ clients:
     prenom: "Sophie"
     telephone: "+33611223344"
     mot_de_passe: "hashed_password_3"
+  - id_client: 4
+    nom: "Martin"
+    prenom: "Sophie"
+    telephone: "+33611223344"
+    mot_de_passe: "hashed_password_3"
+  - id_client: 5
+    nom: "Martin"
+    prenom: "Sophie"
+    telephone: "+33611223344"
+    mot_de_passe: "hashed_password_3"
+  - id_client: 6
+    nom: "Martin"
+    prenom: "Sophie"
+    telephone: "+33611223344"
+    mot_de_passe: "hashed_password_3"
 
 commandes:
   - id_commande: 1
     id_client: 1
     date_commande: "2025-10-21 13:00:00"
-    statut: "En attente"
+    statut: "non récupéré"
     montant_total: 21.50
     sur_place: false
     nombre_personnes: 1
   - id_commande: 2
     id_client: 2
     date_commande: "2025-10-21 12:00:00"
-    statut: "En préparation"
+    statut: "non récupéré"
     montant_total: 41.00
     sur_place: true
     nombre_personnes: 2
+  - id_commande: 3
+    id_client: 1
+    date_commande: "2025-10-21 13:00:00"
+    statut: "non récupéré"
+    montant_total: 21.50
+    sur_place: false
+    nombre_personnes: 1
+  - id_commande: 4
+    id_client: 1
+    date_commande: "2025-10-21 13:00:00"
+    statut: "non récupéré"
+    montant_total: 21.50
+    sur_place: false
+    nombre_personnes: 1
+  - id_commande: 5
+    id_client: 1
+    date_commande: "2025-10-21 13:00:00"
+    statut: "non récupéré"
+    montant_total: 21.50
+    sur_place: false
+    nombre_personnes: 1
+  - id_commande: 6
+    id_client: 1
+    date_commande: "2025-10-21 13:00:00"
+    statut: "non récupéré"
+    montant_total: 21.50
+    sur_place: false
+    nombre_personnes: 1
+  - id_commande: 7
+    id_client: 5
+    date_commande: "2025-10-21 13:00:00"
+    statut: "non récupéré"
+    montant_total: 21.50
+    sur_place: false
+    nombre_personnes: 1
+  - id_commande: 8
+    id_client: 5
+    date_commande: "2025-10-21 13:00:00"
+    statut: "non récupéré"
+    montant_total: 21.50
+    sur_place: false
+    nombre_personnes: 1
+
 
 menus:
   - id_menu: 1
