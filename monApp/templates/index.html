@@ -61,7 +61,7 @@
 					<div class="avis-list simple">
 						{% for av in AVIS[:3] %}
 							<div class="avis-row">
-								<p class="auteur">— {{ av.client.prenom_client if av.client and av.client.prenom_client else av.id_client }}</p>
+								<p class="auteur">— {{ av.client.prenom if av.client and av.client.prenom else av.id_client }}</p>
 								{% if av.note == 5 %}
 								<img class="notes-img" src="{{ url_for('static', filename='images/note_etoiles/5etoiles.png') }}" alt="5 étoiles">
 								{% endif %}

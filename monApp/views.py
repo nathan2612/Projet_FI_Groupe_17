@@ -87,9 +87,9 @@ def produits():
 def contact():
     return render_template("contact.html")
 
-@app.route('/propos/')
+@app.route('/apropos/')
 def apropos():
-    return render_template("propos.html")
+    return render_template("apropos.html")
 
 @app.route('/nouveautes/')
 def nouveaute():

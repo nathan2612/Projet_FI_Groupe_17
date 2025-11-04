@@ -292,6 +292,7 @@ appartenir_menus:
     quantite: 1
 
 avis:
+avis:
   - id_avis: 1
     id_client: 1
     note: 5
@@ -300,6 +301,18 @@ avis:
     id_client: 3
     note: 4
     commentaire: "Très bon, mais le riz était un peu sec."
+  - id_avis: 3
+    id_client: 2
+    note: 3
+    commentaire: "Plats corrects, mais un peu cher pour la qualité."
+  - id_avis: 4
+    id_client: 2
+    note: 1
+    commentaire: Nullllllll !!!!!
+  - id_avis: 5
+    id_client: 3
+    note: 2
+    commentaire: "Franchement, je suis assez déçu par cette expérience. Je ne comprends vraiment pas comment ce restaurant peut avoir d’aussi bonnes notes. Dès l’arrivée, l’accueil manquait de chaleur : on a eu l’impression de déranger plutôt que d’être attendus. Le service a été lent, sans réelle attention aux clients. Côté repas, ce n’était pas terrible du tout. Les plats manquaient clairement de saveur et ne ressemblaient pas à ce qu’on pouvait espérer d’après la carte ou les photos. Les portions étaient petites pour le prix, et la présentation ne donnait pas envie. Même le dessert, censé rattraper le reste, était fade.Globalement, c’est une adresse que je ne recommanderai pas et où je ne reviendrai pas. Il y a bien mieux ailleurs, que ce soit pour la qualité, le service ou l’ambiance. C’est dommage, car le lieu avait du potentiel, mais l’expérience ne m’a pas du tout convaincu."
 
 definir_stock:
   - id_plat: 1
