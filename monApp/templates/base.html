@@ -23,28 +23,31 @@
 
 				<nav class="navbar">
 					<ul class="nav-links">
-						<li><a href="/index">Accueil</a></li>
-						<li><a href="/apropos">A propos</a></li>
-						<li><a href="/nouveautes">Nouveautés</a></li>
-						<li><a href="/contact">Contact</a></li>
-						<li><a href="/produits">Nos produits</a></li>
+						<li {% if request.endpoint == 'index' %}class="active"{% endif %}><a href="{{ url_for('index') }}">Accueil</a></li>
+						<li {% if request.endpoint == 'produits' %}class="active"{% endif %}><a href="{{ url_for('produits') }}">Nos produits</a></li>
+						<li {% if request.endpoint == 'nouveaute' %}class="active"{% endif %}><a href="{{ url_for('nouveaute') }}">Nouveautés</a></li>
+						<li {% if request.endpoint == 'contact' %}class="active"{% endif %}><a href="{{ url_for('contact') }}">Contact</a></li>
+						<li {% if request.endpoint == 'apropos' %}class="active"{% endif %}><a href="{{ url_for('apropos') }}">A propos</a></li>
 					</ul>
 				</nav>
 				<div class="nav-actions">
+					<button id="theme-toggle" class="btn-theme" title="Changer de thème">
+						<i class="fas fa-sun"></i>
+					</button>
 					{% if current_user.is_authenticated %}
-					<a href="{{ url_for('connexion') }}" class="btn-connexion">
-						<img src="{{ url_for('static', filename='images/account.png') }}" alt="Icône utilisateur" class="icon icon-user">
-						{{ current_user.prenom}}
+					<a href="{{ url_for('connexion') }}" class="btn-nav-icon" title="Mon compte">
+						<i class="fas fa-user"></i>
+						<span class="btn-nav-label">{{ current_user.prenom }}</span>
 					</a>
 					{% else %}
-					<a href="{{ url_for('connexion') }}" class="btn-connexion">
-						<img src="{{ url_for('static', filename='images/account.png') }}" alt="Icône utilisateur" class="icon icon-user">
-						Connexion
+					<a href="{{ url_for('connexion') }}" class="btn-nav-icon" title="Connexion">
+						<i class="fas fa-user"></i>
+						<span class="btn-nav-label">Connexion</span>
 					</a>
 					{% endif %}
-					<a href="{{ url_for('panier') }}" class="btn-panier">
-						<img src="{{ url_for('static', filename='images/shop.png') }}" alt="Icône panier" class="icon icon-panier">
-						Panier
+					<a href="{{ url_for('panier') }}" class="btn-nav-icon" title="Panier">
+						<i class="fas fa-shopping-basket"></i>
+						<span class="btn-nav-label">Panier</span>
 					</a>
 				</div>
 			</div>
@@ -57,25 +60,91 @@
 		</main>
 
 		<footer>
-			<ul aria-label="Coordonnées">
-				<li>Oumami</li>
-				<li>4 place de la Halle, 41250 Bracieux</li>
-				<li>Télephone 02.54.79.05.48</li>
-			</ul>
-
-			<ul aria-label="Horaires d'ouverture">
-				<li>Horaires</li>
-				<li>Du mardi au samedi</li>
-				<li>11h30 - 14h (la vente à emporter et la restauration sur place)</li>
-				<li>17h - 20h (la vente à emporter uniquement)</li>
-			</ul>
-
-			<ul aria-label="Informations légales">
-				<li>Mentions légales</li>
-				<li>© 2014-2025 Oumami - Tous droits réservés.</li>
-				<li>Crédit site : <a href="https://github.com/nathan2612/Projet_FI_Groupe_17.git">Github</a></li>
-			</ul>
+			<div class="footer-main">
+				<div class="footer-column">
+					<h4 class="footer-title">Oumami</h4>
+					<ul class="footer-list">
+						<li><i class="fas fa-map-marker-alt"></i> 4 place de la Halle, 41250 Bracieux</li>
+						<li><i class="fas fa-phone"></i> Télephone 02.54.79.05.48</li>
+					</ul>
+				</div>
+				<div class="footer-column">
+					<h4 class="footer-title">Horaires</h4>
+					<ul class="footer-list">
+						<li>Du mardi au samedi</li>
+						<li>11h30 - 14h <span class="horaire-detail">(sur place & à emporter)</span></li>
+						<li>17h - 20h <span class="horaire-detail">(à emporter uniquement)</span></li>
+					</ul>
+				</div>
+			</div>
+			<div class="footer-bottom">
+				<p>© 2024 Oumami - Tous droits réservés.</p>
+				<p>Crédit site : <a href="https://github.com/nathan2612/Projet_FI_Groupe_17.git">Github</a></p>
+			</div>
 		</footer>
+
+		<script>
+			document.addEventListener('DOMContentLoaded', function() {
+				const themeToggle = document.getElementById('theme-toggle');
+				const body = document.body;
+				const themeIcon = themeToggle.querySelector('i');
+	
+				// Applique le thème sauvegardé au chargement de la page
+				const applyTheme = () => {
+					const savedTheme = localStorage.getItem('theme');
+					if (savedTheme === 'dark') {
+						body.classList.add('dark-mode');
+						themeIcon.classList.remove('fa-sun');
+						themeIcon.classList.add('fa-moon');
+					} else {
+						body.classList.remove('dark-mode');
+						themeIcon.classList.remove('fa-moon');
+						themeIcon.classList.add('fa-sun');
+					}
+				};
+	
+				// Gère le clic sur le bouton
+				themeToggle.addEventListener('click', () => {
+					body.classList.toggle('dark-mode');
+					
+					let newTheme = body.classList.contains('dark-mode') ? 'dark' : 'light';
+					localStorage.setItem('theme', newTheme);
+					applyTheme(); // Met à jour l'icône
+				});
+	
+				applyTheme(); // Applique le thème au chargement initial
+			});
+		</script>
+
+		<script>
+			// --- Script pour les transitions de page fluides ---
+			document.addEventListener('DOMContentLoaded', () => {
+				const mainContent = document.getElementById('main');
+
+				// On écoute les clics sur tous les liens du document
+				document.body.addEventListener('click', e => {
+					// On vérifie si l'élément cliqué est un lien <a>
+					const link = e.target.closest('a');
+
+					if (link) {
+						const href = link.getAttribute('href');
+
+						// On ignore les liens externes, les ancres, et ceux qui ouvrent un nouvel onglet
+						if (href && !href.startsWith('#') && !href.startsWith('http') && link.target !== '_blank') {
+							e.preventDefault(); // On empêche la navigation immédiate
+
+							// On ajoute une animation de sortie
+							mainContent.style.animation = 'fadeOut 0.4s ease-in forwards';
+
+							// On attend la fin de l'animation avant de changer de page
+							setTimeout(() => {
+								window.location.href = href;
+							}, 400); // 400ms, la durée de notre animation fadeOut
+						}
+					}
+				});
+			});
+		</script>
 	</body>
 </html>
 {% endblock %}

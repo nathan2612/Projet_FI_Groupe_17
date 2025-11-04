@@ -1,0 +1,59 @@
+{% extends "base.html" %}
+
+{% block styles %}
+    <link rel="stylesheet" href="{{ url_for('static', filename='admin_banni.css') }}">
+{% endblock %}
+
+{% block main %}
+    <div class="admin-banni-page">
+        <div class="top-actions" style="display:flex; justify-content:space-between; align-items:center; gap:12px;">
+            <h1>Clients avec commandes non récupérées</h1>
+            <div>
+                <a href="{{ url_for('admin_bannis') }}" class="toggle-btn">Voir les clients bannis</a>
+            </div>
+        </div>
+        {% if clients %}
+        <div class="table-wrapper">
+            <table class="table admin-table">
+            <thead>
+                <tr>
+                    <th>#</th>
+                    <th>Nom</th>
+                    <th>Prénom</th>
+                    <th>Téléphone</th>
+                        <th>Commandes non récupérées</th>
+                        <th>Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for entry in clients %}
+                    <tr>
+                        <td>{{ loop.index }}</td>
+                        <td>{{ entry.client.nom }}</td>
+                        <td>{{ entry.client.prenom }}</td>
+                        <td>{{ entry.client.telephone }}</td>
+                        {% set title = entry.nb_non_recup ~ ' commande(s) non récupérée(s)' %}
+                        {% if entry.nb_non_recup == 0 %}
+                            <td><span class="badge-count badge-count-green" title="{{ title }}" aria-label="{{ title }}">{{ entry.nb_non_recup }}</span></td>
+                        {% elif entry.nb_non_recup == 1 %}
+                            <td><span class="badge-count badge-count-light-orange" title="{{ title }}" aria-label="{{ title }}">{{ entry.nb_non_recup }}</span></td>
+                        {% elif entry.nb_non_recup == 2 %}
+                            <td><span class="badge-count badge-count-orange" title="{{ title }}" aria-label="{{ title }}">{{ entry.nb_non_recup }}</span></td>
+                        {% else %}
+                            <td><span class="badge-count badge-count-red" title="{{ title }}" aria-label="{{ title }}">{{ entry.nb_non_recup }}</span></td>
+                        {% endif %}
+                            <td>
+                                <form action="{{ url_for('ban_client', client_id=entry.client.id_client) }}" method="post" onsubmit="return confirm('Bannir {{ entry.client.prenom }} {{ entry.client.nom }} ?');">
+                                    <button type="submit" class="ban-btn" title="Bannir le client {{ entry.client.prenom }} {{ entry.client.nom }}">Bannir</button>
+                                </form>
+                            </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+            </table>
+        </div>
+    {% else %}
+        <p>Aucun client avec des commandes non récupérées.</p>
+    {% endif %}
+    </div>
+{% endblock %}

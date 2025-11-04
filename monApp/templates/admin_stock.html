@@ -1,0 +1,58 @@
+{% extends "base.html" %}
+
+{% block styles %}
+    {# On charge le CSS spécifique à la page admin #}
+    <link rel="stylesheet" href="{{ url_for('static', filename='admin.css') }}">
+{% endblock %}
+
+{% block main %}
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+
+    <main class="admin-container">
+        <h1>Gestion du stock</h1>
+
+        <form method="GET" class="search-form">
+            <div class="search-bar">
+                <input type="text" name="search" placeholder="Rechercher un produit..." value="{{ search_term }}">
+                <button type="submit" class="btn btn-secondary"><i class="ph-magnifying-glass"></i> Rechercher</button>
+            </div>
+        </form>
+
+        <div class="stock-list">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Nom du plat</th>
+                        <th>Description</th>
+                        <th>Stock actuel</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for item_data in items %}
+                    <tr>
+                        <td>{{ item_data.item.nom_plat }}</td>
+                        <td>{{ item_data.item.description }}</td>
+                        <td>
+                            <form class="stock-form" action="{{ url_for('edit_stock_item', item_id=item_data.item.id_plat, search=search_term) }}" method="POST">
+                                <input type="number" name="stock" value="{{ item_data.stock }}" required>
+                                <button type="submit" class="btn btn-primary btn-small">Valider<i class="ph-check"></i></button>
+                            </form>
+                        </td>
+                        <td>
+                            <form action="{{ url_for('edit_stock_item', item_id=item_data.item.id_plat, search=search_term) }}" method="POST">
+                                <button type="submit" name="reset" value="true" class="btn btn-secondary btn-small">Réinitialiser le stock<i class="ph-arrow-counter-clockwise"></i></button>
+                            </form>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                    {% if not items %}
+                    <tr>
+                        <td colspan="4">Aucun item en stock</td>
+                    </tr>
+                    {% endif %}
+                </tbody>
+            </table>
+        </div>
+    </main>
+{% endblock %}

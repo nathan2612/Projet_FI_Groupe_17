@@ -1,0 +1,167 @@
+/* static/css/admin.css */
+
+/* --- Variables de couleur (basées sur ta maquette) --- */
+:root {
+    --admin-bg-page: #fdfcff; /* Fond très légèrement violet */
+    --admin-text-title: #2d3748; /* Titre "Gestion du stock" */
+    --admin-text-body: #718096;  /* Texte de description */
+    --admin-card-bg: #ffffff;
+    --admin-card-shadow: 0 4px 12px rgba(0, 0, 0, 0.04);
+    --admin-card-radius: 12px;
+    --admin-btn-primary-bg: #f4f2fa;
+    --admin-btn-primary-text: #5e47c2; /* Violet foncé pour texte/icône */
+    --admin-btn-primary-border: #e6e0f2;
+    --admin-btn-secondary-bg: #f9fafb;
+    --admin-btn-secondary-text: #555;
+    --admin-btn-secondary-border: #e5e7eb;
+}
+
+/* --- Conteneur principal --- */
+/* On n'utilise PAS .page-content-wrapper car son style 
+   est dans contact.css (flex, etc.). On crée un 
+   conteneur dédié pour l'admin. */
+.admin-container {
+    max-width: 900px;
+    margin: 2.5rem auto; /* 40px auto */
+    padding: 0 1.25rem; /* 20px */
+}
+
+.admin-container h1 {
+    font-size: 2.25rem; /* 36px */
+    color: var(--admin-text-title);
+    margin-bottom: 2rem;
+}
+
+/* --- Barre de recherche --- */
+.search-bar {
+    margin-bottom: 2rem;
+    display: flex;
+    gap: 0.75rem;
+}
+
+.search-bar input[type="text"] {
+    flex-grow: 1;
+    padding: 0.6rem 1rem;
+    border-radius: 8px;
+    border: 1px solid var(--admin-btn-secondary-border);
+    font-size: 0.9rem;
+}
+
+.search-bar input[type="text"]:focus {
+    outline: none;
+    border-color: var(--admin-btn-primary-text);
+    box-shadow: 0 0 0 3px rgba(94, 71, 194, 0.1);
+}
+
+/* --- Tableau des stocks --- */
+.stock-list {
+    width: 100%;
+    overflow-x: auto; /* Pour la responsivité sur petits écrans */
+}
+
+.stock-list table {
+    width: 100%;
+    border-collapse: collapse;
+    background-color: var(--admin-card-bg);
+    border-radius: var(--admin-card-radius);
+    box-shadow: var(--admin-card-shadow);
+    overflow: hidden; /* Pour que le radius s'applique aux coins */
+}
+
+.stock-list th,
+.stock-list td {
+    padding: 1rem 1.25rem;
+    text-align: left;
+    border-bottom: 1px solid var(--admin-btn-primary-border);
+    vertical-align: middle;
+}
+
+.stock-list th {
+    background-color: #f9f8fe;
+    font-size: 0.85rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--admin-text-body);
+}
+
+.stock-list td {
+    color: var(--admin-text-title);
+}
+
+.stock-list tbody tr:last-child td {
+    border-bottom: none; /* Pas de bordure pour la dernière ligne */
+}
+
+.stock-list .stock-form {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.stock-list .stock-form input[type="number"] {
+    width: 70px;
+    padding: 0.5rem;
+    border-radius: 6px;
+    border: 1px solid var(--admin-btn-secondary-border);
+    text-align: center;
+}
+
+/* --- Style des boutons (basé sur la maquette) --- */
+.btn {
+    display: inline-flex;
+    gap: 0.5rem; /* Espace entre l'icône et le texte */
+    padding: 0.6rem 1.1rem;
+    border-radius: 8px;
+    text-decoration: none;
+    font-weight: 600;
+    font-size: 0.9rem;
+    border: 1px solid transparent;
+    cursor: pointer;
+    transition: all 0.2s ease-in-out;
+    align-items: center;
+}
+
+.btn i {
+    font-size: 1.1rem; /* Taille de l'icône */
+}
+
+/* Bouton "Modifier" (Primaire) */
+.btn-primary {
+    background-color: var(--admin-btn-primary-bg);
+    color: var(--admin-btn-primary-text);
+    border-color: var(--admin-btn-primary-border);
+}
+
+.btn-primary:hover {
+    background-color: #ede9f7;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.03);
+}
+
+/* Bouton "Voir" (Secondaire) */
+.btn-secondary {
+    background-color: var(--admin-btn-secondary-bg);
+    color: var(--admin-btn-secondary-text);
+    border-color: var(--admin-btn-secondary-border);
+}
+
+.btn-secondary:hover {
+    background-color: #f3f4f6;
+}
+
+.btn-small {
+    padding: 0.4rem 0.6rem;
+    font-size: 0.8rem;
+}
+
+.btn-small i {
+    font-size: 1rem;
+}
+
+/* --- Responsive pour petits écrans --- */
+@media (max-width: 768px) {
+    .admin-container h1 {
+        font-size: 1.8rem;
+    }
+
+    .stock-list th, .stock-list td { padding: 0.75rem; }
+}

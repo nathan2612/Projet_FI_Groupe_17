@@ -1,9 +1,33 @@
 /* ===== GLOBAL ===== */
+:root {
+    --bg-color: #ffffff;
+    --text-color: #333;
+    --navbar-bg: black;
+    --navbar-text: white;
+    --btn-bg: #ffffff;
+    --btn-text: #000;
+    --btn-hover-bg: #ff6d41;
+    --btn-hover-text: #ffffff;
+}
+
+.dark-mode {
+    --bg-color: #121212;
+    --text-color: #e0e0e0;
+    --navbar-bg: #1f1f1f;
+    --navbar-text: #e0e0e0;
+    --btn-bg: #333;
+    --btn-text: #e0e0e0;
+}
+
 body {
     display: flex;
     flex-direction: column;
     margin: 0;
     font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+    background-color: var(--bg-color);
+    color: var(--text-color);
+    transition: background-color 0.3s, color 0.3s;
+    min-height: 100vh; /* Assure que le body prend toute la hauteur */
 }
 
 /* ===== NAVBAR ===== */
@@ -13,7 +37,7 @@ body {
     justify-content: space-between;
     position: relative;
     width: 100%;
-    background-color: black;
+    background-color: var(--navbar-bg);
     padding: 0 18px;
     box-sizing: border-box; /* keep sizing consistent when padding is applied */
 }
@@ -55,14 +79,28 @@ body {
     display: inline-block;
     padding: 12px 18px;
     text-decoration: none;
-    color: white;
+    color: var(--navbar-text);
     font-size: 1.05rem;
     font-weight: 700;
 }
 
 .navbar ul li a:hover,
 .navbar ul li a:focus {
-    color: #ff6d41;
+    color: var(--btn-hover-bg);
+}
+
+.navbar ul li.active a {
+    color: var(--btn-hover-bg); /* Utilise la couleur de survol pour la cohérence */
+    position: relative;
+}
+.navbar ul li.active a::after {
+    content: '';
+    position: absolute;
+    bottom: 5px; /* Ajustez pour la distance du texte */
+    left: 18px; /* Aligné avec le padding du lien */
+    right: 18px; /* Aligné avec le padding du lien */
+    height: 2px;
+    background-color: var(--btn-hover-bg);
 }
 
 .nav-actions {
@@ -86,25 +124,44 @@ body {
     object-fit: contain;
 }
 
-.btn-connexion,
-.btn-panier {
+.btn-theme {
+    background: none;
+    border: none;
+    color: var(--navbar-text);
+    font-size: 1.2rem;
+    cursor: pointer;
+    padding: 8px 12px;
+    border-radius: 999px;
+    line-height: 1;
+}
+
+.btn-theme:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+}
+
+/* Nouveau style pour les boutons d'action de la navbar (compte et panier) */
+.btn-nav-icon {
     display: inline-flex;
     align-items: center;
-    gap: 10px;
-    padding: 8px 14px;
+    gap: 8px; /* Espace entre l'icône et le texte */
+    text-decoration: none;
+    background-color: var(--btn-bg);
+    color: var(--btn-text);
+    padding: 8px 16px; /* Padding pour la forme de pilule */
     border-radius: 999px;
-    font-weight: 700;
-    color: #000;
-    background: #ffffff;
-    border: 1px solid rgba(0,0,0,0.06);
-    transition: background 160ms ease, transform 120ms ease, box-shadow 160ms ease, color 160ms ease;
+    font-size: 1.1rem;
+    transition: background-color 0.3s ease, color 0.3s ease;
 }
-.btn-connexion:hover,
-.btn-panier:hover {
-    background: #ff6d41; /* match btn-commander hover */
-    color: #ffffff;
-    transform: translateY(-2px);
-    box-shadow: 0 8px 20px rgba(0,0,0,0.2);
+
+.btn-nav-icon:hover {
+    background-color: var(--btn-hover-bg);
+    color: var(--btn-hover-text);
+}
+
+/* Style du texte à l'intérieur du bouton */
+.btn-nav-icon .btn-nav-label {
+    font-weight: 600;
+    font-size: 0.95rem;
 }
 
 /* ===== SITE HEADER ===== */
@@ -159,40 +216,90 @@ body {
 
 /* ===== FOOTER ===== */
 footer {
-    display: flex;
-    justify-content: space-around;
-    flex-wrap: wrap;
-    font-size: 1.05rem;
-    background: linear-gradient(180deg, #ff6d41, #ff5a2a);
+    background-color: #1a1a1a; /* Fond sombre et moderne */
     color: #fff;
-    padding: 2rem 1rem;
-    border-top-left-radius: 20px;
-    border-top-right-radius: 20px;
     margin-top: auto;
+    padding: 3rem 2rem 1.5rem 2rem;
+    font-size: 0.95rem;
 }
 
-footer ul {
-    list-style-type: none;
+.footer-main {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 2rem;
+    max-width: 1200px;
+    margin: 0 auto 2.5rem auto;
+    padding-bottom: 2rem;
+    border-bottom: 1px solid #333;
+}
+
+.footer-column {
+    min-width: 200px;
+}
+
+.footer-title {
+    font-size: 1.2rem;
+    font-weight: 600;
+    margin: 0 0 1rem 0;
+    color: var(--btn-hover-bg); /* Touche de couleur orange */
+}
+
+.footer-list {
+    list-style: none;
     padding: 0;
-    min-width: 220px;
+    margin: 0;
+    line-height: 1.8;
+    color: #ccc;
 }
 
-footer ul li:first-child {
-    font-weight: bold;
-    margin-bottom: 12px;
-    font-size: 1.05rem;
-    color: #333;
+.footer-list li {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
 }
 
-footer ul li {
-    margin-bottom: 8px;
+.footer-list .horaire-detail {
+    color: #888;
+    font-size: 0.9em;
 }
 
-footer ul li a {
-    color: #6a5acd;
+.footer-bottom {
+    max-width: 1200px;
+    margin: 0 auto;
+    text-align: center;
+    font-size: 0.85rem;
+    color: #888;
+}
+
+.footer-bottom a {
+    color: #aaa;
     text-decoration: none;
 }
 
-footer ul li a:hover {
-    text-decoration: underline;
+/* ===== ANIMATIONS DE PAGE ===== */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(15px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
 }
+
+@keyframes fadeOut {
+    from {
+        opacity: 1;
+    }
+    to {
+        opacity: 0;
+    }
+}
+
+/* Applique l'animation d'entrée sur le contenu principal de chaque page */
+main#main {
+    flex-grow: 1; /* Fait en sorte que le contenu principal prenne tout l'espace vertical disponible */
+    animation: fadeIn 0.5s ease-out forwards;
+}
+

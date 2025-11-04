@@ -58,10 +58,14 @@
         <section class="menu-grid">
             {% for produit in produits %}
             <article class="menu-card">
-                <img src="../static/images/{{ produit.image_url }}" alt="{{ produit.nom }}">
+                <a href="{{ url_for('detail_plat', id_plat=produit.id_plat) }}" class="card-image-link">
+                    <img src="../static/images/{{ produit.image_url }}" alt="Photo de {{ produit.nom_plat }}">
+                </a>
                 <div class="card-content">
-                    <h2>{{ produit.nom_plat }}</h2>
-                    <p>{{ produit.description }}</p>
+                    <a href="{{ url_for('detail_plat', id_plat=produit.id_plat) }}" class="card-text-link">
+                        <h2>{{ produit.nom_plat }}</h2>
+                        <p>{{ produit.description }}</p>
+                    </a>
                     <form action="{{ url_for('ajouter_au_panier') }}" method="post">
                                 <input type="hidden" name="id_plat" value="{{ produit.id_plat }}">
                                 <button type="submit" class="order-button">
