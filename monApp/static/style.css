@@ -10,9 +10,21 @@ body {
 .navbar-complet {
     display: flex;
     align-items: center;
+    justify-content: space-between;
     position: relative;
     width: 100%;
     background-color: black;
+    padding: 0 18px;
+    box-sizing: border-box; /* keep sizing consistent when padding is applied */
+}
+
+.navbar {
+    /* allow this flex child to shrink when space is limited and center nav links */
+    flex: 1 1 auto;
+    min-width: 0; /* allow children to overflow internally instead of forcing container wider */
+    text-align: center;
+    display: flex;
+    justify-content: center;
 }
 
 .nav-logo {
@@ -23,35 +35,76 @@ body {
     height: 120px;
 }
 
-.navbar {
-    position: absolute;
-    left: 50%;
-    transform: translateX(-50%);
-    text-align: center;
-}
-
 .navbar ul {
+    /* prevent long nav links from expanding the header; clip overflow */
     display: inline-flex;
     gap: 0.6rem;
     align-items: center;
     list-style: none;
     margin: 0;
     padding: 0;
+    overflow: hidden;
 }
 
 .navbar ul li a {
+    /* make links truncate instead of expanding on very small widths */
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 12rem;
     display: inline-block;
     padding: 12px 18px;
     text-decoration: none;
     color: white;
     font-size: 1.05rem;
     font-weight: 700;
-    white-space: nowrap;
 }
 
 .navbar ul li a:hover,
 .navbar ul li a:focus {
     color: #ff6d41;
+}
+
+.nav-actions {
+    /* keep actions from growing and pushing the header wider */
+    flex: 0 0 auto;
+    display: flex;
+    gap: 10px;
+    align-items: center;
+}
+
+.nav-actions a {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    text-decoration: none;
+}
+
+.icon {
+    width: 18px;
+    height: 18px;
+    object-fit: contain;
+}
+
+.btn-connexion,
+.btn-panier {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    padding: 8px 14px;
+    border-radius: 999px;
+    font-weight: 700;
+    color: #000;
+    background: #ffffff;
+    border: 1px solid rgba(0,0,0,0.06);
+    transition: background 160ms ease, transform 120ms ease, box-shadow 160ms ease, color 160ms ease;
+}
+.btn-connexion:hover,
+.btn-panier:hover {
+    background: #ff6d41; /* match btn-commander hover */
+    color: #ffffff;
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(0,0,0,0.2);
 }
 
 /* ===== SITE HEADER ===== */

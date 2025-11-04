@@ -1,0 +1,151 @@
+/* Connexion page — site-aligned styles
+   Scoped under .login-page-specific to avoid global collisions
+*/
+
+/* Color and sizing literals inlined per request (no :root variables) */
+
+.login-page-specific {
+    min-height: 70vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 3rem 1rem;
+    background: #fafafc;
+    box-sizing: border-box;
+}
+
+.login-form-container {
+    width: 100%;
+    max-width: 520px;
+    background: #ffffff;
+    border-radius: 12px;
+    box-shadow: 0 12px 36px rgba(0,0,0,0.06);
+    border: 1px solid rgba(0,0,0,0.04);
+    padding: 28px;
+}
+
+.login-form-container h2 {
+    margin: 0 0 12px 0;
+    font-size: 1.25rem;
+    color: #111827;
+}
+
+/* Horizontal form layout (desktop) but stacks on mobile */
+.login-page-specific .form-horizontal .form-group {
+    display: flex;
+    gap: 12px;
+    align-items: flex-start;
+    margin-bottom: 14px;
+}
+.login-page-specific .form-horizontal .form-group.row {
+    align-items: center;
+}
+
+.login-page-specific .col-sm-2 { flex: 0 0 110px; max-width: 110px; }
+.login-page-specific .control-label { font-weight: 700; color: #111827; font-size: 0.95rem; }
+.login-page-specific .col-sm-10 { flex: 1 1 auto; min-width: 0; }
+
+/* Make input fields slightly narrower on desktop for nicer visual balance
+    but allow them to be full-width on small screens (see media query below). */
+.login-page-specific .col-sm-10 { display: flex; justify-content: center; }
+.login-page-specific .col-sm-10 .form-control { max-width: 420px; width: 100%; }
+
+/* Inputs */
+.login-page-specific .form-control,
+.login-page-specific input.form-control,
+.login-page-specific textarea.form-control {
+    width: 100%;
+    padding: 10px 12px;
+    border-radius: 10px;
+    border: 1px solid rgba(15,23,42,0.08);
+    background: #fff;
+    font-size: 0.95rem;
+    color: #111827;
+}
+.login-page-specific .form-control:focus {
+    outline: none;
+    border-color: #ff7a00;
+    box-shadow: 0 0 0 6px rgba(255,122,0,0.08);
+}
+
+.login-page-specific .field-errors {
+    color: #d9534f;
+    font-size: 0.88rem;
+    margin-top: 6px;
+}
+
+/* Submit button styled like site: white -> orange on hover */
+.login-page-specific .btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    cursor: pointer;
+}
+.login-page-specific .btn-success,
+.login-page-specific input[type="submit"].btn-success {
+    background: #ffffff;
+    color: #000;
+    padding: 10px 16px;
+    border-radius: 10px;
+    border: 1px solid rgba(0,0,0,0.06);
+    font-weight: 700;
+    transition: background 160ms ease, color 160ms ease, transform 120ms ease, box-shadow 160ms ease;
+}
+.login-page-specific .btn-success:hover,
+.login-page-specific input[type="submit"].btn-success:hover {
+    background: #ff6d41;
+    color: #fff;
+    transform: translateY(-2px);
+    box-shadow: 0 12px 30px rgba(255,109,65,0.14);
+}
+
+login-form-info { text-align: center; margin-top: 10px; color: #6b7280; }
+login-form-info .signup-link { color: #ff7a00; font-weight: 700; text-decoration: none; }
+.login-form-info .signup-link:hover { text-decoration: underline; }
+
+/* Mobile stacking */
+@media (max-width: 680px) {
+    .login-page-specific .form-horizontal .form-group { flex-direction: column; align-items: stretch; }
+    .login-page-specific .col-sm-2 { max-width: none; width: 100%; }
+    .login-page-specific .col-sm-10 { width: 100%; }
+    .login-form-container { padding: 18px; }
+    /* remove desktop max-width so inputs fill the available width on mobile */
+    .login-page-specific .col-sm-10 .form-control { max-width: none; }
+}
+
+/* Accessibility */
+.login-page-specific .form-control:focus-visible { outline: 3px solid rgba(255,122,0,0.14); outline-offset: 2px; }
+
+/* Compatibility helpers (non-invasive) */
+.login-page-specific .login-form-input { /* duplicate visual of .form-control */
+    width: 100%;
+    padding: 10px 12px;
+    border-radius: 10px;
+    border: 1px solid rgba(15,23,42,0.08);
+    background: #fff;
+    font-size: 0.95rem;
+    color: var(--text);
+}
+/* Make the primary action stretch full width inside the form; keep visual styles */
+.login-page-specific .login-form-button { width: 100%; display: inline-flex; justify-content:center; padding:10px 16px; border-radius:10px; }
+
+/* Ensure action rows use the full form width so the button doesn't get confined to the input column */
+.login-page-specific .form-group.form-actions,
+.login-page-specific .form-actions {
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 8px;
+    width: 100%;
+}
+
+/* Native submit styling: full width and centered text */
+.login-page-specific input[type="submit"].btn-success {
+    width: 100%;
+    display: inline-block;
+    text-align: center;
+}
+
+/* ensure spacing under errors */
+.login-page-specific .form-group .field-errors { margin-left: 0; }
