@@ -1,0 +1,191 @@
+/* Variables de base (facultatif mais recommandé) */
+:root {
+    --primary-font: Arial, sans-serif;
+    --text-color: #333;
+    --light-border: #eee;
+    --dark-bg: #333;
+    --white: #fff;
+    --light-bg: #f9f9f9;
+}
+
+/* Styles généraux */
+body {
+    font-family: var(--primary-font);
+    margin: 40px;
+    background-color: var(--light-bg); /* Un arrière-plan légèrement gris */
+    color: var(--text-color);
+}
+
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+    background-color: var(--white);
+}
+
+/* En-tête (Titre Panier) */
+header h1 {
+    font-size: 24px;
+    font-weight: normal;
+    margin-bottom: 5px;
+}
+
+header .separator {
+    width: 60px;
+    height: 2px;
+    background-color: var(--text-color);
+    margin-bottom: 30px;
+}
+
+/* Mise en page principale (Articles + Récapitulatif) */
+.cart-layout {
+    display: flex;
+    gap: 20px;
+}
+
+.cart-items {
+    flex: 2; /* Prend plus d'espace pour la liste */
+}
+
+.cart-summary {
+    flex: 1; /* Prend moins d'espace pour le récapitulatif */
+    background-color: var(--light-bg); /* Fond gris clair pour le récapitulatif */
+    padding: 20px;
+    border-radius: 4px; /* Un léger arrondi si souhaité */
+    height: fit-content; /* S'ajuste au contenu */
+}
+
+/* Style de l'Article Individuel */
+.cart-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    padding: 15px 0;
+    margin-bottom: 15px;
+    border: 1px solid var(--light-border); /* Bordure légère */
+    border-radius: 4px;
+    padding: 15px;
+}
+
+.item-details {
+    flex-grow: 1;
+}
+
+.cart-item h2 {
+    font-size: 18px;
+    margin: 0 0 5px 0;
+}
+
+.cart-item p {
+    font-size: 12px;
+    color: #666;
+    margin: 0;
+}
+
+/* Contrôles de l'Article (Quantité, Prix, Supprimer) */
+.item-controls {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    margin-left: 20px;
+}
+
+.quantity-control {
+    display: flex;
+    align-items: center;
+    border: 1px solid var(--light-border);
+    padding: 5px;
+    border-radius: 4px;
+}
+
+.quantity {
+    padding-right: 5px;
+}
+
+.arrows {
+    display: inline-flex;
+    flex-direction: column;
+    line-height: 0.8;
+    margin: 0;
+}
+
+.arrow-up, .arrow-down {
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-size: 8px;
+    padding: 2px 4px;
+    color: var(--text-color);
+}
+
+.item-price {
+    font-weight: bold;
+    font-size: 16px;
+    min-width: 60px; /* Assure un alignement cohérent des prix */
+    text-align: right;
+}
+
+.remove-item {
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-size: 16px;
+    color: var(--text-color);
+}
+
+.remove-form {
+    margin: 0;
+}
+
+/* Style du Récapitulatif (aside) */
+.summary-details {
+    margin-bottom: 30px;
+}
+
+.summary-line {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 10px;
+    font-size: 16px;
+}
+
+.total-line {
+    margin-top: 20px;
+    font-weight: bold;
+}
+
+.summary-separator {
+    height: 1px;
+    background-color: #ccc;
+    margin: 20px 0;
+}
+
+/* Bouton Commander */
+.checkout-button {
+    width: 100%;
+    padding: 10px;
+    background-color: var(--dark-bg);
+    color: var(--white);
+    border: none;
+    cursor: pointer;
+    font-size: 16px;
+    border-radius: 4px;
+    font-weight: bold;
+}
+
+/* Média Queries pour la réactivité (si nécessaire) */
+@media (max-width: 768px) {
+    .cart-layout {
+        flex-direction: column; /* Empile les colonnes sur mobile */
+    }
+
+    .cart-summary {
+        order: -1; /* Place le récapitulatif en haut sur mobile */
+    }
+
+    .item-controls {
+        flex-direction: column;
+        align-items: flex-end;
+        gap: 10px;
+    }
+}

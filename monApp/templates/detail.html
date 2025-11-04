@@ -1,0 +1,92 @@
+{% extends "base.html" %}
+
+{% block styles %}
+    {# Ce lien est crucial ! Il charge le CSS pour CETTE page #}
+    <link rel="stylesheet" href="{{ url_for('static', filename='detail.css') }}">
+{% endblock %}
+
+{% block main %}
+    <div class="page-content-wrapper">
+        <main class="plat-container">
+            {# Affiche l'image du plat. Si aucune image n'est définie, utilise une image par défaut. #}
+            <div class="plat-image-wrapper">
+                <img src="{{ url_for('static', filename='images/' + plat.image_url) }}" alt="Photo de {{ plat.nom_plat }}" class="plat-image">
+            </div>
+
+            <div class="plat-details">
+                <h1 class="plat-nom">{{ plat.nom_plat }}</h1>
+                <p class="plat-prix">{{ "%.2f€"|format(plat.prix) }}</p>
+                
+                <p class="plat-description">
+                    {{ plat.longue_description or plat.description }}
+                </p>
+                
+                {# Formulaire pour ajouter le plat au panier #}
+                <form action="{{ url_for('ajouter_au_panier') }}" method="POST">
+                    <input type="hidden" name="id_plat" value="{{ plat.id_plat }}">
+                    <button type="submit" class="bouton-commander">Ajouter au panier</button>
+                </form>
+            </div>
+        </main>
+        
+        <div class="allergen-container">
+            <header class="allergen-header">
+                <h2 class="allergen-title">Allergènes</h2>
+                <div class="arrow-wrapper">
+                    <span class="dropdown-arrow"></span>
+                </div>
+            </header>
+
+            {#
+               1. On définit une liste d'allergènes. Chaque allergène a :
+                  - un nom à afficher
+                  - le nom du champ booléen à vérifier dans l'objet 'plat'
+                  - le nom du fichier de son icône
+            #}
+            {% set allergenes = [
+                {'nom': 'Gluten', 'champ': 'sans_gluten', 'icone': 'Gluten.png'},
+                {'nom': 'Lactose', 'champ': 'sans_lactose', 'icone': 'Lactose.png'},
+                {'nom': 'Fruits à coque', 'champ': 'sans_fruit_a_coque', 'icone': 'Fruits à coque.png'},
+                {'nom': 'Crustacés', 'champ': 'sans_crustaces', 'icone': 'Crustacés.png'}
+            ] %}
+
+            <ul class="allergen-list">
+                {#
+                   2. On boucle sur notre liste d'allergènes.
+                      Pour chaque allergène, on vérifie si le plat en contient.
+                      Si c'est le cas (ex: plat['sans_gluten'] est False), on l'affiche.
+                #}
+                {% for allergene in allergenes %}
+                    {% if not plat[allergene.champ] %}
+                        <li class="allergen-item">
+                            <img src="{{ url_for('static', filename='images/' + allergene.icone) }}" alt="Icône {{ allergene.nom }}" class="icon">
+                            {{ allergene.nom }}
+                        </li>
+                    {% endif %}
+                {% endfor %}
+            </ul>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const allergenHeader = document.querySelector('.allergen-header');
+            const allergenList = document.querySelector('.allergen-list');
+            const dropdownArrow = document.querySelector('.dropdown-arrow');
+
+            // Cache la liste par défaut
+            allergenList.style.display = 'none';
+            dropdownArrow.classList.add('collapsed');
+
+            allergenHeader.addEventListener('click', function() {
+                if (allergenList.style.display === 'none') {
+                    allergenList.style.display = 'block';
+                    dropdownArrow.classList.remove('collapsed');
+                } else {
+                    allergenList.style.display = 'none';
+                    dropdownArrow.classList.add('collapsed');
+                }
+            });
+        });
+    </script>
+{% endblock %}

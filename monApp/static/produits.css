@@ -252,6 +252,14 @@ main h1 {
     margin-bottom: 20px;
 }
 
+/* Cible les liens sur l'image et le texte de la carte produit */
+.card-image-link,
+.card-text-link {
+    text-decoration: none; /* Supprime le soulignement */
+    color: inherit;        /* Fait hériter la couleur du texte parent (noir par défaut) */
+}
+
+
 .order-button {
     display: inline-flex;
     align-items: center;

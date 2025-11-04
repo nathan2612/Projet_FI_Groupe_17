@@ -21,202 +21,242 @@ plats:
     id_categorie: 1
     nom_plat: "Nems végétariens"
     description: "Nems croustillants aux légumes"
+    longue_description: "Découvrez nos délicieux nems végétariens, une entrée croustillante et savoureuse. Chaque nem est soigneusement roulé à la main dans une fine galette de riz, garni d'un mélange frais de légumes croquants comme des carottes, du chou, des pousses de soja et des champignons parfumés. Frits à la perfection pour une texture dorée et irrésistible, ils sont servis avec une sauce nuoc-mâm légère pour tremper."
     vegetarien: true
     prix: 4.50
   - id_plat: 2
     id_categorie: 1
     nom_plat: "Raviolis vapeur (Jiaozi)"
     description: "Raviolis vapeur à la viande et légumes"
+    longue_description: "Nos Jiaozi traditionnels sont de tendres raviolis farcis d'un savoureux mélange de porc haché, de chou chinois et de ciboulette fraîche. Cuits à la vapeur pour préserver toute leur saveur et leur moelleux, ils sont servis avec une sauce soja vinaigrée pour une expérience authentique."
     prix: 5.00
   - id_plat: 3
     id_categorie: 2
     nom_plat: "Canard laqué (Peking Duck) - demi"
     description: "Canard laqué servi avec crêpes et condiments"
+    longue_description: "Un classique de la cuisine impériale chinoise. Notre demi-canard est mariné puis rôti lentement jusqu'à ce que sa peau soit parfaitement croustillante et laquée. Il est servi découpé, accompagné de fines crêpes de blé, de bâtonnets de concombre, de ciboule et d'une riche sauce Hoisin."
     prix: 32.00
   - id_plat: 4
     id_categorie: 2
     nom_plat: "Porc aigre-doux"
     description: "Porc sauté sauce aigre-douce"
+    longue_description: "Morceaux de porc tendres, enrobés d'une légère panure et frits jusqu'à être dorés et croustillants. Ils sont ensuite nappés de notre sauce aigre-douce maison, préparée avec des poivrons, des oignons et des morceaux d'ananas pour un équilibre parfait entre douceur et acidité."
     prix: 12.50
   - id_plat: 5
     id_categorie: 2
     nom_plat: "Riz cantonnais"
     description: "Riz sauté aux œufs, petits pois et jambon"
+    longue_description: "L'accompagnement incontournable. Notre riz cantonnais est un riz sauté au wok à haute température avec des œufs brouillés, des dés de jambon savoureux, des petits pois, et des grains de maïs, le tout relevé d'une touche de sauce soja."
     prix: 9.00
   - id_plat: 6
     id_categorie: 3
     nom_plat: "Pudding de mangue"
     description: "Pudding à la mangue, dessert frais"
+    longue_description: "Un dessert léger et exotique pour finir votre repas en douceur. Ce pudding crémeux est préparé à base de purée de mangues fraîches, lui conférant un goût intense et une texture fondante. Servi bien frais."
     prix: 4.00
   - id_plat: 7
     id_categorie: 4
     nom_plat: "Thé au jasmin"
     description: "Thé vert parfumé au jasmin"
+    longue_description: "Un thé vert de haute qualité, naturellement parfumé par des fleurs de jasmin fraîches. Sa liqueur est claire, son parfum envoûtant et son goût délicat, idéal pour accompagner tout le repas ou pour un moment de détente."
     prix: 2.50
   - id_plat: 8
     id_categorie: 4
     nom_plat: "Bière Tsingtao 33cl"
     description: "Bière chinoise importée"
+    longue_description: "La plus célèbre des bières chinoises. La Tsingtao est une bière blonde de type pilsner, légère et rafraîchissante, avec des notes maltées et une légère amertume. Parfaite pour accompagner des plats épicés."
     prix: 4.00
   - id_plat: 9
     id_categorie: 4
     nom_plat: "Louis Maillet"
     description: "Un epileptique francais"
+    longue_description: "Une spécialité surprenante qui combine des saveurs inattendues pour une expérience gustative unique. Un plat audacieux pour les palais aventureux."
     prix: 9.50
   - id_plat: 10
     id_categorie: 4
     nom_plat: "Mehdi Akbar"
     description: "Un etudiant en IUT"
+    longue_description: "Ce plat rend hommage à la créativité et à l'innovation. Un mélange de techniques modernes et d'ingrédients traditionnels pour un résultat surprenant et délicieux."
     prix: 17.30
   - id_plat: 11
     id_categorie: 1
     nom_plat: "Poulet Kung Pao"
     description: "Poulet sauté aux cacahuètes et piments"
+    longue_description: "Un classique du Sichuan ! Des dés de poulet marinés et sautés vivement au wok avec des piments séchés pour le piquant, du poivre de Sichuan pour la sensation unique 'málà', et des cacahuètes croquantes. Un plat relevé et plein de saveurs."
     prix: 11.50
   - id_plat: 12
     id_categorie: 1
     nom_plat: "Bœuf au gingembre"
     description: "Fines tranches de bœuf sautées au gingembre"
+    longue_description: "De fines lamelles de bœuf tendre, marinées puis rapidement saisies au wok avec une généreuse quantité de gingembre frais, de l'ail et de la ciboule. Un plat parfumé et réconfortant."
     prix: 13.00
   - id_plat: 13
     id_categorie: 1
     nom_plat: "Crevettes sautées à l'ail"
     description: "Crevettes fraîches sautées à l'ail et sauce soja"
+    longue_description: "Des crevettes juteuses et croquantes, sautées à la perfection avec de l'ail haché, un filet de vin de riz Shaoxing et une sauce soja légère. Simple, rapide et délicieux."
     prix: 14.00
   - id_plat: 14
     id_categorie: 1
     nom_plat: "Soupe Wonton"
     description: "Bouillon clair avec wontons farcis"
+    longue_description: "Une soupe réconfortante composée d'un bouillon de poulet clair et parfumé, dans lequel flottent de délicats wontons farcis au porc et aux crevettes. Quelques légumes verts ajoutent une touche de fraîcheur."
     prix: 6.50
   - id_plat: 15
     id_categorie: 1
     nom_plat: "Nouilles sautées au poulet"
     description: "Nouilles chinoises aux légumes et poulet"
+    longue_description: "Un plat complet et savoureux. Des nouilles de blé sont sautées au wok avec des émincés de poulet, des lanières de chou, des carottes, des pousses de soja et des oignons, le tout lié par une sauce savoureuse."
     prix: 9.50
   - id_plat: 16
     id_categorie: 1
     nom_plat: "Mapo Tofu"
     description: "Tofu épicé à la sichuanaise"
+    longue_description: "Un plat emblématique de la cuisine du Sichuan. Des cubes de tofu soyeux mijotent dans une sauce rouge vif, épicée et parfumée, à base de pâte de haricots fermentés (doubanjiang), de piments et de poivre de Sichuan. Peut contenir un peu de porc haché pour plus de saveur."
     prix: 10.00
   - id_plat: 17
     id_categorie: 2
     nom_plat: "Salade de concombre vinaigrée"
     description: "Concombres croquants assaisonnés au vinaigre"
+    longue_description: "Une entrée rafraîchissante et pleine de peps. Des concombres sont légèrement écrasés pour mieux absorber une vinaigrette à base de vinaigre de riz, d'ail, de sucre et d'un filet d'huile de sésame. Simple et addictif."
     prix: 4.50
   - id_plat: 18
     id_categorie: 2
     nom_plat: "Salade de papaye"
     description: "Salade fraîche acidulée façon asiatique"
+    longue_description: "Inspirée de la célèbre salade thaïlandaise, notre version est un mélange croquant de papaye verte râpée, de carottes, de tomates cerises et de cacahuètes, le tout assaisonné d'une sauce acidulée et légèrement pimentée."
     prix: 5.50
   - id_plat: 19
     id_categorie: 2
     nom_plat: "Carpaccio de saumon mariné"
     description: "Saumon mariné au sésame et citron"
+    longue_description: "De fines tranches de saumon frais de qualité sashimi, marinées dans une sauce légère à base de sauce soja, de jus de citron, d'huile de sésame et parsemées de graines de sésame grillées. Une entrée fraîche et élégante."
     prix: 12.00
   - id_plat: 20
     id_categorie: 2
     nom_plat: "Entrée froide de tofu"
     description: "Tofu froid avec ciboulette et sauce soja"
+    longue_description: "Un bloc de tofu soyeux et frais, servi froid et nappé d'une sauce savoureuse à base de sauce soja, d'huile de sésame et garni de ciboulette ciselée et d'un peu de 'pídan' (œuf de cent ans) pour l'authenticité."
     prix: 5.00
   - id_plat: 21
     id_categorie: 3
     nom_plat: "California Roll"
     description: "Makis aux avocats, surimi et concombre"
+    longue_description: "Un grand classique des sushis revisités. Ce maki inversé (riz à l'extérieur) est garni de surimi, d'avocat crémeux et de concombre croquant, puis roulé dans des graines de sésame grillées. Doux et accessible à tous."
     prix: 7.50
   - id_plat: 22
     id_categorie: 3
     nom_plat: "Nigiri saumon (2 pièces)"
     description: "Tranches de saumon sur riz vinaigré"
+    longue_description: "La simplicité à son meilleur. Deux fines tranches de saumon frais et fondant, délicatement déposées sur une boulette de riz à sushi vinaigré, avec une pointe de wasabi entre les deux."
     prix: 6.00
   - id_plat: 23
     id_categorie: 3
     nom_plat: "Maki thon épicé (6 pièces)"
     description: "Maki au thon, sauce pimentée"
+    longue_description: "Pour les amateurs de sensations, ces makis sont garnis d'un tartare de thon frais mélangé à une mayonnaise japonaise épicée et un peu de ciboulette, le tout enroulé dans une feuille de nori et du riz vinaigré."
     prix: 8.00
   - id_plat: 24
     id_categorie: 3
     nom_plat: "Sashimi mixte"
     description: "Assortiment de tranches de poissons crus"
+    longue_description: "Un assortiment de nos meilleurs poissons du jour (typiquement saumon, thon, daurade), tranchés de manière experte pour apprécier pleinement leur texture et leur saveur. Servi avec du wasabi et du gingembre mariné."
     prix: 15.00
   - id_plat: 25
     id_categorie: 3
     nom_plat: "Tempura roll"
     description: "Roll frit garni de crevettes tempura"
+    longue_description: "Un roll gourmand et croustillant. Une crevette en tempura (beignet léger) est enroulée avec de l'avocat, puis le rouleau entier est légèrement pané et frit pour un extérieur chaud et croustillant contrastant avec l'intérieur frais."
     prix: 9.00
   - id_plat: 26
     id_categorie: 4
     nom_plat: "Perles de coco"
     description: "Boulettes de riz gluant fourrées à la pâte de haricot"
+    longue_description: "Un dessert traditionnel moelleux et réconfortant. Ces boulettes sont faites de farine de riz gluant, fourrées d'une pâte sucrée de haricots rouges, puis roulées dans de la noix de coco râpée. Servies tièdes."
     prix: 4.50
   - id_plat: 27
     id_categorie: 4
     nom_plat: "Beignets au sésame"
     description: "Beignets croustillants saupoudrés de sésame"
+    longue_description: "Des boules de pâte frites, croustillantes à l'extérieur et incroyablement moelleuses à l'intérieur. Elles sont généreusement saupoudrées de graines de sésame pour un goût de noisette et une texture agréable."
     prix: 3.50
   - id_plat: 28
     id_categorie: 4
     nom_plat: "Glace au thé vert"
     description: "Glace crémeuse parfumée au matcha"
+    longue_description: "Une glace onctueuse et rafraîchissante, préparée avec de la poudre de thé vert matcha de qualité. Son goût unique, à la fois végétal et légèrement amer, est parfaitement équilibré par la douceur de la crème."
     prix: 3.80
   - id_plat: 29
     id_categorie: 4
     nom_plat: "Riz gluant à la mangue"
     description: "Riz sucré servi avec mangue fraîche"
+    longue_description: "Un dessert emblématique de l'Asie du Sud-Est. Du riz gluant cuit dans du lait de coco sucré, servi tiède et accompagné de tranches de mangue fraîche et juteuse, le tout nappé d'une crème de coco."
     prix: 5.50
   - id_plat: 30
     id_categorie: 1
     nom_plat: "Canard croustillant"
     description: "Filets de canard à la peau caramélisée"
+    longue_description: "Des filets de canard marinés, cuits à la vapeur puis frits pour obtenir une peau incroyablement croustillante et une chair tendre et juteuse. Servi en tranches avec une sauce de votre choix."
     prix: 18.00
   - id_plat: 31
     id_categorie: 1
     nom_plat: "Porc Char Siu"
     description: "Porc laqué tendre et sucré"
+    longue_description: "Le fameux porc barbecue chinois. Des morceaux de longe de porc sont marinés dans un mélange sucré-salé (miel, sauce hoisin, cinq-épices) puis rôtis lentement, ce qui leur donne une couleur rouge caractéristique et un goût caramélisé."
     prix: 11.00
   - id_plat: 32
     id_categorie: 2
     nom_plat: "Nouilles froides au sésame"
     description: "Nouilles servies froides avec sauce tahini"
+    longue_description: "Un plat d'été parfait. Des nouilles de blé cuites puis refroidies, nappées d'une sauce crémeuse et riche à base de pâte de sésame chinoise (tahini), de vinaigre et d'huile pimentée, et garnies de concombre en julienne."
     prix: 7.00
   - id_plat: 33
     id_categorie: 3
     nom_plat: "Dragon Roll"
     description: "Roll garni d'avocat et tempura, sauce spéciale"
+    longue_description: "Un rouleau spectaculaire ! L'intérieur est garni de tempura de crevette et de concombre, et l'extérieur est entièrement recouvert de fines tranches d'avocat, imitant les écailles d'un dragon. Nappé de sauce unagi et de mayonnaise épicée."
     prix: 10.50
   - id_plat: 34
     id_categorie: 3
     nom_plat: "Hosomaki concombre (6 pièces)"
     description: "Petits makis fins au concombre"
+    longue_description: "Des rouleaux fins et simples (hosomaki) garnis uniquement de concombre frais et croquant. Un choix léger et rafraîchissant pour nettoyer le palais entre deux bouchées plus complexes."
     prix: 5.00
   - id_plat: 35
     id_categorie: 4
     nom_plat: "Fondant au thé jasmin"
     description: "Gâteau moelleux parfumé au jasmin"
+    longue_description: "Un gâteau léger et aérien, subtilement infusé avec du thé au jasmin pour un parfum floral délicat. Sa texture est incroyablement moelleuse, presque comme un nuage. Parfait avec une tasse de thé."
     prix: 4.20
   - id_plat: 36
     id_categorie: 1
     nom_plat: "Légumes sautés au tofu"
     description: "Mélange de légumes croquants et tofu"
+    longue_description: "Un plat végétarien sain et savoureux. Un assortiment de légumes de saison (brocoli, carottes, champignons, poivrons) est sauté au wok avec des morceaux de tofu frit, le tout lié par une sauce légère à l'ail."
     prix: 9.00
   - id_plat: 37
     id_categorie: 2
     nom_plat: "Assiette de sashimi froid"
     description: "Sashimi servi froid en entrée"
+    longue_description: "Une sélection de fines tranches de poisson cru (saumon et thon), servie sur un lit de glace pilée pour garantir une fraîcheur optimale. Une entrée légère et raffinée pour les amateurs de poisson cru."
     prix: 13.50
   - id_plat: 38
     id_categorie: 4
     nom_plat: "Cookie fortune (4 pièces)"
     description: "Biscuits croquants avec message"
+    longue_description: "Terminez votre repas avec une touche de mystère et de fun. Ces biscuits légers et croustillants, au subtil goût de vanille et de sésame, renferment chacun un message de bonne fortune ou une pensée philosophique."
     prix: 2.50
   - id_plat: 39
     id_categorie: 1
     nom_plat: "Aubergines Sichuan"
     description: "Aubergines mijotées sauce piquante"
+    longue_description: "Des aubergines fondantes, cuites dans une sauce riche et savoureuse, à la fois piquante, ailée et légèrement sucrée. Un plat végétarien plein de caractère, typique de la région du Sichuan."
     prix: 8.50
   - id_plat: 40
     id_categorie: 3
     nom_plat: "Chirashi bowl"
     description: "Bol de riz vinaigré garni de poissons variés"
+    longue_description: "Un 'sushi déconstruit'. Un grand bol de riz à sushi vinaigré est généreusement garni d'un assortiment de sashimis (thon, saumon, daurade), d'avocat, de concombre et d'omelette japonaise. Un repas complet et coloré."
     prix: 14.50
 
 clients:
@@ -350,6 +390,7 @@ appartenir_menus:
     quantite: 1
 
 avis:
+avis:
   - id_avis: 1
     id_client: 1
     note: 5
@@ -358,6 +399,18 @@ avis:
     id_client: 3
     note: 4
     commentaire: "Très bon, mais le riz était un peu sec."
+  - id_avis: 3
+    id_client: 2
+    note: 3
+    commentaire: "Plats corrects, mais un peu cher pour la qualité."
+  - id_avis: 4
+    id_client: 2
+    note: 1
+    commentaire: Nullllllll !!!!!
+  - id_avis: 5
+    id_client: 3
+    note: 2
+    commentaire: "Franchement, je suis assez déçu par cette expérience. Je ne comprends vraiment pas comment ce restaurant peut avoir d’aussi bonnes notes. Dès l’arrivée, l’accueil manquait de chaleur : on a eu l’impression de déranger plutôt que d’être attendus. Le service a été lent, sans réelle attention aux clients. Côté repas, ce n’était pas terrible du tout. Les plats manquaient clairement de saveur et ne ressemblaient pas à ce qu’on pouvait espérer d’après la carte ou les photos. Les portions étaient petites pour le prix, et la présentation ne donnait pas envie. Même le dessert, censé rattraper le reste, était fade.Globalement, c’est une adresse que je ne recommanderai pas et où je ne reviendrai pas. Il y a bien mieux ailleurs, que ce soit pour la qualité, le service ou l’ambiance. C’est dommage, car le lieu avait du potentiel, mais l’expérience ne m’a pas du tout convaincu."
 
 definir_stock:
   - id_plat: 1
