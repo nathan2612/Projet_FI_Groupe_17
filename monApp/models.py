@@ -75,7 +75,7 @@ class COMMANDE(db.Model):
 
 	__table_args__ = (
 		db.CheckConstraint('nombre_personnes <= 12', name='chk_nombre_personnes'),
-		db.CheckConstraint("statut IN ('En commande', 'En préparation', 'Prêt','non récupéré','récupéré')", name='chk_statut_valide'),
+		db.CheckConstraint("statut IN ('En commande', 'En attente', 'En préparation', 'Prêt','non récupéré','récupéré')", name='chk_statut_valide'),
 		db.CheckConstraint("date_commande IS NULL OR (TIME(date_commande) BETWEEN '11:30:00' AND '14:00:00') OR ((TIME(date_commande) BETWEEN '17:00:00' AND '20:00:00' AND sur_place=0))", name='chk_heure_valide'),
 		db.CheckConstraint("date_commande IS NULL OR WEEKDAY(DATE(date_commande)) IN (1, 2, 3, 4, 5)", name='chk_commande_jour_valide'),
 	)
