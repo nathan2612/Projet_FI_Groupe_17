@@ -12,7 +12,7 @@ def test_trigger_stock_plats(testapp):
 
         # Prépare état propre (create_all/drop_all est fait par la fixture testapp dans ton conftest.py)
         # Create a commande for that date and mark sur_place True
-        cmd = COMMANDE(id_commande=999, id_client=None, date_commande=datetime(2025,10,21,12,00,0), statut='En attente', sur_place=True, nombre_personnes=1)
+        cmd = COMMANDE(id_commande=999, id_client=None, date_commande=datetime(2025,10,21,12,00,0), statut='En commande', sur_place=True, nombre_personnes=1)
         db.session.merge(cmd)
 
         # definir_stock with stock 1 (success case)
@@ -44,7 +44,7 @@ def test_trigger_stock_menus(testapp):
         db.session.add(menu_plat3)
         db.session.commit()
 
-        cmd = COMMANDE(id_commande=1000, id_client=None, date_commande=datetime(2025,10,21,13,00,0), statut='En attente', sur_place=True, nombre_personnes=1)
+        cmd = COMMANDE(id_commande=1000, id_client=None, date_commande=datetime(2025,10,21,13,00,0), statut='En commande', sur_place=True, nombre_personnes=1)
         db.session.merge(cmd)
 
         stock1.stock = 0
@@ -64,9 +64,9 @@ def test_trigger_stock_menus(testapp):
 
 def test_trigger_commande_sur_place(testapp):
     with testapp.app_context():
-        cmd1 = COMMANDE(id_commande=1001, id_client=None, date_commande=datetime(2025,10,22,12,00,0), statut='En attente', sur_place=True, nombre_personnes=8)
-        cmd2 = COMMANDE(id_commande=1002, id_client=None, date_commande=datetime(2025,10,22,13,00,0), statut='En attente', sur_place=True, nombre_personnes=8)
-        cmd3 = COMMANDE(id_commande=1003, id_client=None, date_commande=datetime(2025,10,22,13,00,0), statut='En attente', sur_place=True, nombre_personnes=5)
+        cmd1 = COMMANDE(id_commande=1001, id_client=None, date_commande=datetime(2025,10,22,12,00,0), statut='En commande', sur_place=True, nombre_personnes=8)
+        cmd2 = COMMANDE(id_commande=1002, id_client=None, date_commande=datetime(2025,10,22,13,00,0), statut='En commande', sur_place=True, nombre_personnes=8)
+        cmd3 = COMMANDE(id_commande=1003, id_client=None, date_commande=datetime(2025,10,22,13,00,0), statut='En commande', sur_place=True, nombre_personnes=5)
         db.session.add(cmd1)
         db.session.add(cmd2)
         db.session.add(cmd3)
@@ -77,7 +77,7 @@ def test_trigger_commande_sur_place(testapp):
 
 def test_trigger_calcul_commandes_plats(testapp):
     with testapp.app_context():
-        cmd = COMMANDE(id_commande=2000, id_client=None, date_commande=datetime(2025,10,21,12,00,0), statut='En attente', sur_place=False, nombre_personnes=1)
+        cmd = COMMANDE(id_commande=2000, id_client=None, date_commande=datetime(2025,10,21,12,00,0), statut='En commande', sur_place=False, nombre_personnes=1)
         db.session.add(cmd)
         db.session.commit()
 
@@ -120,7 +120,7 @@ def test_trigger_calcul_commandes_menus_insert(testapp):
         db.session.add(menu_plat3)
         db.session.commit()
 
-        cmd = COMMANDE(id_commande=2001, id_client=None, date_commande=datetime(2025,10,21,13,00,0), statut='En attente', sur_place=False, nombre_personnes=1)
+        cmd = COMMANDE(id_commande=2001, id_client=None, date_commande=datetime(2025,10,21,13,00,0), statut='En commande', sur_place=False, nombre_personnes=1)
         db.session.add(cmd)
         db.session.commit()
 
@@ -146,7 +146,7 @@ def test_trigger_client_banni(testapp):
         client = db.session.get(CLIENT, 1)
         client.banni = True
         db.session.commit()
-        cmd = COMMANDE(id_commande=3000, id_client=1, date_commande=datetime(2025,10,23,12,00,0), statut='En attente', sur_place=False, nombre_personnes=1)
+        cmd = COMMANDE(id_commande=3000, id_client=1, date_commande=datetime(2025,10,23,12,00,0), statut='En commande', sur_place=False, nombre_personnes=1)
         db.session.add(cmd)
         with pytest.raises(OperationalError) as excinfo:
             db.session.commit()
@@ -158,7 +158,7 @@ def test_trigger_client_banni(testapp):
 
 def test_trigger_heure_reservation(testapp):
     with testapp.app_context():
-        cmd = COMMANDE(id_commande=4000, id_client=None, date_commande=datetime(2025,10,24,19,00,0), statut='En attente', sur_place=True, nombre_personnes=2)
+        cmd = COMMANDE(id_commande=4000, id_client=None, date_commande=datetime(2025,10,24,19,00,0), statut='En commande', sur_place=True, nombre_personnes=2)
         db.session.add(cmd)
         with pytest.raises(OperationalError) as excinfo:
             db.session.commit()
