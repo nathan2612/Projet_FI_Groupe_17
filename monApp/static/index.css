@@ -1,4 +1,4 @@
-/* ===== INDEX HEADER BACKGROUND ===== */
+/* ===== INDEX HEADER BACKGROUND ===== pour que l'image depasse sur le nav */ 
 .site-header:has(.header-with-bg) {
     background-image: url('/static/images/imageNoir.png');
     background-size: cover;
@@ -88,4 +88,81 @@
 .menu-card p {
     margin: 0;
     color: #666;
+}
+/* ===== AVIS ===== */
+.avis {
+    margin: 60px auto;
+}
+
+.avis h2 {
+    font-size: 36px;
+    font-weight: 800;
+    text-align: center;
+    margin-bottom: 40px;
+}
+
+.avis-list.simple {
+    max-width: 1000px;
+    margin: 0 auto;
+}
+
+.avis-row {
+    display: grid;
+    grid-template-columns: auto 1fr auto;
+    gap: 20px;
+    align-items: center;
+    padding: 24px 28px;
+    margin-bottom: 16px;
+    border: 1px solid #f0f0f0;
+}
+
+.notes-img {
+    width: 120px;
+    height: auto;
+    flex-shrink: 0;
+}
+
+.avis-text {
+    line-height: 1.3;
+    margin: 0;
+    font-style: italic;
+}
+
+.avis-more {
+    display: flex;
+    justify-content: center;
+    margin-top: 32px;
+}
+
+.voir-plus {
+    color: #ff6d41;
+    border: 2px solid #ff6d41;
+    padding: 12px 28px;
+    border-radius: 12px;
+    text-decoration: none;
+    font-weight: 700;
+    transition: all 0.3s ease;
+}
+
+.voir-plus:hover {
+    background: #ff6d41 ;
+    color: #fff;
+    transform: translateY(-2px);
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .avis h2 {
+        font-size: 28px;
+    }
+    .avis-meta {
+        flex-direction: row;
+        align-items: center;
+        gap: 12px;
+        min-width: auto;
+    }
+    
+    .avis-text {
+        font-size: 15px;
+    }
 }
