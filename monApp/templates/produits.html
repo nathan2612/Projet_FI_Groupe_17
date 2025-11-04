@@ -62,10 +62,13 @@
                 <div class="card-content">
                     <h2>{{ produit.nom_plat }}</h2>
                     <p>{{ produit.description }}</p>
-                    <button class="order-button">
-                        <i class="fa-regular fa-circle-plus"></i>
-                        <span>Commander</span>
-                    </button>
+                    <form action="{{ url_for('ajouter_au_panier') }}" method="post">
+                                <input type="hidden" name="id_plat" value="{{ produit.id_plat }}">
+                                <button type="submit" class="order-button">
+                                    <i class="fa-solid fa-circle-plus"></i>
+                                    <span>Commander</span>
+                                </button>
+                            </form>
                 </div>
             </article>
             {% endfor %}

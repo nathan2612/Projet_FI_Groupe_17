@@ -1,0 +1,62 @@
+{% extends "base.html" %}
+
+{% block styles %}
+    <link rel="stylesheet" href="{{ url_for('static', filename='inscription.css') }}">
+{% endblock %}
+
+{% block main %}
+<div class="signup-page-specific">
+
+    <div class="signup-form-container">
+
+        <form class="signup-form-grid" method="post" action="{{ url_for('inscription') }}">
+            {{ form.csrf_token }}
+
+            <div class="signup-form-group">
+                {{ form.prenom.label }}
+                {{ form.prenom(class="signup-form-input") }}
+                {% if form.prenom.errors %}
+                    <div class="field-errors">{{ form.prenom.errors[0] }}</div>
+                {% endif %}
+            </div>
+
+            <div class="signup-form-group">
+                {{ form.nom.label }}
+                {{ form.nom(class="signup-form-input") }}
+                {% if form.nom.errors %}
+                    <div class="field-errors">{{ form.nom.errors[0] }}</div>
+                {% endif %}
+            </div>
+
+            <div class="signup-form-group form-span-2">
+                {{ form.telephone.label }}
+                {{ form.telephone(class="signup-form-input") }}
+                {% if form.telephone.errors %}
+                    <div class="field-errors">{{ form.telephone.errors[0] }}</div>
+                {% endif %}
+            </div>
+
+            <div class="signup-form-group form-span-2">
+                {{ form.mot_de_passe.label }}
+                {{ form.mot_de_passe(class="signup-form-input", placeholder='8+ caractères minimum') }}
+                {% if form.mot_de_passe.errors %}
+                    <div class="field-errors">{{ form.mot_de_passe.errors[0] }}</div>
+                {% endif %}
+            </div>
+
+            <div class="signup-form-group form-span-2">
+                {{ form.confirmation_mot_de_passe.label }}
+                {{ form.confirmation_mot_de_passe(class="signup-form-input", placeholder='Confirmez le mot de passe') }}
+                {% if form.confirmation_mot_de_passe.errors %}
+                    <div class="field-errors">{{ form.confirmation_mot_de_passe.errors[0] }}</div>
+                {% endif %}
+            </div>
+
+            <button type="submit" class="signup-form-button form-span-2">
+                S'inscrire
+            </button>
+        </form>
+    </div>
+
+</div>
+{% endblock %}

@@ -94,9 +94,10 @@ def loaddb(filename):
     for entry in data.get('clients', []) or []:
         obj = CLIENT(
             id_client=entry.get('id_client'),
-            nom_client=entry.get('nom_client'),
-            prenom_client=entry.get('prenom_client'),
+            nom=entry.get('nom'),
+            prenom=entry.get('prenom'),
             telephone=entry.get('telephone'),
+            mot_de_passe=entry.get('mot_de_passe'),
             banni=entry.get('banni', False)
         )
         db.session.merge(obj)

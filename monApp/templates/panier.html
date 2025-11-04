@@ -1,0 +1,94 @@
+{% extends "base.html" %}
+
+{% block styles %}
+    {# Ce lien est crucial ! Il charge le CSS pour CETTE page #}
+    <link rel="stylesheet" href="{{ url_for('static', filename='panier.css') }}">
+{% endblock %}
+
+{% block main %}
+    <div class="container">
+        <header>
+            <h1>Panier</h1>
+            <div class="separator"></div>
+        </header>
+
+        <main class="cart-layout">
+            <section class="cart-items">
+                {% if not commande or (not commande.plats and not commande.menus) %}
+                    <p>Votre panier est vide.</p>
+                {% else %}
+                    {# Boucle pour afficher les plats de la commande (utilisateur connecté) #}
+                    {% for item_plat in commande.plats %}
+                    <div class="cart-item">
+                        <div class="item-details">
+                            <h2>{{ item_plat.plat.nom_plat }}</h2>
+                            <p>{{ item_plat.plat.description }}</p>
+                        </div>
+                        <div class="item-controls">
+                            <div class="quantity-control">
+                                <span class="quantity">{{ item_plat.quantite }}</span>
+                                <form action="{{ url_for('modifier_quantite_panier') }}" method="post" class="arrows">
+                                    <input type="hidden" name="id_plat" value="{{ item_plat.plat.id_plat }}">
+                                    <input type="hidden" name="action" value="increase">
+                                    <button type="submit" class="arrow-up">▲</button>
+                                </form>
+                                <form action="{{ url_for('modifier_quantite_panier') }}" method="post" class="arrows">
+                                    <input type="hidden" name="id_plat" value="{{ item_plat.plat.id_plat }}">
+                                    <input type="hidden" name="action" value="decrease">
+                                    <button type="submit" class="arrow-down">▼</button>
+                                </form>
+                            </div>
+                            <span class="item-price">{{ "%.2f€"|format(item_plat.plat.prix) }}</span>
+                            <form action="{{ url_for('supprimer_du_panier') }}" method="post" class="remove-form">
+                                <input type="hidden" name="id_plat" value="{{ item_plat.plat.id_plat }}">
+                                <button type="submit" class="remove-item">🗑️</button>
+                            </form>
+                        </div>
+                    </div>
+                    {% endfor %}
+
+                    {# Boucle pour afficher les menus de la commande (utilisateur connecté) #}
+                    {% for item_menu in commande.menus %}
+                    <div class="cart-item">
+                        <div class="item-details">
+                            <h2>{{ item_menu.menu.nom_menu }}</h2>
+                            <p>{{ item_menu.menu.description }}</p>
+                        </div>
+                        <div class="item-controls">
+                            <div class="quantity-control">
+                                <span class="quantity">{{ item_menu.quantite }}</span>
+                                <form action="{{ url_for('modifier_quantite_panier') }}" method="post" class="arrows">
+                                    <input type="hidden" name="id_menu" value="{{ item_menu.menu.id_menu }}">
+                                    <input type="hidden" name="action" value="increase">
+                                    <button type="submit" class="arrow-up">▲</button>
+                                </form>
+                                <form action="{{ url_for('modifier_quantite_panier') }}" method="post" class="arrows">
+                                    <input type="hidden" name="id_menu" value="{{ item_menu.menu.id_menu }}">
+                                    <input type="hidden" name="action" value="decrease">
+                                    <button type="submit" class="arrow-down">▼</button>
+                                </form>
+                            </div>
+                            <span class="item-price">{{ "%.2f€"|format(item_menu.menu.prix) }}</span>
+                            <form action="{{ url_for('supprimer_du_panier') }}" method="post" class="remove-form">
+                                <input type="hidden" name="id_menu" value="{{ item_menu.menu.id_menu }}">
+                                <button type="submit" class="remove-item">🗑️</button>
+                            </form>
+                        </div>
+                    </div>
+                    {% endfor %}
+                {% endif %}
+            </section>
+
+            <aside class="cart-summary">
+                <div class="summary-details">
+                    <div class="summary-line total-line">
+                        <span>Total</span>
+                        <span class="summary-price">{{ "%.2f€"|format(total_general) }}</span>
+                    </div>
+                    <div class="summary-separator"></div>
+                </div>
+                <button class="checkout-button">Commander</button>
+            </aside>
+        </main>
+    </div>
+{% endblock %}
