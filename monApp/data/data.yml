@@ -240,7 +240,7 @@ commandes:
   - id_commande: 1
     id_client: 1
     date_commande: "2025-10-21 13:00:00"
-    statut: "En attente"
+    statut: "En commande"
     montant_total: 21.50
     sur_place: false
     nombre_personnes: 1
