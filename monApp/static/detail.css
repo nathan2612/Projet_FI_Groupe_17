@@ -1,0 +1,194 @@
+/* Styles généraux */
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f4f4f4; /* Fond légèrement gris pour le contraste */
+}
+
+/* On applique le padding et le centrage au conteneur du contenu, pas au body entier */
+.page-content-wrapper {
+    padding: 50px 0; /* Espace au-dessus et en-dessous du contenu principal */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+/* Conteneur principal (Image et Détails) */
+.plat-container {
+    display: flex;
+    max-width: 1000px; /* Largeur maximale pour le contenu */
+    width: 90%;
+    background-color: white;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Légère ombre */
+    padding: 30px;
+}
+
+/* Partie gauche : Image */
+.plat-image-wrapper {
+    flex: 1; /* Prend la moitié de l'espace */
+    padding-right: 40px;
+}
+
+.plat-image {
+    width: 100%;
+    height: auto;
+    display: block;
+    object-fit: cover; /* Assure que l'image couvre l'espace sans déformation */
+    border-radius: 4px; /* Coins légèrement arrondis */
+}
+
+/* Partie droite : Détails */
+.plat-details {
+    flex: 1; /* Prend l'autre moitié de l'espace */
+    padding-left: 20px;
+}
+
+.plat-nom {
+    font-size: 2.5em;
+    font-weight: bold;
+    margin-top: 0;
+    margin-bottom: 5px;
+}
+
+.plat-prix {
+    font-size: 1.2em;
+    color: #666;
+    margin-top: 0;
+    margin-bottom: 25px;
+}
+
+.plat-description {
+    font-size: 1em;
+    line-height: 1.6;
+    color: #333;
+    margin-bottom: 30px;
+}
+
+.plat-signature {
+    display: block; /* Pour mettre Madoka sur sa propre ligne */
+    margin-top: 15px;
+    font-style: italic;
+    color: #666;
+}
+
+.gras {
+    font-weight: bold;
+}
+
+/* Bouton Commander */
+.bouton-commander {
+    background-color: #333; /* Couleur de fond foncée */
+    color: white;
+    border: none;
+    padding: 12px 25px;
+    font-size: 1.1em;
+    cursor: pointer;
+    border-radius: 4px;
+    transition: background-color 0.3s;
+}
+
+.bouton-commander:hover {
+    background-color: #555;
+}
+
+/* --- Section Allergènes --- */
+
+/* Conteneur général et réinitialisations */
+.allergen-container {
+    max-width: 1000px; /* Aligné avec plat-container */
+    width: 90%;
+    margin: 30px auto 0 auto;
+    font-family: Arial, sans-serif;
+    color: #333;
+    padding: 20px;
+    border: 1px solid #eee;
+    background-color: white;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* Style de l'en-tête */
+.allergen-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-bottom: 10px;
+    margin-bottom: 10px;
+    cursor: pointer;
+}
+
+.allergen-title {
+    font-size: 1.5em;
+    font-weight: bold;
+    margin: 0;
+}
+
+/* Conteneur pour la flèche */
+.arrow-wrapper {
+    display: flex;
+    align-items: center;
+    padding: 0 10px; /* Ajoute un peu d'espace pour que la flèche ne soit pas collée au bord */
+}
+
+.dropdown-arrow {
+    display: block;
+    width: 0;
+    height: 0;
+    border-left: 5px solid transparent;
+    border-right: 5px solid transparent;
+    border-top: 5px solid #555;
+    cursor: pointer;
+    transition: transform 0.3s ease;
+}
+
+.dropdown-arrow.collapsed {
+    transform: rotate(-90deg);
+}
+
+/* Liste des allergènes */
+.allergen-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.allergen-item {
+    display: flex;
+    align-items: center;
+    padding: 15px 0;
+    border-bottom: 1px solid #eee;
+    font-size: 1.1em;
+}
+
+.allergen-item:last-child {
+    border-bottom: none;
+}
+
+/* Style des icônes */
+.allergen-item .icon {
+    display: inline-block;
+    width: 24px;
+    height: 24px;
+    margin-right: 15px;
+    background-size: contain;
+    background-repeat: no-repeat;
+}
+
+/* Media Query pour les petits écrans (responsive) */
+@media (max-width: 768px) {
+    .plat-container {
+        flex-direction: column; /* Empile les éléments verticalement */
+        padding: 20px;
+    }
+
+    .plat-image-wrapper {
+        padding-right: 0;
+        padding-bottom: 20px;
+    }
+
+    .plat-details {
+        padding-left: 0;
+    }
+
+    .plat-nom {
+        font-size: 2em;
+    }
+}

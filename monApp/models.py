@@ -22,6 +22,7 @@ class PLAT(db.Model):
 	id_categorie = db.Column(db.Integer, db.ForeignKey('categories.id_categorie'))
 	nom_plat = db.Column(db.String(150))
 	description = db.Column(db.Text)
+	longue_description = db.Column(db.Text, nullable=True)
 	prix = db.Column(db.Numeric(10, 2))
 	disponible = db.Column(db.Boolean, default=True)
 	image_url = db.Column(db.String(255), default='default_plat.png')
