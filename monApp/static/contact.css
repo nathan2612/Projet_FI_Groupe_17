@@ -1,86 +1,106 @@
+/* Conteneur principal qui centre la carte */
 .page-content-wrapper {
     display: flex;
-    max-width: 1000px;
-    margin: 40px auto;
-    gap: 40px;
-    padding: 0 20px;
-    align-items: flex-start;
-}
-
-.map-container {
-    flex: 2; 
-    max-width: 550px;
-    border: 1px solid #ccc;
-    padding: 5px;
-}
-
-.map-placeholder {
+    justify-content: center;
+    align-items: center; /* Centre la carte verticalement */
+    padding: 3rem 1rem;
     width: 100%;
-    height: 350px; 
-    background-color: #e6f7e0; 
-    background-position: center;
-    position: relative; 
+    box-sizing: border-box;
+    flex-grow: 1; /* Permet au conteneur de grandir et d'occuper l'espace */
 }
 
-.map-address-box {
-    position: absolute;
-    top: 15px; 
-    left: 15px; 
-    background-color: white;
-    padding: 10px;
-    border-radius: 4px;
-    box-shadow: 0 2px 5px rgba(0,0,0,0.2);
-    font-size: 14px;
-    line-height: 1.3;
+/* La carte qui englobe tout */
+.contact-card {
+    display: flex;
+    max-width: 1100px;
+    width: 100%;
+    background-color: var(--bg-color);
+    border-radius: 16px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+    overflow: hidden; /* Important pour que les coins arrondis s'appliquent à la carte */
+    border: 1px solid #eee;
 }
 
-.map-address-box strong {
-    margin-bottom: 2px;
-}
-
+/* Partie gauche : Informations de contact */
 .contact-info {
-    flex: 1; 
-    min-width: 300px;
+    flex: 1 1 45%;
+    padding: 2.5rem 3rem;
 }
 
 .contact-info h1 {
-    font-size: 32px;
-    margin-top: 0;
-    margin-bottom: 30px;
+    font-size: 2.8rem;
+    margin: 0 0 0.5rem 0;
+    color: var(--text-color);
+    font-weight: 800;
 }
 
-.contact-info h2 {
-    font-size: 16px;
-    font-weight: normal;
-    margin-top: 20px;
-    margin-bottom: 5px;
+.contact-info .subtitle {
+    font-size: 1.1rem;
+    color: #777;
+    margin-bottom: 2.5rem;
 }
 
-.contact-info p {
-    font-size: 16px;
-    margin: 2px 0;
-    line-height: 1.4;
+.contact-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 1.8rem;
 }
 
-.contact-info strong {
+.contact-list li {
+    display: flex;
+    align-items: flex-start;
+    gap: 1rem;
+}
+
+.contact-list i {
+    font-size: 1.2rem;
+    color: var(--btn-hover-bg);
+    margin-top: 5px;
+    width: 20px;
+    text-align: center;
+}
+
+.contact-list div {
+    display: flex;
+    flex-direction: column;
+}
+
+.contact-list strong {
     font-weight: bold;
+    font-size: 1rem;
+    margin-bottom: 0.2rem;
+    color: var(--text-color);
 }
 
-.contact-info a {
-    color: inherit;
+.contact-list span,
+.contact-list a {
+    font-size: 1rem;
+    color: #666;
+    text-decoration: none;
+}
+
+.contact-list a:hover {
     text-decoration: underline;
 }
 
-@media (max-width: 950px) {
-    .page-content-wrapper {
-        flex-direction: column;
-        gap: 20px;
-        margin-top: 20px;
-    }
+/* Partie droite : Carte Google Maps */
+.map-container {
+    flex: 1 1 55%;
+    min-height: 400px;
+}
 
-    .map-container,
+/* Responsive pour les petits écrans */
+@media (max-width: 980px) {
+    .page-content-wrapper {
+        padding: 1rem;
+    }
+    .contact-card {
+        flex-direction: column;
+    }
     .contact-info {
-        max-width: 100%;
-        width: 100%;
+        padding: 2rem;
     }
 }
