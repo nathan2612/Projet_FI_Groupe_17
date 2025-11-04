@@ -1,6 +1,6 @@
 from monApp.models import PLAT,CATEGORIE,CLIENT, COMMANDE, APPARTENIR_PLATS, DEFINIR_STOCK, AVIS
 from .app import app
-from flask import render_template, request, url_for, redirect, flash, session
+from flask import render_template, request, url_for, redirect, flash, session, abort
 from .app import db
 from .forms import InscriptionForm, ConnexionForm
 from flask_login import login_user,logout_user,login_required, current_user
@@ -82,7 +82,16 @@ def produits():
             'sans_crustaces': sans_crustaces,
         }
     )
-                       
+
+@app.route('/produit/<int:id_plat>')
+def detail_plat(id_plat):
+    """ Affiche la page de détail pour un plat spécifique. """
+    plat = db.session.query(PLAT).get(id_plat)
+    if not plat:
+        abort(404)  # Affiche une page 404 si le plat n'est pas trouvé
+    return render_template("detail.html", plat=plat)
+
+
 @app.route('/contact/')
 def contact():
     return render_template("contact.html")

@@ -67,6 +67,7 @@ def loaddb(filename):
             id_categorie=entry.get('id_categorie'),
             nom_plat=entry.get('nom_plat'),
             description=entry.get('description'),
+            longue_description=entry.get('longue_description'),
             prix=entry.get('prix'),
             disponible=entry.get('disponible', True),
             image_url=entry.get('image_url', 'default_plat.png'),
