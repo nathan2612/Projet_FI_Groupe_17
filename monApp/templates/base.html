@@ -24,10 +24,10 @@
 				<nav class="navbar">
 					<ul class="nav-links">
 						<li {% if request.endpoint == 'index' %}class="active"{% endif %}><a href="{{ url_for('index') }}">Accueil</a></li>
-						<li {% if request.endpoint == 'apropos' %}class="active"{% endif %}><a href="{{ url_for('apropos') }}">A propos</a></li>
+						<li {% if request.endpoint == 'produits' %}class="active"{% endif %}><a href="{{ url_for('produits') }}">Nos produits</a></li>
 						<li {% if request.endpoint == 'nouveaute' %}class="active"{% endif %}><a href="{{ url_for('nouveaute') }}">Nouveautés</a></li>
 						<li {% if request.endpoint == 'contact' %}class="active"{% endif %}><a href="{{ url_for('contact') }}">Contact</a></li>
-						<li {% if request.endpoint == 'produits' %}class="active"{% endif %}><a href="{{ url_for('produits') }}">Nos produits</a></li>
+						<li {% if request.endpoint == 'apropos' %}class="active"{% endif %}><a href="{{ url_for('apropos') }}">A propos</a></li>
 					</ul>
 				</nav>
 				<div class="nav-actions">

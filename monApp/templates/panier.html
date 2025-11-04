@@ -7,88 +7,95 @@
 
 {% block main %}
     <div class="container">
-        <header>
-            <h1>Panier</h1>
-            <div class="separator"></div>
-        </header>
-
         <main class="cart-layout">
             <section class="cart-items">
+                <header>
+                    <h1>Votre Panier</h1>
+                </header>
                 {% if not commande or (not commande.plats and not commande.menus) %}
-                    <p>Votre panier est vide.</p>
+                    <div class="cart-empty">
+                        <p>Votre panier est vide pour le moment.</p>
+                        <a href="{{ url_for('produits') }}" class="btn-primary">Voir nos produits</a>
+                    </div>
                 {% else %}
                     {# Boucle pour afficher les plats de la commande (utilisateur connecté) #}
                     {% for item_plat in commande.plats %}
                     <div class="cart-item">
+                        <img src="{{ url_for('static', filename='images/' + (item_plat.plat.image_url or 'default.jpg')) }}" alt="{{ item_plat.plat.nom_plat }}" class="item-image">
                         <div class="item-details">
                             <h2>{{ item_plat.plat.nom_plat }}</h2>
-                            <p>{{ item_plat.plat.description }}</p>
+                            <p class="item-price-single">{{ "%.2f€"|format(item_plat.plat.prix) }} / unité</p>
                         </div>
                         <div class="item-controls">
-                            <div class="quantity-control">
-                                <span class="quantity">{{ item_plat.quantite }}</span>
-                                <form action="{{ url_for('modifier_quantite_panier') }}" method="post" class="arrows">
-                                    <input type="hidden" name="id_plat" value="{{ item_plat.plat.id_plat }}">
-                                    <input type="hidden" name="action" value="increase">
-                                    <button type="submit" class="arrow-up">▲</button>
-                                </form>
-                                <form action="{{ url_for('modifier_quantite_panier') }}" method="post" class="arrows">
-                                    <input type="hidden" name="id_plat" value="{{ item_plat.plat.id_plat }}">
-                                    <input type="hidden" name="action" value="decrease">
-                                    <button type="submit" class="arrow-down">▼</button>
-                                </form>
-                            </div>
-                            <span class="item-price">{{ "%.2f€"|format(item_plat.plat.prix) }}</span>
-                            <form action="{{ url_for('supprimer_du_panier') }}" method="post" class="remove-form">
+                            <form action="{{ url_for('modifier_quantite_panier') }}" method="post" class="quantity-form">
                                 <input type="hidden" name="id_plat" value="{{ item_plat.plat.id_plat }}">
-                                <button type="submit" class="remove-item">🗑️</button>
+                                <input type="hidden" name="action" value="decrease">
+                                <button type="submit" class="quantity-btn" title="Réduire la quantité">-</button>
+                            </form>
+                            <span class="quantity">{{ item_plat.quantite }}</span>
+                            <form action="{{ url_for('modifier_quantite_panier') }}" method="post" class="quantity-form">
+                                <input type="hidden" name="id_plat" value="{{ item_plat.plat.id_plat }}">
+                                <input type="hidden" name="action" value="increase">
+                                <button type="submit" class="quantity-btn" title="Augmenter la quantité">+</button>
                             </form>
                         </div>
+                        <span class="item-price-total">{{ "%.2f€"|format(item_plat.plat.prix * item_plat.quantite) }}</span>
+                        <form action="{{ url_for('supprimer_du_panier') }}" method="post" class="remove-form">
+                            <input type="hidden" name="id_plat" value="{{ item_plat.plat.id_plat }}">
+                            <button type="submit" class="remove-item" title="Supprimer l'article">
+                                <i class="fas fa-times"></i>
+                            </button>
+                        </form>
                     </div>
                     {% endfor %}
 
                     {# Boucle pour afficher les menus de la commande (utilisateur connecté) #}
                     {% for item_menu in commande.menus %}
                     <div class="cart-item">
+                        <img src="{{ url_for('static', filename='images/' + (item_menu.menu.image_url or 'default.jpg')) }}" alt="{{ item_menu.menu.nom_menu }}" class="item-image">
                         <div class="item-details">
                             <h2>{{ item_menu.menu.nom_menu }}</h2>
-                            <p>{{ item_menu.menu.description }}</p>
+                            <p class="item-price-single">{{ "%.2f€"|format(item_menu.menu.prix) }} / unité</p>
                         </div>
                         <div class="item-controls">
-                            <div class="quantity-control">
-                                <span class="quantity">{{ item_menu.quantite }}</span>
-                                <form action="{{ url_for('modifier_quantite_panier') }}" method="post" class="arrows">
-                                    <input type="hidden" name="id_menu" value="{{ item_menu.menu.id_menu }}">
-                                    <input type="hidden" name="action" value="increase">
-                                    <button type="submit" class="arrow-up">▲</button>
-                                </form>
-                                <form action="{{ url_for('modifier_quantite_panier') }}" method="post" class="arrows">
-                                    <input type="hidden" name="id_menu" value="{{ item_menu.menu.id_menu }}">
-                                    <input type="hidden" name="action" value="decrease">
-                                    <button type="submit" class="arrow-down">▼</button>
-                                </form>
-                            </div>
-                            <span class="item-price">{{ "%.2f€"|format(item_menu.menu.prix) }}</span>
-                            <form action="{{ url_for('supprimer_du_panier') }}" method="post" class="remove-form">
+                            <form action="{{ url_for('modifier_quantite_panier') }}" method="post" class="quantity-form">
                                 <input type="hidden" name="id_menu" value="{{ item_menu.menu.id_menu }}">
-                                <button type="submit" class="remove-item">🗑️</button>
+                                <input type="hidden" name="action" value="decrease">
+                                <button type="submit" class="quantity-btn" title="Réduire la quantité">-</button>
+                            </form>
+                            <span class="quantity">{{ item_menu.quantite }}</span>
+                            <form action="{{ url_for('modifier_quantite_panier') }}" method="post" class="quantity-form">
+                                <input type="hidden" name="id_menu" value="{{ item_menu.menu.id_menu }}">
+                                <input type="hidden" name="action" value="increase">
+                                <button type="submit" class="quantity-btn" title="Augmenter la quantité">+</button>
                             </form>
                         </div>
+                        <span class="item-price-total">{{ "%.2f€"|format(item_menu.menu.prix * item_menu.quantite) }}</span>
+                        <form action="{{ url_for('supprimer_du_panier') }}" method="post" class="remove-form">
+                            <input type="hidden" name="id_menu" value="{{ item_menu.menu.id_menu }}">
+                            <button type="submit" class="remove-item" title="Supprimer l'article">
+                                <i class="fas fa-times"></i>
+                            </button>
+                        </form>
                     </div>
                     {% endfor %}
                 {% endif %}
             </section>
 
+            {% if commande and (commande.plats or commande.menus) %}
             <aside class="cart-summary">
-                <div class="summary-details">
-                    <div class="summary-line total-line">
-                        <span>Total</span>
-                        <span class="summary-price">{{ "%.2f€"|format(total_general) }}</span>
-                    </div>
-                    <div class="summary-separator"></div>
+                <h3>Récapitulatif</h3>
+                <div class="summary-line">
+                    <span>Sous-total</span>
+                    <span class="summary-price">{{ "%.2f€"|format(total_general) }}</span>
                 </div>
-                <button class="checkout-button">Commander</button>
+                <div class="summary-line total-line">
+                    <span>Total</span>
+                    <span class="summary-price">{{ "%.2f€"|format(total_general) }}</span>
+                </div>
+                <button class="checkout-button">Passer la commande</button>
             </aside>
+            {% endif %}
         </main>
     </div>
 {% endblock %}
