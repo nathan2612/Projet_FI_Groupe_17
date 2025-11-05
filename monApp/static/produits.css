@@ -9,6 +9,9 @@
     --border-radius-l: 25px;
 }
 
+/* Import a refined display font for product names */
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&display=swap');
+
 * {
     box-sizing: border-box;
     margin: 0;
@@ -57,6 +60,12 @@
     border-radius: 12px;
     padding: 12px;
     box-shadow: 0 4px 12px rgba(0,0,0,0.03);
+}
+
+/* Make category and preferences panels square (no rounded corners) */
+.sidebar .panel.categories-block,
+.sidebar .panel.preferences-block {
+    border-radius: 0;
 }
 
 .sidebar .panel h3 {
@@ -207,7 +216,8 @@ main h1 {
 /* --- Carte de Plat Individuelle --- */
 .menu-card {
     background-color: #fff;
-    border-radius: var(--border-radius-m);
+    /* Coins carrés pour les encadrés des plats */
+    border-radius: 0;
     overflow: hidden;
     box-shadow: var(--card-shadow);
     transition: transform 0.3s ease, box-shadow 0.3s ease;
@@ -233,17 +243,20 @@ main h1 {
     padding: 25px;
     display: flex;
     flex-direction: column;
-    /* let the content area expand so footer/button sits at bottom */
     flex: 1 1 auto;
+    justify-content: space-between;
+    min-height: 120px;
 }
 
 .card-content h2 {
-    font-size: 0.9rem;
-    font-weight: 600;
-    color: var(--muted-text-color);
-    letter-spacing: 1px;
-    text-transform: uppercase;
-    margin-bottom: 10px;
+    /* Use Playfair Display for a more elegant product name */
+    font-family: 'Playfair Display', Georgia, serif;
+    font-size: 1.05rem;
+    font-weight: 700;
+    color: #222;
+    letter-spacing: 0.2px;
+    text-transform: none;
+    margin-bottom: 8px;
 }
 
 .card-content p {
