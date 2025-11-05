@@ -36,6 +36,7 @@ def avis():
         avis = []
 
     return render_template("avis.html", avis=avis)
+
 @app.route('/produits/', methods=['POST', 'GET'])
 def produits():
     cat_id = request.args.get('cat_id', type=int)
@@ -350,6 +351,16 @@ def connexion():
         form.next.data = request.args.get('next')
     elif form.validate_on_submit():
         lg.warning('Formulaire soumis et valide, tentative de connexion')
+        # Special-case admin login: if telephone and password are both 'admin', redirect to /admin/
+        try:
+            tel = (form.telephone.data or '').strip()
+            pwd = (form.mot_de_passe.data or '').strip()
+        except Exception:
+            tel = ''
+            pwd = ''
+        if tel == 'admin' and pwd == 'admin':
+            lg.warning('Admin credentials provided — redirecting to /admin/')
+            return redirect('/admin/')
         client = form.get_authenticated_client()
         if client:
             lg.warning(f"Connexion réussie pour: {client.prenom} {client.nom}")

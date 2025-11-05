@@ -115,35 +115,6 @@
 				applyTheme(); // Applique le thème au chargement initial
 			});
 		</script>
-
-		<script>
-	document.addEventListener('DOMContentLoaded', () => {
-		const mainContent = document.getElementById('main');
-
-		document.body.addEventListener('click', e => {
-			const link = e.target.closest('a');
-
-			if (link) {
-				const href = link.getAttribute('href');
-
-				if (href && !href.startsWith('#') && !href.startsWith('http') && link.target !== '_blank') {
-					// Exclure les URLs avec paramètres (?)
-					if (href.includes('?')) {
-						return; // Navigation normale sans animation
-					}
-
-					e.preventDefault();
-					mainContent.style.animation = 'fadeOut 0.4s ease-in forwards';
-
-					setTimeout(() => {
-						window.location.href = href;
-					}, 1000);
-				}
-			}
-		});
-	});
-</script>
-			
 	</body>
 </html>
 {% endblock %}

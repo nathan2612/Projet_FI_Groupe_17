@@ -284,30 +284,3 @@ footer {
     color: #aaa;
     text-decoration: none;
 }
-
-/* ===== ANIMATIONS DE PAGE ===== */
-@keyframes fadeIn {
-    from {
-        opacity: 0;
-        transform: translateY(15px);
-    }
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
-}
-
-@keyframes fadeOut {
-    from {
-        opacity: 1;
-    }
-    to {
-        opacity: 0;
-    }
-}
-
-/* Applique l'animation d'entrée sur le contenu principal de chaque page */
-main#main {
-    flex-grow: 1; /* Fait en sorte que le contenu principal prenne tout l'espace vertical disponible */
-    animation: fadeIn 0.5s ease-out forwards;
-}
