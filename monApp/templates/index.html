@@ -14,7 +14,7 @@
 				<p>Traiteur et plat à emporter</p>
 			</li>
 			<li>
-				<a href="/plat" class="btn-commander">Commander</a>
+                <a href="{{ url_for('produits') }}" class="btn-commander">Commander</a>
 			</li>
 		</ul>
 	</div>
@@ -25,35 +25,45 @@
 		<h2>Nos plats à emporter</h2>
 
 		<div class="menu-grid">
-			<article class="menu-card">
-				<img src="{{ url_for('static', filename='images/image-sushi1.webp') }}" alt="Plats chauds">
-				<h3>Plats chauds</h3>
-				<p>Body text for whatever you'd like to add more to the subheading.</p>
-			</article>
+			<a href="{{ url_for('produits', cat_id=1) }}" class="menu-card-link">
+				<article class="menu-card">
+					<img src="{{ url_for('static', filename='images/image-sushi1.webp') }}" alt="Plats chauds">
+					<h3>Plats chauds</h3>
+					<p>Découvrez nos spécialités chaudes, cuisinées avec soin.</p>
+				</article>
+			</a>
 
-			<article class="menu-card">
-				<img src="{{ url_for('static', filename='images/image-sushi2.webp') }}" alt="Sushis">
-				<h3>Sushis</h3>
-				<p>Body text for whatever you'd like to expand on the main point.</p>
-			</article>
+			<a href="{{ url_for('produits', cat_id=3) }}" class="menu-card-link">
+				<article class="menu-card">
+					<img src="{{ url_for('static', filename='images/image-sushi2.webp') }}" alt="Sushis">
+					<h3>Sushis</h3>
+					<p>Une sélection de sushis frais et savoureux.</p>
+				</article>
+			</a>
 
-			<article class="menu-card">
-				<img src="{{ url_for('static', filename='images/image-sushi3.webp') }}" alt="Plats froids">
-				<h3>Plats froids</h3>
-				<p>Body text for whatever you'd like to share more.</p>
-			</article>
+			<a href="{{ url_for('produits', cat_id=2) }}" class="menu-card-link">
+				<article class="menu-card">
+					<img src="{{ url_for('static', filename='images/image-sushi3.webp') }}" alt="Plats froids">
+					<h3>Plats froids</h3>
+					<p>Nos entrées et plats froids, parfaits pour une touche de fraîcheur.</p>
+				</article>
+			</a>
 
-			<article class="menu-card">
-				<img src="{{ url_for('static', filename='images/image-sushi4.webp') }}" alt="Desserts">
-				<h3>Desserts</h3>
-				<p>Body text for whatever you'd like to add more to the subheading.</p>
-			</article>
+			<a href="{{ url_for('produits', cat_id=4) }}" class="menu-card-link">
+				<article class="menu-card">
+					<img src="{{ url_for('static', filename='images/image-sushi4.webp') }}" alt="Desserts">
+					<h3>Desserts</h3>
+					<p>Terminez votre repas avec une note sucrée et exotique.</p>
+				</article>
+			</a>
 
-			<article class="menu-card">
-				<img src="{{ url_for('static', filename='images/image-sushi5.webp') }}" alt="Plats sur commande">
-				<h3>Plats sur commande</h3>
-				<p>Body text for whatever you'd like to expand the main point.</p>
-			</article>
+			<a href="{{ url_for('produits', cat_id=5) }}" class="menu-card-link">
+				<article class="menu-card">
+					<img src="{{ url_for('static', filename='images/image-sushi5.webp') }}" alt="Plats sur commande">
+					<h3>Plats sur commande</h3>
+					<p>Des plats spéciaux préparés juste pour vous sur demande.</p>
+				</article>
+			</a>
 		</div>
 	</section>
 		<section class="avis">
