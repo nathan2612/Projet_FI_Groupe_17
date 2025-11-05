@@ -117,34 +117,33 @@
 		</script>
 
 		<script>
-			// --- Script pour les transitions de page fluides ---
-			document.addEventListener('DOMContentLoaded', () => {
-				const mainContent = document.getElementById('main');
+	document.addEventListener('DOMContentLoaded', () => {
+		const mainContent = document.getElementById('main');
 
-				// On écoute les clics sur tous les liens du document
-				document.body.addEventListener('click', e => {
-					// On vérifie si l'élément cliqué est un lien <a>
-					const link = e.target.closest('a');
+		document.body.addEventListener('click', e => {
+			const link = e.target.closest('a');
 
-					if (link) {
-						const href = link.getAttribute('href');
+			if (link) {
+				const href = link.getAttribute('href');
 
-						// On ignore les liens externes, les ancres, et ceux qui ouvrent un nouvel onglet
-						if (href && !href.startsWith('#') && !href.startsWith('http') && link.target !== '_blank') {
-							e.preventDefault(); // On empêche la navigation immédiate
-
-							// On ajoute une animation de sortie
-							mainContent.style.animation = 'fadeOut 0.4s ease-in forwards';
-
-							// On attend la fin de l'animation avant de changer de page
-							setTimeout(() => {
-								window.location.href = href;
-							}, 400); // 400ms, la durée de notre animation fadeOut
-						}
+				if (href && !href.startsWith('#') && !href.startsWith('http') && link.target !== '_blank') {
+					// Exclure les URLs avec paramètres (?)
+					if (href.includes('?')) {
+						return; // Navigation normale sans animation
 					}
-				});
-			});
-		</script>
+
+					e.preventDefault();
+					mainContent.style.animation = 'fadeOut 0.4s ease-in forwards';
+
+					setTimeout(() => {
+						window.location.href = href;
+					}, 1000);
+				}
+			}
+		});
+	});
+</script>
+			
 	</body>
 </html>
 {% endblock %}

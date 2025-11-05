@@ -529,5 +529,8 @@ def unban_client(client_id):
     flash(f"Client {client.prenom} {client.nom} débanni.", 'success')
     return redirect(url_for('admin_bannis'))
 
+@app.route('/admin/')
+def admin_index():
+    return render_template("admin.html")
 if __name__ == "__main__":
     app.run()
