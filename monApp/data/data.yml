@@ -299,6 +299,7 @@ commandes:
     montant_total: 21.50
     sur_place: false
     nombre_personnes: 1
+
   - id_commande: 2
     id_client: 2
     date_commande: "2025-10-21 12:00:00"
@@ -350,6 +351,28 @@ commandes:
     nombre_personnes: 1
 
 
+  - id_commande: 3
+    id_client: 3
+    date_commande: "2025-10-21 19:30:00"
+    statut: "Prêt"
+    montant_total: 15.50
+    sur_place: false
+    nombre_personnes: 1
+  - id_commande: 4
+    id_client: 1
+    date_commande: "2025-10-21 13:30:00"
+    statut: "En préparation"
+    montant_total: 28.00
+    sur_place: true
+    nombre_personnes: 2
+  - id_commande: 5
+    id_client: 2
+    date_commande: "2025-10-21 20:00:00"
+    statut: "En attente"
+    montant_total: 12.50
+    sur_place: false
+    nombre_personnes: 1
+
 menus:
   - id_menu: 1
     nom_menu: "Formule vapeur"
@@ -383,13 +406,22 @@ appartenir_plats:
   - id_commande: 2
     id_plat: 5
     quantite: 1
+  - id_commande: 2
+    id_plat: 8
+    quantite: 2
+  - id_commande: 3
+    id_plat: 1
+    quantite: 2
+  - id_commande: 3
+    id_plat: 6
+    quantite: 1
 
 appartenir_menus:
   - id_commande: 1
     id_menu: 1
     quantite: 1
 
-avis:
+
 avis:
   - id_avis: 1
     id_client: 1

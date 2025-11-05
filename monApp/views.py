@@ -109,6 +109,56 @@ def contact():
 def apropos():
     return render_template("apropos.html")
 
+@app.route('/commandes/')
+def commandes():
+    """Affiche toutes les commandes avec le client et les plats/menus associés."""
+    try:
+        # Charger toutes les commandes sauf celles encore en cours de commande ('En commande')
+        # et celles déjà récupérées ('récupéré') — elles disparaissent de la page
+        commandes_list = (
+            db.session.query(COMMANDE)
+            .filter(~COMMANDE.statut.in_(['En commande', 'récupéré'])) # chatgpt qui me permet d'enlever les commandes en cours et récupérées
+            .order_by(COMMANDE.date_commande.desc())
+            .all()
+        )
+    except Exception:
+        commandes_list = []
+
+    return render_template('commandes.html', commandes=commandes_list)
+
+
+@app.route('/commandes/<int:cmd_id>/set_statut', methods=['POST'])
+def set_statut(cmd_id):
+    """Met à jour le statut d'une commande.
+
+    Accepte les statuts validés par la contrainte DB.
+    Attend un champ form 'statut'
+    fait par ia car je ne savais pas comment faire autrement louis.
+    """
+    new_status = request.form.get('statut')
+    allowed_statuses = {"En attente", "En préparation", "Prêt", "non récupéré", "récupéré", "En commande"}
+
+    if not new_status or new_status not in allowed_statuses:
+        flash("Statut invalide.", "error")
+        return redirect(request.referrer or url_for('commandes'))
+
+    commande = db.session.query(COMMANDE).filter_by(id_commande=cmd_id).first()
+    if not commande:
+        flash("Commande introuvable.", "error")
+        return redirect(request.referrer or url_for('commandes'))
+
+    try:
+        commande.statut = new_status
+        db.session.commit()
+        flash(f"Statut de la commande #{cmd_id} mis à jour en '{new_status}'.", "success")
+    except Exception:
+        db.session.rollback()
+        flash("Impossible de mettre à jour le statut (erreur base).", "error")
+
+    return redirect(request.referrer or url_for('commandes'))
+
+
+
 @app.route('/nouveautes/')
 def nouveaute():
     return render_template("nouveaute.html")
@@ -370,6 +420,13 @@ def compte():
         return redirect(url_for('compte'))
 
     return render_template("compte.html", form=form)
+@app.route('/preparation-cuisto/')
+def preparation_cuisto():
+    try :
+        status = db.session.query(COMMANDE).all()
+    except Exception:
+        status = []
+    return render_template("preparation-cuisto.html", COMMANDE=status)
 
 def is_admin():
     # Ceci est un exemple simple. Adaptez-le à votre système d'authentification.

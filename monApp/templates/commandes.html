@@ -1,0 +1,53 @@
+{% extends 'base.html' %}
+
+{% block styles %}
+    <link rel="stylesheet" href="{{ url_for('static', filename='index.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='commandes.css') }}">
+{% endblock %}
+
+{% block main %}
+    <section class="commandes container">
+        <h2>Toutes les commandes</h2>
+        {% if commandes  %}
+            <ul class="commandes-list">
+                {% for cmd in commandes %}
+                    <li class="commande-item">
+                        <h3>Commande #{{ cmd.id_commande }} — {{ cmd.client.prenom }} {{ cmd.client.nom }} </h3>
+                        <p>Statut : {{ cmd.statut }}</p>
+                        <div class="commande-actions">
+                            <form method="post" action="{{ url_for('set_statut', cmd_id=cmd.id_commande) }}">
+                                <input type="hidden" name="statut" value="En préparation">
+                                <button type="submit" {% if cmd.statut == 'En préparation' %}disabled{% endif %}>Mettre en préparation</button>
+                            </form>
+
+                            <form method="post" action="{{ url_for('set_statut', cmd_id=cmd.id_commande) }}" >
+                                <input type="hidden" name="statut" value="Prêt">
+                                <button type="submit" {% if cmd.statut == 'Prêt' %}disabled{% endif %}>Marquer prêt</button>
+                            </form>
+                            
+                            <form method="post" action="{{ url_for('set_statut', cmd_id=cmd.id_commande) }}" >
+                                <input type="hidden" name="statut" value="récupéré">
+                                <button type="submit">Marquer récupéré</button>
+                            </form>
+                        </div>
+                        {% if cmd.plats %}
+                            <div class="ligne-plats">
+                                <strong>Plats :</strong>
+                                <ul>
+                                    {% for ligne in cmd.plats %}
+                                        <li>
+                                            {{ ligne.plat.nom_plat if ligne.plat else 'Plat #' ~ ligne.id_plat }}
+                                            — Qté: {{ ligne.quantite }}
+                                        </li>
+                                    {% endfor %}
+                                </ul>
+                            </div>
+                        {% endif %}
+                    </li>
+                {% endfor %}
+            </ul>
+        {% else %}
+            <p>Aucune commande en cours.</p>
+        {% endif %}
+    </section>
+{% endblock %}
