@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Administration{% endblock %}</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='base_admin.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+<body class="admin-body">
+    
+    {% block styles %}{% endblock %}
+<body>
+    <div class="sidebar">
+        <h2><a href="{{ url_for('admin_index') }}">Administration</a></h2>
+        <ul class="nav-links">
+            <li> <a href="{{ url_for('admin_index') }}">Tableau de bord</a></li>
+            <li><a href="{{ url_for('admin_banni') }}">Clients à bannir</a></li>
+            <li><a href="{{ url_for('admin_bannis') }}">Clients bannis</a></li>
+            <li><a href="{{ url_for('admin_stock') }}">Gestion du stock</a></li>
+            <li><a href="{{ url_for('commandes') }}">Commandes</a></li>
+        </ul>
+        <div class="logout-link">
+             <a href="{{ url_for('index') }}">Retour au site</a>
+        </div>
+    </div>
+    <div class="content">
+        {% block main %}{% endblock %}
+    </div>
+</body>
+</html>

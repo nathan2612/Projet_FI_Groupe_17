@@ -35,7 +35,7 @@
 						<i class="fas fa-sun"></i>
 					</button>
 					{% if current_user.is_authenticated %}
-					<a href="{{ url_for('connexion') }}" class="btn-nav-icon" title="Mon compte">
+					<a href="{{ url_for('compte') }}" class="btn-nav-icon" title="Mon compte">
 						<i class="fas fa-user"></i>
 						<span class="btn-nav-label">{{ current_user.prenom }}</span>
 					</a>

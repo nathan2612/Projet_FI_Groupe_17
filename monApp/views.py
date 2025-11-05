@@ -8,8 +8,8 @@ from monApp.models import (
     AVIS
 )
 from .app import app, db
-from flask import render_template, request, url_for, redirect, flash, session, abort
-from .forms import InscriptionForm, ConnexionForm
+from flask import render_template, request, url_for, redirect, flash, abort
+from .forms import InscriptionForm, ConnexionForm, EditProfileForm
 from flask_login import login_user, logout_user, login_required, current_user
 from sqlalchemy import func, desc
 from hashlib import sha256  # Garder cette ligne
@@ -388,6 +388,49 @@ def inscription():
         return redirect(url_for('connexion'))
     return render_template("inscription.html", form=form)
 
+@app.route('/logout')
+@login_required
+def logout():
+    logout_user()
+    flash("Vous avez été déconnecté.", "success")
+    return redirect(url_for('index'))
+
+@app.route('/compte/', methods=['GET', 'POST'])
+@login_required
+def compte():
+    """ Affiche et gère la mise à jour du compte de l'utilisateur. """
+    form = EditProfileForm(obj=current_user)
+
+    if form.validate_on_submit():
+        user_to_update = db.session.get(CLIENT, current_user.id_client)
+        
+        # Mise à jour des informations de base
+        user_to_update.prenom = form.prenom.data
+        user_to_update.nom = form.nom.data
+        user_to_update.telephone = form.telephone.data
+
+        # Gestion du changement de mot de passe
+        if form.new_mot_de_passe.data:
+            # Vérifier si le mot de passe actuel est correct
+            m = sha256()
+            m.update(form.current_mot_de_passe.data.encode())
+            current_password_hash = m.hexdigest()
+
+            if current_password_hash == user_to_update.mot_de_passe:
+                # Hasher et sauvegarder le nouveau mot de passe
+                m_new = sha256()
+                m_new.update(form.new_mot_de_passe.data.encode())
+                user_to_update.mot_de_passe = m_new.hexdigest()
+                flash("Votre mot de passe a été mis à jour.", "success")
+            else:
+                flash("Le mot de passe actuel est incorrect.", "error")
+                return render_template("compte.html", form=form)
+
+        db.session.commit()
+        flash("Vos informations ont été mises à jour avec succès !", "success")
+        return redirect(url_for('compte'))
+
+    return render_template("compte.html", form=form)
 @app.route('/preparation-cuisto/')
 def preparation_cuisto():
     try :
@@ -540,5 +583,8 @@ def unban_client(client_id):
     flash(f"Client {client.prenom} {client.nom} débanni.", 'success')
     return redirect(url_for('admin_bannis'))
 
+@app.route('/admin/')
+def admin_index():
+    return render_template("admin.html")
 if __name__ == "__main__":
     app.run()

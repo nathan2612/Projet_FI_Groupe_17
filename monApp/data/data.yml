@@ -15,6 +15,9 @@ categories:
   - id_categorie: 4
     nom_categorie: "Desserts"
     image_categorie: "Dessert.png"
+  - id_categorie: 5
+    nom_categorie: "Plats sur commande"
+    image_categorie: "Plats sur commande.png"
 
 plats:
   - id_plat: 1

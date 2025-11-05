@@ -214,6 +214,15 @@ body {
     outline-offset: 3px;
 }
 
+/* ===== CARTES CLICABLES (ex: page d'accueil) ===== */
+.menu-card-link {
+    text-decoration: none; /* Supprime le soulignement */
+    color: inherit;       /* Fait en sorte que le texte hérite de la couleur de son parent, au lieu d'être bleu */
+    display: block;       /* Assure que le lien se comporte comme un bloc pour un meilleur rendu */
+    transition: transform 0.2s ease-in-out; /* Ajoute une petite animation au survol */
+}
+
+
 /* ===== FOOTER ===== */
 footer {
     background-color: #1a1a1a; /* Fond sombre et moderne */
@@ -275,4 +284,3 @@ footer {
     color: #aaa;
     text-decoration: none;
 }
-
