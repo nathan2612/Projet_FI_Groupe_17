@@ -73,10 +73,10 @@ def loaddb(filename):
             image_url=entry.get('image_url', 'default_plat.png'),
             vegetarien=entry.get('vegetarien', False),
             vegan=entry.get('vegan', False),
-            sans_gluten=entry.get('sans_gluten', False),
-            sans_lactose=entry.get('sans_lactose', False),
-            sans_fruit_a_coque=entry.get('sans_fruit_a_coque', False),
-            sans_crustaces=entry.get('sans_crustaces', False)
+            gluten=entry.get('gluten', False),
+            lactose=entry.get('lactose', False),
+            fruit_a_coque=entry.get('fruit_a_coque', False),
+            crustaces=entry.get('crustaces', False)
         )
         db.session.merge(obj)
     db.session.commit()

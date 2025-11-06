@@ -14,14 +14,14 @@
                 <nav class="categorie-nav sidebar-categories">
                     <ul>
                         <li class="{% if cat_id == None %}active{% endif %}">
-                            <a href="{{ url_for('produits') }}">
+                            <a href="{{ url_for('produits', vegetarien=(1 if filters.vegetarien else 0), vegan=(1 if filters.vegan else 0), sans_gluten=(1 if filters.sans_gluten else 0), sans_lactose=(1 if filters.sans_lactose else 0), sans_fruits_a_coque=(1 if filters.sans_fruits_a_coque else 0), sans_crustaces=(1 if filters.sans_crustaces else 0), page=1) }}">
                                 <img class="categorie-thumb" src="../static/images/menu.png">
                                 <span>Tous</span>
                             </a>
                         </li>
                         {% for categorie in categories %}
                         <li class="{% if categorie.id_categorie == cat_id %}active{% endif %}">
-                            <a href="{{ url_for('produits', cat_id=categorie.id_categorie) }}">
+                            <a href="{{ url_for('produits', cat_id=categorie.id_categorie, vegetarien=(1 if filters.vegetarien else 0), vegan=(1 if filters.vegan else 0), sans_gluten=(1 if filters.sans_gluten else 0), sans_lactose=(1 if filters.sans_lactose else 0), sans_fruits_a_coque=(1 if filters.sans_fruits_a_coque else 0), sans_crustaces=(1 if filters.sans_crustaces else 0), page=1) }}">
                                 <img class="categorie-thumb" src="../static/images/{{ categorie.image_categorie }}">
                                 <span>{{ categorie.nom_categorie }}</span>
                             </a>
@@ -82,7 +82,11 @@
             <ul>
                 <li class="page-item {% if page == 1 %}disabled{% endif %}">
                     {% if page > 1 %}
-                        <a href="{{ url_for('produits', cat_id=cat_id, page=page-1) }}">
+                        {% if cat_id is not none %}
+                            <a href="{{ url_for('produits', cat_id=cat_id, page=page-1, vegetarien=(1 if filters.vegetarien else 0), vegan=(1 if filters.vegan else 0), sans_gluten=(1 if filters.sans_gluten else 0), sans_lactose=(1 if filters.sans_lactose else 0), sans_fruits_a_coque=(1 if filters.sans_fruits_a_coque else 0), sans_crustaces=(1 if filters.sans_crustaces else 0)) }}">
+                        {% else %}
+                            <a href="{{ url_for('produits', page=page-1, vegetarien=(1 if filters.vegetarien else 0), vegan=(1 if filters.vegan else 0), sans_gluten=(1 if filters.sans_gluten else 0), sans_lactose=(1 if filters.sans_lactose else 0), sans_fruits_a_coque=(1 if filters.sans_fruits_a_coque else 0), sans_crustaces=(1 if filters.sans_crustaces else 0)) }}">
+                        {% endif %}
                             <img class="pager-arrow left" src="{{ url_for('static', filename='images/arrow-big-left-dash.png') }}" alt="Précédent">
                             <span class="pager-label">Précédent</span>
                         </a>
@@ -94,7 +98,11 @@
                 {% set start = page - 2 if page - 2 > 1 else 1 %}
                 {% set end = page + 2 if page + 2 < total_pages else total_pages %}
                 {% if start > 1 %}
-                    <li class="page-item"><a href="{{ url_for('produits', cat_id=cat_id, page=1) }}">1</a></li>
+                    {% if cat_id is not none %}
+                        <li class="page-item"><a href="{{ url_for('produits', cat_id=cat_id, page=1, vegetarien=(1 if filters.vegetarien else 0), vegan=(1 if filters.vegan else 0), sans_gluten=(1 if filters.sans_gluten else 0), sans_lactose=(1 if filters.sans_lactose else 0), sans_fruits_a_coque=(1 if filters.sans_fruits_a_coque else 0), sans_crustaces=(1 if filters.sans_crustaces else 0)) }}">1</a></li>
+                    {% else %}
+                        <li class="page-item"><a href="{{ url_for('produits', page=1, vegetarien=(1 if filters.vegetarien else 0), vegan=(1 if filters.vegan else 0), sans_gluten=(1 if filters.sans_gluten else 0), sans_lactose=(1 if filters.sans_lactose else 0), sans_fruits_a_coque=(1 if filters.sans_fruits_a_coque else 0), sans_crustaces=(1 if filters.sans_crustaces else 0)) }}">1</a></li>
+                    {% endif %}
                     {% if start > 2 %}<li class="ellipsis">…</li>{% endif %}
                 {% endif %}
 
@@ -103,19 +111,31 @@
                         {% if p == page %}
                             <span>{{ p }}</span>
                         {% else %}
-                            <a href="{{ url_for('produits', cat_id=cat_id, page=p) }}">{{ p }}</a>
+                            {% if cat_id is not none %}
+                                <a href="{{ url_for('produits', cat_id=cat_id, page=p, vegetarien=(1 if filters.vegetarien else 0), vegan=(1 if filters.vegan else 0), sans_gluten=(1 if filters.sans_gluten else 0), sans_lactose=(1 if filters.sans_lactose else 0), sans_fruits_a_coque=(1 if filters.sans_fruits_a_coque else 0), sans_crustaces=(1 if filters.sans_crustaces else 0)) }}">{{ p }}</a>
+                            {% else %}
+                                <a href="{{ url_for('produits', page=p, vegetarien=(1 if filters.vegetarien else 0), vegan=(1 if filters.vegan else 0), sans_gluten=(1 if filters.sans_gluten else 0), sans_lactose=(1 if filters.sans_lactose else 0), sans_fruits_a_coque=(1 if filters.sans_fruits_a_coque else 0), sans_crustaces=(1 if filters.sans_crustaces else 0)) }}">{{ p }}</a>
+                            {% endif %}
                         {% endif %}
                     </li>
                 {% endfor %}
 
                 {% if end < total_pages %}
                     {% if end < total_pages -1 %}<li class="ellipsis">…</li>{% endif %}
-                    <li class="page-item"><a href="{{ url_for('produits', cat_id=cat_id, page=total_pages) }}">{{ total_pages }}</a></li>
+                    {% if cat_id is not none %}
+                        <li class="page-item"><a href="{{ url_for('produits', cat_id=cat_id, page=total_pages, vegetarien=(1 if filters.vegetarien else 0), vegan=(1 if filters.vegan else 0), sans_gluten=(1 if filters.sans_gluten else 0), sans_lactose=(1 if filters.sans_lactose else 0), sans_fruits_a_coque=(1 if filters.sans_fruits_a_coque else 0), sans_crustaces=(1 if filters.sans_crustaces else 0)) }}">{{ total_pages }}</a></li>
+                    {% else %}
+                        <li class="page-item"><a href="{{ url_for('produits', page=total_pages, vegetarien=(1 if filters.vegetarien else 0), vegan=(1 if filters.vegan else 0), sans_gluten=(1 if filters.sans_gluten else 0), sans_lactose=(1 if filters.sans_lactose else 0), sans_fruits_a_coque=(1 if filters.sans_fruits_a_coque else 0), sans_crustaces=(1 if filters.sans_crustaces else 0)) }}">{{ total_pages }}</a></li>
+                    {% endif %}
                 {% endif %}
 
                 <li class="page-item {% if page >= total_pages %}disabled{% endif %}">
                     {% if page < total_pages %}
-                        <a href="{{ url_for('produits', cat_id=cat_id, page=page+1) }}">
+                        {% if cat_id is not none %}
+                            <a href="{{ url_for('produits', cat_id=cat_id, page=page+1, vegetarien=(1 if filters.vegetarien else 0), vegan=(1 if filters.vegan else 0), sans_gluten=(1 if filters.sans_gluten else 0), sans_lactose=(1 if filters.sans_lactose else 0), sans_fruits_a_coque=(1 if filters.sans_fruits_a_coque else 0), sans_crustaces=(1 if filters.sans_crustaces else 0)) }}">
+                        {% else %}
+                            <a href="{{ url_for('produits', page=page+1, vegetarien=(1 if filters.vegetarien else 0), vegan=(1 if filters.vegan else 0), sans_gluten=(1 if filters.sans_gluten else 0), sans_lactose=(1 if filters.sans_lactose else 0), sans_fruits_a_coque=(1 if filters.sans_fruits_a_coque else 0), sans_crustaces=(1 if filters.sans_crustaces else 0)) }}">
+                        {% endif %}
                             <span class="pager-label">Suivant</span>
                             <img class="pager-arrow right" src="{{ url_for('static', filename='images/arrow-big-right-dash.png') }}" alt="Suivant">
                         </a>

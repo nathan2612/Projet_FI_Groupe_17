@@ -80,6 +80,7 @@ plats:
     nom_plat: "Mehdi Akbar"
     description: "Un etudiant en IUT"
     longue_description: "Ce plat rend hommage à la créativité et à l'innovation. Un mélange de techniques modernes et d'ingrédients traditionnels pour un résultat surprenant et délicieux."
+    crustaces: true
     prix: 17.30
   - id_plat: 11
     id_categorie: 1
