@@ -537,7 +537,7 @@ def connexion():
             pwd = ''
         if tel == 'admin' and pwd == 'admin':
             lg.warning('Admin credentials provided — redirecting to /admin/')
-            return redirect('/admin/')
+            return redirect(url_for('admin_index'))
         client = form.get_authenticated_client()
         if client:
             lg.warning(f"Connexion réussie pour: {client.prenom} {client.nom}")
@@ -772,53 +772,58 @@ def unban_client(client_id):
 
 @app.route('/admin-index/')
 def admin_index():
-    commandes_list = db.session.query(COMMANDE).all()
     today = date.today()
-    lst_recup_auj = 0
-    lst_recup_mois = 0
-    lst_recup_annee = 0
-    ca_auj = 0
-    ca_mois = 0
-    ca_annee = 0
-    ca_hier = 0
-    ca_mois_dernier = 0
-    ca_annee_derniere = 0
-    for commande in commandes_list:
-        if commande.date_commande == date.today() - timedelta(days=1):
-            if commande.statut == "récupéré":
-                ca_hier += commande.montant_total
-        if commande.date_commande.month == (date.today().month -1) or (date.today().month == 12 and commande.date_commande.month == 1):
-            if commande.statut == "récupéré":
-                ca_mois_dernier += commande.montant_total
-        if commande.date_commande.year == (date.today().year -1):
-            if commande.statut == "récupéré":
-                ca_annee_derniere += commande.montant_total
-        if commande.date_commande == date.today():
-            if commande.statut == "récupéré":
-                lst_recup_auj+=1
-                ca_auj += commande.montant_total
-        if commande.date_commande.month == date.today().month:
-            if commande.statut == "récupéré":
-                lst_recup_mois+=1
-                ca_mois += commande.montant_total
-        if commande.date_commande.year == date.today().year:
-            if commande.statut == "récupéré":
-                lst_recup_annee+=1
-                ca_annee += commande.montant_total
+    yesterday = today - timedelta(days=1)
+    current_month_start = today.replace(day=1)
+    last_month_end = current_month_start - timedelta(days=1)
+    last_month_start = last_month_end.replace(day=1)
+    current_year_start = today.replace(day=1, month=1)
+    last_year_start = current_year_start.replace(year=today.year - 1)
+    last_year_end = current_year_start - timedelta(days=1)
+
+    # Utiliser des requêtes agrégées pour la performance
+    def get_stats(start_date, end_date):
+        """Calcule le nombre de commandes et le CA pour une période donnée."""
+        stats = db.session.query(
+            func.count(COMMANDE.id_commande),
+            func.sum(COMMANDE.montant_total)
+        ).filter(
+            COMMANDE.statut == "récupéré",
+            COMMANDE.date_commande.between(start_date, end_date)
+        ).first()
+        # Convertir le montant total en float pour éviter les erreurs de type avec Decimal
+        return stats[0] or 0, float(stats[1]) if stats[1] is not None else 0.0
+
+    # Calculs pour les périodes actuelles
+    lst_recup_auj, ca_auj = get_stats(today, today + timedelta(days=1))
+    lst_recup_mois, ca_mois = get_stats(current_month_start, today + timedelta(days=1))
+    lst_recup_annee, ca_annee = get_stats(current_year_start, today + timedelta(days=1))
+
+    # Calculs pour les périodes précédentes
+    _, ca_hier = get_stats(yesterday, today)
+    _, ca_mois_dernier = get_stats(last_month_start, last_month_end)
+    _, ca_annee_derniere = get_stats(last_year_start, last_year_end)
+
+    # Calcul des pourcentages de variation
     ca_pourcentage_hier_auj = round((ca_auj - ca_hier) / ca_hier * 100) if ca_hier != 0 else 0
     ca_pourcentage_mois = round((ca_mois - ca_mois_dernier) / ca_mois_dernier * 100) if ca_mois_dernier != 0 else 0
     ca_pourcentage_annee_derniere = round((ca_annee - ca_annee_derniere) / ca_annee_derniere * 100) if ca_annee_derniere != 0 else 0
 
 
     # Calculer le top 5 des plats vendus (id + quantité) puis récupérer les objets PLAT
-    lignes_appartenir = db.session.query(APPARTENIR_PLATS).all()
-    ventes = {}
-    for ligne in lignes_appartenir:
-        pid = ligne.id_plat
-        qte = ligne.quantite or 0
-        ventes[pid] = ventes.get(pid, 0) + qte
+    # Optimisation : Agréger directement en base de données
+    top_items_query = (
+        db.session.query(
+            APPARTENIR_PLATS.id_plat,
+            func.sum(APPARTENIR_PLATS.quantite).label('total_vendus')
+        )
+        .group_by(APPARTENIR_PLATS.id_plat)
+        .order_by(desc('total_vendus'))
+        .limit(5)
+        .all()
+    )
+    top_items = [(item[0], item[1]) for item in top_items_query]
 
-    top_items = sorted(ventes.items(), key=lambda x: x[1], reverse=True)[:5]
     top_5_ventes = []
     if top_items:
         ids_top = [pid for pid, r in top_items]
