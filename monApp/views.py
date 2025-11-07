@@ -12,6 +12,7 @@ from monApp.models import (
 )
 from .app import app, db
 from flask import render_template, request, url_for, redirect, flash, abort
+from functools import wraps
 from .forms import InscriptionForm, ConnexionForm, EditProfileForm
 from flask_login import login_user, logout_user, login_required, current_user
 from sqlalchemy import func, desc
@@ -20,6 +21,15 @@ from math import ceil       # Garder cette ligne
 from datetime import datetime, date, timedelta
 import logging as lg
 from flask import flash
+
+def admin_required(f):
+    @wraps(f)
+    def decorated_function(*args, **kwargs):
+        if not current_user.is_authenticated or current_user.role != 'admin':
+            flash("Vous n'avez pas les droits pour accéder à cette page.", "error")
+            return redirect(url_for('index'))
+        return f(*args, **kwargs)
+    return decorated_function
 
 @app.route('/')
 @app.route('/index/')
@@ -65,6 +75,8 @@ def produits():
         query = query.filter(PLAT.vegan.is_(True))
     if sans_gluten:
         query = query.filter(PLAT.gluten.is_(False))
+
+
     if sans_lactose:
         query = query.filter(PLAT.lactose.is_(False))
     if sans_fruits_a_coque:
@@ -92,6 +104,7 @@ def produits():
         plat.stock_disponible = stocks_map.get(plat.id_plat, 0)
 
     categories = db.session.query(CATEGORIE).all()
+
 
     return render_template(
         "produits.html",
@@ -126,6 +139,8 @@ def menus():
 
     # Build base query with optional category filter
     query = db.session.query(MENU)
+
+
 
     total = query.count()
     total_pages = max(1, ceil(total / per_page))
@@ -641,12 +656,10 @@ def preparation_cuisto():
         status = []
     return render_template("preparation-cuisto.html", COMMANDE=status)
 
-def is_admin():
-    # Ceci est un exemple simple. Adaptez-le à votre système d'authentification.
-    # Par exemple, vous pourriez vérifier si l'utilisateur appartient à un groupe "admin".
-    return current_user.telephone == "admin"  # À remplacer par votre logique
 
 @app.route('/admin/stock/')
+@admin_required
+
 def admin_stock():
     #if not current_user.is_authenticated or not is_admin():
     #    flash("Vous n'avez pas les droits pour accéder à cette page.", "error")
@@ -679,6 +692,8 @@ def admin_stock():
     return render_template("admin_stock.html", items=items_with_stock, search_term=search_term)
 
 @app.route('/admin/stock/view/<int:item_id>')
+@admin_required
+
 def view_stock_item(item_id):
     #if not is_admin():
     #    flash("Vous n'avez pas les droits pour accéder à cette page.", "error")
@@ -696,6 +711,7 @@ def view_stock_item(item_id):
 
 
 @app.route('/admin/stock/edit/<int:item_id>', methods=['GET', 'POST'])
+@admin_required
 def edit_stock_item(item_id):
     #if not is_admin():
     #    flash("Vous n'avez pas les droits pour accéder à cette page.", "error")
@@ -752,6 +768,7 @@ def creer_avis():
     return render_template("creation_avis.html")
 
 @app.route('/admin/banni/')
+@admin_required
 def admin_banni():
     # Count non-récupéré commandes per client and order desc by count
     # Note: statut values include 'non récupéré' per model constraint
@@ -777,6 +794,7 @@ def admin_banni():
 
 
 @app.route('/admin/ban/<int:client_id>', methods=['POST'])
+@admin_required
 def ban_client(client_id):
     # mark client as banned
     client = db.session.query(CLIENT).filter_by(id_client=client_id).first()
@@ -791,6 +809,7 @@ def ban_client(client_id):
 
 
 @app.route('/admin/bannis/')
+@admin_required
 def admin_bannis():
     # list clients who are banned
     clients = db.session.query(CLIENT).filter_by(banni=True).all()
@@ -798,6 +817,7 @@ def admin_bannis():
 
 
 @app.route('/admin/unban/<int:client_id>', methods=['POST'])
+@admin_required
 def unban_client(client_id):
     client = db.session.query(CLIENT).filter_by(id_client=client_id).first()
     if not client:
@@ -810,6 +830,7 @@ def unban_client(client_id):
     return redirect(url_for('admin_bannis'))
 
 @app.route('/admin-index/')
+@admin_required
 def admin_index():
     today = date.today()
     yesterday = today - timedelta(days=1)

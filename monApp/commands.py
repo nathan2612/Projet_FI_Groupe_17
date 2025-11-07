@@ -99,7 +99,9 @@ def loaddb(filename):
             prenom=entry.get('prenom'),
             telephone=entry.get('telephone'),
             mot_de_passe=entry.get('mot_de_passe'),
-            banni=entry.get('banni', False)
+            banni=entry.get('banni', False),
+            # Rôle de l'utilisateur : 'user' (par défaut) ou 'admin'
+            role=entry.get('role', 'user')
         )
         db.session.merge(obj)
     db.session.commit()
