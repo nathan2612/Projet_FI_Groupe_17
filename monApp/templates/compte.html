@@ -116,6 +116,33 @@
             <i class="fas fa-sign-out-alt"></i> Se déconnecter
         </a>
     </div>
+            <div class="orders-section">
+            <h2>Mes Commandes</h2>
+            {% if commandes %}
+                <div class="orders-list">
+                    {% for cmd in commandes %}
+                        <div class="order-card">
+                            <p><strong>Commande #{{ cmd.id_commande }}</strong></p>
+                            <p>
+                                <strong>Date :</strong> 
+                                {{ cmd.date_commande.strftime('%d/%m/%Y %H:%M') if cmd.date_commande else 'Panier non validé' }}
+                            </p>
+                            <p><strong>Total :</strong> {{ "%.2f€"|format(cmd.montant_total) }}</p>
+                            <p>
+                                <strong>Statut :</strong> 
+                                <span class="status-badge status-{{ cmd.statut | lower | replace(' ', '-') }}">{{ cmd.statut }}</span>
+                            </p>
+                        </div>
+                    {% endfor %}
+                </div>
+            {% else %}
+                <div class="no-orders">
+                    <p>Vous n'avez encore passé aucune commande.</p>
+                    <a href="{{ url_for('produits') }}" class="btn-primary">Voir nos produits</a>
+                </div>
+            {% endif %}
+        </div>
+
 </div>
 
 <script>

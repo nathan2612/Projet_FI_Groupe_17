@@ -468,6 +468,14 @@ def logout():
 @login_required
 def compte():
     """ Affiche et gère la mise à jour du compte de l'utilisateur. """
+    # Récupérer les commandes de l'utilisateur, triées par date décroissante
+    commandes_client = (
+        db.session.query(COMMANDE)
+        .filter_by(id_client=current_user.id_client)
+        .order_by(COMMANDE.date_commande.desc())
+        .all()
+    )
+
     form = EditProfileForm(obj=current_user)
 
     if form.validate_on_submit():
@@ -493,13 +501,13 @@ def compte():
                 flash("Votre mot de passe a été mis à jour.", "success")
             else:
                 flash("Le mot de passe actuel est incorrect.", "error")
-                return render_template("compte.html", form=form)
+                return render_template("compte.html", form=form, commandes=commandes_client)
 
         db.session.commit()
         flash("Vos informations ont été mises à jour avec succès !", "success")
         return redirect(url_for('compte'))
 
-    return render_template("compte.html", form=form)
+    return render_template("compte.html", form=form, commandes=commandes_client)
 @app.route('/preparation-cuisto/')
 def preparation_cuisto():
     try :
