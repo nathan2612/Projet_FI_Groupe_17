@@ -58,7 +58,7 @@ class CLIENT(db.Model,UserMixin):
 		return self.id_client
 
 	def __repr__(self):
-		return f"<Client {self.nom_client} {self.prenom_client} ({self.id_client})>"
+		return f"<Client {self.nom} {self.prenom} ({self.id_client})>"
 	
 @login_manager.user_loader
 def load_user(telephone):

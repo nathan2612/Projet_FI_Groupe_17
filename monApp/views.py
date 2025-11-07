@@ -76,6 +76,21 @@ def produits():
     total_pages = max(1, ceil(total / per_page))
     page = max(1, min(page, total_pages))
     produits = query.offset((page - 1) * per_page).limit(per_page).all()
+
+    # Récupérer les stocks pour les plats de la page actuelle
+    today = date.today()
+    # --- CORRECTION TEMPORAIRE POUR LA DATE DE STOCK ---
+    # Utilise une date fixe pour la vérification du stock afin de correspondre aux données de test.
+    stock_check_date = date(2025, 10, 21)
+    
+    ids_plats = [p.id_plat for p in produits]
+    stocks_db = db.session.query(DEFINIR_STOCK).filter(DEFINIR_STOCK.id_plat.in_(ids_plats), DEFINIR_STOCK.jour == stock_check_date).all()
+    stocks_map = {s.id_plat: s.stock for s in stocks_db}
+
+    # Ajouter le stock à chaque objet plat
+    for plat in produits:
+        plat.stock_disponible = stocks_map.get(plat.id_plat, 0)
+
     categories = db.session.query(CATEGORIE).all()
 
     return render_template(

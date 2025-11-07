@@ -57,25 +57,25 @@
 
         <div class="menu-grid">
             {# Boucle sur chaque plat pour l'afficher #}
-            {% for item in produits %}
+            {% for plat in produits %}
                  <div class="menu-card">
-                     <a href="{{ url_for('detail_plat', id_plat=item.plat.id_plat) }}" class="card-image-link">
-                         <img src="{{ url_for('static', filename='images/' + item.plat.image_url) }}" alt="Photo de {{ item.plat.nom_plat }}">
+                     <a href="{{ url_for('detail_plat', id_plat=plat.id_plat) }}" class="card-image-link">
+                         <img src="{{ url_for('static', filename='images/' + plat.image_url) }}" alt="Photo de {{ plat.nom_plat }}">
                      </a>
                      <div class="card-content">
                          <div>
                              <h2 class="card-title">
-                                 <a href="{{ url_for('detail_plat', id_plat=item.plat.id_plat) }}" class="card-text-link">
-                                     {{ item.plat.nom_plat }}
+                                 <a href="{{ url_for('detail_plat', id_plat=plat.id_plat) }}" class="card-text-link">
+                                     {{ plat.nom_plat }}
                                  </a>
                              </h2>
-                             <p>{{ item.plat.description }}</p>
+                             <p>{{ plat.description }}</p>
                          </div>
                          <div class="card-footer">
-                             {% if item.stock > 0 %}
-                                 <span class="card-price">{{ "%.2f€"|format(item.plat.prix) }}</span>
+                             {% if plat.stock_disponible > 0 %}
+                                 <span class="card-price">{{ "%.2f€"|format(plat.prix) }}</span>
                                  <form action="{{ url_for('ajouter_au_panier') }}" method="POST">
-                                     <input type="hidden" name="id_plat" value="{{ item.plat.id_plat }}">
+                                     <input type="hidden" name="id_plat" value="{{ plat.id_plat }}">
                                      <button type="submit" class="order-button">
                                          <i class="fas fa-shopping-cart"></i>
                                          <span>Commander</span>
