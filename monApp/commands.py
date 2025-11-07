@@ -71,7 +71,7 @@ def loaddb(filename):
     for entry in data.get('definir_stock', []) or []:
         obj = DEFINIR_STOCK(
             id_plat=entry.get('id_plat'),
-            jour=parse_date(entry.get('jour')),
+            jour=parse_date(datetime.today()),
             stock=entry.get('stock')
         )
         db.session.merge(obj)
@@ -115,7 +115,7 @@ def loaddb(filename):
         obj = COMMANDE(
             id_commande=entry.get('id_commande'),
             id_client=entry.get('id_client'),
-            date_commande=datetime.strptime(entry.get('date_commande'), '%Y-%m-%d %H:%M:%S'),
+            date_commande=datetime.today().replace(hour=12, minute=0, second=0, microsecond=0),
             statut=entry.get('statut'),
             montant_total=entry.get('montant_total'),
             sur_place=entry.get('sur_place'),

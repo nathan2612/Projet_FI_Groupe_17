@@ -88,7 +88,7 @@ def produits():
     produits = query.offset((page - 1) * per_page).limit(per_page).all()
 
     today = date.today()
-    stock_check_date = date(2025, 10, 21)
+    stock_check_date = date.today()
     
     ids_plats = [p.id_plat for p in produits]
     stocks_db = db.session.query(DEFINIR_STOCK).filter(DEFINIR_STOCK.id_plat.in_(ids_plats), DEFINIR_STOCK.jour == stock_check_date).all()
@@ -123,7 +123,7 @@ def produits():
 def detail_plat(id_plat):
     plat = db.session.query(PLAT).get(id_plat)
     
-    stock_check_date = date(2025, 10, 21)
+    stock_check_date = date.today()
     stock_entry = db.session.query(DEFINIR_STOCK).filter_by(id_plat=id_plat, jour=stock_check_date).first()
     
     stock_disponible = stock_entry.stock if stock_entry else 0
@@ -180,7 +180,7 @@ def ajouter_au_panier_menu():
         flash("Identifiant de plat invalide.", "error")
         return redirect(url_for('produits'))
     
-    stock_check_date = date(2025, 10, 21)
+    stock_check_date = date.today()
     stock_disponible = db.session.query(DEFINIR_STOCK).filter_by(id_plat=id_plat_int, jour=stock_check_date).first()
     item_panier_existant = db.session.query(APPARTENIR_PLATS).join(COMMANDE).filter(
         COMMANDE.id_client == current_user.id_client,
@@ -301,7 +301,7 @@ def ajouter_au_panier():
         flash("Identifiant de plat invalide.", "error")
         return redirect(url_for('produits'))
     
-    stock_check_date = date(2025, 10, 21)
+    stock_check_date = date.today()
     stock_disponible = db.session.query(DEFINIR_STOCK).filter_by(id_plat=id_plat_int, jour=stock_check_date).first()
     item_panier_existant = db.session.query(APPARTENIR_PLATS).join(COMMANDE).filter(
         COMMANDE.id_client == current_user.id_client,
@@ -366,7 +366,7 @@ def modifier_quantite_panier():
     if commande:
         item = db.session.query(APPARTENIR_PLATS).filter_by(id_commande=commande.id_commande, id_plat=id_plat_int).first()
         if item:
-            stock_check_date = date(2025, 10, 21)
+            stock_check_date = date.today()
             if action == 'increase':
                 jour_verification = commande.date_commande.date() if commande.date_commande else stock_check_date
                 stock_disponible = db.session.query(DEFINIR_STOCK).filter_by(id_plat=id_plat_int, jour=jour_verification).first()
@@ -444,7 +444,7 @@ def valider_commande():
         return redirect(url_for('panier'))
 
     try:
-        stock_check_date = date(2025, 10, 21)
+        stock_check_date = date.today()
 
         for item_plat in commande.plats:
             stock_entry = db.session.query(DEFINIR_STOCK).filter_by(id_plat=item_plat.id_plat, jour=stock_check_date).first()
@@ -689,7 +689,6 @@ def admin_banni():
         .order_by(desc('nb_non_recup'))
         .all()
     )
-
     clients = [
         {
             'client': r[0],
@@ -697,7 +696,6 @@ def admin_banni():
         }
         for r in results
     ]
-
     return render_template("admin_banni.html", clients=clients)
 
 
@@ -738,6 +736,7 @@ def unban_client(client_id):
 @app.route('/admin-index/')
 @admin_required
 def admin_index():
+    today = date.today()
     yesterday = today - timedelta(days=1)
     current_month_start = today.replace(day=1)
     last_month_end = current_month_start - timedelta(days=1)
