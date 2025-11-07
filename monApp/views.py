@@ -135,43 +135,41 @@ def detail_menu(id_menu):
     desserts = db.session.query(CONTENIR).filter_by(id_menu=id_menu, type_plat=2).all()
     return render_template("detail_menu.html", menu=menu, entres=entres, desserts=desserts, plats=plats)
 
-@app.route('/ajouter-au-panier-menu/', methods=['POST'])
-def ajouter_au_panier_menu():
-    # If user is not authenticated, redirect to connexion but set next to the
-    # products listing (GET) so after login we return to a safe GET page and
-    # not attempt to re-POST to this route.
+@app.route('/ajouter-menu-selection/', methods=['POST'])
+def ajouter_menu_selection():
+    """Ajoute les plats sélectionnés (entree, plat, dessert) au panier comme plats individuels."""
     if not current_user.is_authenticated:
         flash("Veuillez vous connecter pour ajouter des articles au panier.", "info")
-        return redirect(url_for('connexion', next=url_for('produits')))
+        return redirect(url_for('connexion', next=request.referrer or url_for('produits')))
 
-    id_plat = request.form.get('id_plat')
-    if not id_plat:
-        flash("Aucun plat spécifié.", "error")
-        return redirect(url_for('produits'))
+    # Récupérer les sélections (peuvent être None si non choisies)
+    entree_id = request.form.get('entree')
+    plat_id = request.form.get('plat')
+    dessert_id = request.form.get('dessert')
+    id_menu = request.form.get('id_menu')
 
-    try:
-        id_plat_int = int(id_plat)
-    except (ValueError, TypeError):
-        flash("Identifiant de plat invalide.", "error")
-        return redirect(url_for('produits'))
-    
-    # --- CORRECTION TEMPORAIRE POUR LA DATE DE STOCK ---
-    # Utilise une date fixe pour la vérification du stock afin de correspondre aux données de test.
-    # En production, assurez-vous que DEFINIR_STOCK est alimenté pour la date actuelle.
-    # Vérification du stock avant d'ajouter
-    stock_check_date = date(2025, 10, 21) # Remplacez par la date de vos données de stock (ex: 2025, 10, 21)
-    stock_disponible = db.session.query(DEFINIR_STOCK).filter_by(id_plat=id_plat_int, jour=stock_check_date).first()
-    item_panier_existant = db.session.query(APPARTENIR_PLATS).join(COMMANDE).filter(
-        COMMANDE.id_client == current_user.id_client,
-        COMMANDE.statut == 'En commande',
-        APPARTENIR_PLATS.id_plat == id_plat_int
-    ).first()
-    quantite_actuelle = item_panier_existant.quantite if item_panier_existant else 0
-    if not stock_disponible or stock_disponible.stock <= quantite_actuelle:
-        flash("Stock insuffisant pour ajouter ce plat.", "error")
-        return redirect(request.referrer or url_for('produits'))
+    # helper to cast to int or None
+    def to_int(v):
+        try:
+            return int(v)
+        except (TypeError, ValueError):
+            return None
 
-    # 1. Trouver ou créer une commande "En attente" pour l'utilisateur
+    entree_id = to_int(entree_id)
+    plat_id = to_int(plat_id)
+    dessert_id = to_int(dessert_id)
+    id_menu = to_int(id_menu)
+
+    # Validate menu
+    if not id_menu:
+        flash("Menu invalide.", "error")
+        return redirect(request.referrer or url_for('menus'))
+
+    menu = db.session.get(MENU, id_menu)
+    if not menu:
+        flash("Menu introuvable.", "error")
+        return redirect(request.referrer or url_for('menus'))
+
     commande = db.session.query(COMMANDE).filter_by(id_client=current_user.id_client, statut='En commande').first()
     if not commande:
         commande = COMMANDE(
@@ -179,30 +177,63 @@ def ajouter_au_panier_menu():
             statut='En commande'
         )
         db.session.add(commande)
-        db.session.commit() # On commit pour que la commande ait un ID
+        db.session.commit()
 
-    # 2. Vérifier si le plat est déjà dans la commande
-    item_panier = db.session.query(APPARTENIR_PLATS).filter_by(id_commande=commande.id_commande, id_plat=id_plat_int).first()
+    # Validate that selected plats belong to this menu (if provided)
+    def choice_belongs(plat_id, type_plat):
+        if plat_id is None:
+            return True
+        return db.session.query(CONTENIR).filter_by(id_menu=id_menu, id_plat=plat_id, type_plat=type_plat).first() is not None
 
-    if item_panier:
-        # Si oui, on incrémente la quantité
-        item_panier.quantite += 1
+    if not choice_belongs(entree_id, 0):
+        flash("L'entrée sélectionnée n'appartient pas à ce menu.", "error")
+        return redirect(request.referrer or url_for('menu', id_menu=id_menu))
+    if not choice_belongs(plat_id, 1):
+        flash("Le plat sélectionné n'appartient pas à ce menu.", "error")
+        return redirect(request.referrer or url_for('menu', id_menu=id_menu))
+    if not choice_belongs(dessert_id, 2):
+        flash("Le dessert sélectionné n'appartient pas à ce menu.", "error")
+        return redirect(request.referrer or url_for('menu', id_menu=id_menu))
+
+    # Find existing menu line for this commande/menu
+    item = db.session.query(APPARTENIR_MENUS).filter_by(id_commande=commande.id_commande, id_menu=id_menu).first()
+
+    if item:
+        # If the same choices are already stored, just increment quantity.
+        if item.id_entree == entree_id and item.id_plat_choisi == plat_id and item.id_dessert == dessert_id:
+            item.quantite = (item.quantite or 0) + 1
+        else:
+            # If choices differ, update stored choices and increment quantity.
+            item.id_entree = entree_id
+            item.id_plat_choisi = plat_id
+            item.id_dessert = dessert_id
+            item.quantite = (item.quantite or 0) + 1
+        db.session.add(item)
     else:
-        # Sinon, on crée une nouvelle ligne dans appartenir_plats
-        item_panier = APPARTENIR_PLATS(id_commande=commande.id_commande, id_plat=id_plat_int, quantite=1)
-        db.session.add(item_panier)
+        # create a new menu line
+        item = APPARTENIR_MENUS(
+            id_commande=commande.id_commande,
+            id_menu=id_menu,
+            quantite=1,
+            id_entree=entree_id,
+            id_plat_choisi=plat_id,
+            id_dessert=dessert_id
+        )
+        db.session.add(item)
 
-    # Recalculer le total
+    # Recalculate commande total (menus + plats)
+    db.session.flush()
     total = 0
-    for item in commande.plats:
-        total += item.plat.prix * item.quantite
-    for item in commande.menus:
-        total += item.menu.prix * item.quantite
+    for p in commande.plats:
+        total += (p.plat.prix or 0) * (p.quantite or 0)
+    for m in commande.menus:
+        total += (m.menu.prix or 0) * (m.quantite or 0)
     commande.montant_total = total
     db.session.commit()
 
-    flash("Plat ajouté au panier avec succès !", "success")
-    return redirect(request.referrer or url_for('produits'))
+    flash("Menu ajouté au panier.", "success")
+    return redirect(request.referrer or url_for('panier'))
+
 
 @app.route('/contact/')
 def contact():

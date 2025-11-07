@@ -198,9 +198,9 @@ body {
     max-width: 1000px;
     width: 90%;
     margin: 30px auto 60px auto;
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 20px;
+    display: flex;            /* empile verticalement les sections */
+    flex-direction: column;
+    gap: 18px;
 }
 
 .menu-course {
@@ -223,31 +223,62 @@ body {
     list-style: none;
     margin: 0;
     padding: 0;
-    display: grid;
-    gap: 12px;
+    display: flex;           /* affiche les choix en ligne (horizontal) */
+    gap: 11px;
+    overflow-x: auto;        /* scroll horizontal si nécessaire */
+    padding-bottom: 6px;
+    /* Allow cards to visually lift outside the line when hovered/checked */
+    overflow-y: visible;
 }
 
 .menu-item {
+    min-width: 260px;       /* taille minimale des cartes */
+    display: block;
+    /* small horizontal breathing so cards don't stick to each other */
+    margin: 5px 5px;
+}
+
+/* position relative pour pouvoir placer le bouton 'Voir' à l'intérieur visuellement */
+.menu-item { position: relative; }
+
+/* Faire en sorte que tout l'encadré (label) soit cliquable */
+.menu-choice {
+    display: block;
+    height: 100%;
+    cursor: pointer;
+    text-decoration: none;
+}
+
+.menu-choice-content {
     display: flex;
     flex-direction: column;
-    gap: 8px;
-    padding: 12px;
-    border-radius: 8px;
-    background: linear-gradient(180deg, #ffffff 0%, #fbfdff 100%);
-    border: 1px solid #f1f5f9;
-    transition: transform 0.15s ease, box-shadow 0.15s ease;
+    gap: 7px;
+    /* slightly increased padding so cards breathe a little */
+    padding: 12px 12px 10px 12px;
+    border-radius: 10px;
+    background: linear-gradient(180deg, #ffffff 0%, #fcfeff 100%);
+    border: 1px solid #e6eef8;
+    box-shadow: 0 4px 12px rgba(16,24,40,0.035);
+    transition: transform 0.14s cubic-bezier(.2,.9,.2,1), box-shadow 0.14s ease, border-color 0.12s ease;
+    min-height: 80px; /* slightly larger so content isn't cramped */
 }
 
-.menu-item:hover {
-    transform: translateY(-4px);
-    box-shadow: 0 10px 30px rgba(16, 24, 40, 0.08);
+.menu-choice-content:hover {
+    transform: translateY(-6px);
+    box-shadow: 0 20px 40px rgba(16,24,40,0.10);
+    border-color: #dbeeff;
 }
 
+.plat-name,
 .menu-item a {
-    font-weight: 600;
-    color: #0f172a;
+    font-weight: 700;
+    color: #0b1220;
     text-decoration: none;
-    font-size: 1.02rem;
+    font-size: 1.05rem;
+}
+
+.plat-name {
+    margin-bottom: 6px;
 }
 
 .menu-item .prix {
@@ -259,9 +290,56 @@ body {
 .menu-item .description-small {
     color: #6b7280;
     margin: 0;
-    font-size: 0.95rem;
-    line-height: 1.4;
+    font-size: 0.92rem;
+    line-height: 1.3;
+    /* clamp description to 2 lines to save space */
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+    line-clamp: 2;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
+
+/* Cacher l'input radio mais le garder accessible */
+.menu-choice input[type="radio"] {
+    position: absolute;
+    opacity: 0;
+    pointer-events: none;
+}
+
+/* Style quand sélectionné */
+.menu-choice input[type="radio"]:checked + .menu-choice-content {
+    border-color: #2563eb;
+    /* keep a subtle elevated shadow when selected but do not lift the card */
+    box-shadow: 0 12px 28px rgba(37,99,235,0.12);
+    transform: none;
+}
+
+/* Bouton 'Voir' repositionné en haut à droite de la carte */
+.voir-icon {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 34px;
+    height: 34px;
+    color: #2563eb;
+    text-decoration: none;
+    background: rgba(37,99,235,0.06);
+    border-radius: 8px;
+    transition: background 0.12s ease, transform 0.12s ease;
+    box-shadow: 0 2px 6px rgba(16,24,40,0.06);
+}
+
+.voir-icon:hover {
+    background: rgba(37,99,235,0.12);
+    transform: translateY(-2px);
+}
+
+.voir-icon svg { display: block; width: 16px; height: 16px; }
 
 .empty-note {
     color: #6b7280;
@@ -271,7 +349,7 @@ body {
 
 @media (max-width: 1000px) {
     .menu-sections {
-        grid-template-columns: repeat(2, 1fr);
+        gap: 16px;
     }
 }
 

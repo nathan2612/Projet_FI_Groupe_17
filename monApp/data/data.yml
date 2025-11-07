@@ -427,6 +427,10 @@ appartenir_menus:
   - id_commande: 1
     id_menu: 1
     quantite: 1
+    # champs ajoutés pour compatibilité avec le modèle (peuvent être null)
+    id_entree: 2
+    id_plat_choisi: 5
+    id_dessert: null
 
 
 avis:

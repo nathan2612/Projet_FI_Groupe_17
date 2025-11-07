@@ -27,15 +27,28 @@
     {# Les listes `entres`, `plats` et `desserts` sont fournies directement par la vue. #}
     <div class="menu-sections">
 
+        <form method="post" action="{{ url_for('ajouter_menu_selection') }}">
+        <input type="hidden" name="id_menu" value="{{ menu.id_menu }}">
+
         <section class="menu-course">
             <h2>Entrées</h2>
             {% if entres %}
                 <ul class="menu-plats">
                 {% for c in entres %}
                     <li class="menu-item">
-                        <a href="{{ url_for('detail_plat', id_plat=c.plat.id_plat) }}">{{ c.plat.nom_plat }}</a>
-                        <span class="prix">{{ "%.2f€"|format(c.plat.prix) }}</span>
-                        <p class="description-small">{{ c.plat.description }}</p>
+                        <label class="menu-choice">
+                            <input type="radio" name="entree" value="{{ c.plat.id_plat }}">
+                            <span class="menu-choice-content">
+                                <div class="plat-name">{{ c.plat.nom_plat }}</div>
+                                <p class="description-small">{{ c.plat.description }}</p>
+                            </span>
+                        </label>
+                        <a class="voir-icon" href="{{ url_for('detail_plat', id_plat=c.plat.id_plat) }}" aria-label="Voir {{ c.plat.nom_plat }}">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                                <path d="M5 12h14" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                <path d="M13 5l7 7-7 7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            </svg>
+                        </a>
                     </li>
                 {% endfor %}
                 </ul>
@@ -50,9 +63,19 @@
                 <ul class="menu-plats">
                 {% for c in plats %}
                     <li class="menu-item">
-                        <a href="{{ url_for('detail_plat', id_plat=c.plat.id_plat) }}">{{ c.plat.nom_plat }}</a>
-                        <span class="prix">{{ "%.2f€"|format(c.plat.prix) }}</span>
-                        <p class="description-small">{{ c.plat.description }}</p>
+                        <label class="menu-choice">
+                            <input type="radio" name="plat" value="{{ c.plat.id_plat }}">
+                            <span class="menu-choice-content">
+                                <div class="plat-name">{{ c.plat.nom_plat }}</div>
+                                <p class="description-small">{{ c.plat.description }}</p>
+                            </span>
+                        </label>
+                        <a class="voir-icon" href="{{ url_for('detail_plat', id_plat=c.plat.id_plat) }}" aria-label="Voir {{ c.plat.nom_plat }}">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                                <path d="M5 12h14" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                <path d="M13 5l7 7-7 7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            </svg>
+                        </a>
                     </li>
                 {% endfor %}
                 </ul>
@@ -67,9 +90,19 @@
                 <ul class="menu-plats">
                 {% for c in desserts %}
                     <li class="menu-item">
-                        <a href="{{ url_for('detail_plat', id_plat=c.plat.id_plat) }}">{{ c.plat.nom_plat }}</a>
-                        <span class="prix">{{ "%.2f€"|format(c.plat.prix) }}</span>
-                        <p class="description-small">{{ c.plat.description }}</p>
+                        <label class="menu-choice">
+                            <input type="radio" name="dessert" value="{{ c.plat.id_plat }}">
+                            <span class="menu-choice-content">
+                                <div class="plat-name">{{ c.plat.nom_plat }}</div>
+                                <p class="description-small">{{ c.plat.description }}</p>
+                            </span>
+                        </label>
+                        <a class="voir-icon" href="{{ url_for('detail_plat', id_plat=c.plat.id_plat) }}" aria-label="Voir {{ c.plat.nom_plat }}">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                                <path d="M5 12h14" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                <path d="M13 5l7 7-7 7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            </svg>
+                        </a>
                     </li>
                 {% endfor %}
                 </ul>
@@ -77,6 +110,11 @@
                 <p class="empty-note">Aucun dessert dans ce menu.</p>
             {% endif %}
         </section>
+        <div class="menu-actions" style="grid-column: 1 / -1; text-align: center; margin-top: 16px;">
+            <button type="submit" class="bouton-commander">Ajouter au panier</button>
+        </div>
+
+        </form>
 
     </div>
 {% endblock %}
