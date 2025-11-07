@@ -77,13 +77,16 @@ def loaddb(filename):
         db.session.merge(obj)
     db.session.commit()
 
+    from hashlib import sha256
+    m = sha256()
     for entry in data.get('clients', []) or []:
+        m.update(entry.get('mot_de_passe').encode())
         obj = CLIENT(
             id_client=entry.get('id_client'),
             nom=entry.get('nom'),
             prenom=entry.get('prenom'),
             telephone=entry.get('telephone'),
-            mot_de_passe=entry.get('mot_de_passe'),
+            mot_de_passe=m.hexdigest(),
             banni=entry.get('banni', False),
             # Rôle de l'utilisateur : 'user' (par défaut) ou 'admin'
             role=entry.get('role', 'user')

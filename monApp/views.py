@@ -233,6 +233,7 @@ def commandes():
     try:
         commandes_list = (
             db.session.query(COMMANDE)
+            .filter(~COMMANDE.statut.in_(['En commande', 'récupéré', 'non récupéré']))
             .order_by(COMMANDE.date_commande.desc())
             .all()
         )

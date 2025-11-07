@@ -267,8 +267,8 @@ clients:
   - id_client: 1
     nom: "Wang"
     prenom: "Mei"
-    telephone: "+33123456789"
-    mot_de_passe: "hashed_password_1"
+    telephone: "0"
+    mot_de_passe: "admin"
     role : admin
   - id_client: 2
     nom: "Dupont"
