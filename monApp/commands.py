@@ -114,12 +114,17 @@ def loaddb(filename):
         db.session.merge(obj)
     db.session.commit()
 
+    # 6) commandes
+    original_statuts = {}
     for entry in data.get('commandes', []) or []:
+        cmd_id = entry.get('id_commande')
+        original_statuts[cmd_id] = entry.get('statut')
         obj = COMMANDE(
-            id_commande=entry.get('id_commande'),
+            id_commande=cmd_id,
             id_client=entry.get('id_client'),
-            date_commande=datetime.today().replace(hour=12, minute=0, second=0, microsecond=0),
-            statut=entry.get('statut'),
+            date_commande=datetime.strptime(entry.get('date_commande'), '%Y-%m-%d %H:%M:%S'),
+            # force 'En commande' during import to avoid stock triggers
+            statut='En commande',
             montant_total=entry.get('montant_total'),
             sur_place=entry.get('sur_place'),
             nombre_personnes=entry.get('nombre_personnes')
@@ -141,6 +146,10 @@ def loaddb(filename):
             id_commande=entry.get('id_commande'),
             id_menu=entry.get('id_menu'),
             quantite=entry.get('quantite'),
+            # support the new chosen-plat columns (may be None)
+            id_entree=entry.get('id_entree',None),
+            id_plat_choisi=entry.get('id_plat_choisi',None),
+            id_dessert=entry.get('id_dessert',None)
         )
         db.session.merge(obj)
     db.session.commit()

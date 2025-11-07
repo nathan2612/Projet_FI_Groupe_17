@@ -2,46 +2,6 @@
 
 {% block styles %}
     <link rel="stylesheet" href="{{ url_for('static', filename='panier.css') }}">
-    <style>
-        .popup-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(0, 0, 0, 0.6);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            z-index: 1000;
-            visibility: hidden;
-            opacity: 0;
-            transition: opacity 0.3s ease, visibility 0.3s ease;
-        }
-        .popup-overlay.is-visible {
-            visibility: visible;
-            opacity: 1;
-        }
-        .popup-content {
-            background-color: #fff;
-            padding: 30px;
-            border-radius: 8px;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
-            text-align: center;
-            max-width: 450px;
-            width: 90%;
-        }
-        .popup-content h3 { margin-top: 0; font-size: 1.5em; }
-        .popup-actions { margin-top: 20px; display: flex; justify-content: center; gap: 15px; }
-        .btn-popup { padding: 10px 20px; border-radius: 5px; border: 1px solid #ccc; cursor: pointer; font-weight: bold; }
-        .btn-confirmer { background-color: #28a745; color: white; border-color: #28a745; }
-        .btn-annuler { background-color: #f8f9fa; color: #333; }
-
-        .dark-mode .popup-content {
-            background-color: #333;
-            color: #e0e0e0;
-        }
-    </style>
 {% endblock %}
 
 {% block main %}
@@ -93,6 +53,22 @@
                         <div class="item-details">
                             <h2>{{ item_menu.menu.nom_menu }}</h2>
                             <p class="item-price-single">{{ "%.2f€"|format(item_menu.menu.prix) }} / unité</p>
+                            {% if item_menu.entree or item_menu.plat_choisi or item_menu.dessert %}
+                            <div class="menu-choices">
+                                <strong>Choix :</strong>
+                                <ul class="choices-list">
+                                    {% if item_menu.entree %}
+                                        <li class="choice-entry">Entrée: {{ item_menu.entree.nom_plat }}</li>
+                                    {% endif %}
+                                    {% if item_menu.plat_choisi %}
+                                        <li class="choice-main">Plat: {{ item_menu.plat_choisi.nom_plat }}</li>
+                                    {% endif %}
+                                    {% if item_menu.dessert %}
+                                        <li class="choice-dessert">Dessert: {{ item_menu.dessert.nom_plat }}</li>
+                                    {% endif %}
+                                </ul>
+                            </div>
+                            {% endif %}
                         </div>
                         <div class="item-controls">
                             <form action="{{ url_for('modifier_quantite_panier') }}" method="post" class="quantity-form">
@@ -149,7 +125,7 @@
         </div>
     </div>
 
-    <script>
+<script>
         document.addEventListener('DOMContentLoaded', function() {
             const checkoutBtn = document.getElementById('checkout-btn');
             if (checkoutBtn) {
@@ -171,5 +147,5 @@
                 });
             }
         });
-    </script>
+</script>
 {% endblock %}

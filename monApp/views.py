@@ -162,35 +162,17 @@ def detail_menu(id_menu):
     plats = db.session.query(CONTENIR).filter_by(id_menu=id_menu, type_plat=1).all()
     desserts = db.session.query(CONTENIR).filter_by(id_menu=id_menu, type_plat=2).all()
     return render_template("detail_menu.html", menu=menu, entres=entres, desserts=desserts, plats=plats)
-
-@app.route('/ajouter-au-panier-menu/', methods=['POST'])
-def ajouter_au_panier_menu():
+   
+@app.route('/ajouter-menu-selection/', methods=['POST'])
+def ajouter_menu_selection():
     if not current_user.is_authenticated:
         flash("Veuillez vous connecter pour ajouter des articles au panier.", "info")
-        return redirect(url_for('connexion', next=url_for('produits')))
+        return redirect(url_for('connexion', next=request.referrer or url_for('produits')))
 
-    id_plat = request.form.get('id_plat')
-    if not id_plat:
-        flash("Aucun plat spécifié.", "error")
-        return redirect(url_for('produits'))
-
-    try:
-        id_plat_int = int(id_plat)
-    except (ValueError, TypeError):
-        flash("Identifiant de plat invalide.", "error")
-        return redirect(url_for('produits'))
-    
-    stock_check_date = date.today()
-    stock_disponible = db.session.query(DEFINIR_STOCK).filter_by(id_plat=id_plat_int, jour=stock_check_date).first()
-    item_panier_existant = db.session.query(APPARTENIR_PLATS).join(COMMANDE).filter(
-        COMMANDE.id_client == current_user.id_client,
-        COMMANDE.statut == 'En commande',
-        APPARTENIR_PLATS.id_plat == id_plat_int
-    ).first()
-    quantite_actuelle = item_panier_existant.quantite if item_panier_existant else 0
-    if not stock_disponible or stock_disponible.stock <= quantite_actuelle:
-        flash("Stock insuffisant pour ajouter ce plat.", "error")
-        return redirect(request.referrer or url_for('produits'))
+    entree_id = request.form.get('entree')
+    plat_id = request.form.get('plat')
+    dessert_id = request.form.get('dessert')
+    id_menu = request.form.get('id_menu')
 
     commande = db.session.query(COMMANDE).filter_by(id_client=current_user.id_client, statut='En commande').first()
     if not commande:
@@ -201,24 +183,33 @@ def ajouter_au_panier_menu():
         db.session.add(commande)
         db.session.commit()
 
-    item_panier = db.session.query(APPARTENIR_PLATS).filter_by(id_commande=commande.id_commande, id_plat=id_plat_int).first()
+    # Ensure we explicitly include id_dessert (may be None) when looking for an existing identical menu
+    menu = db.session.query(APPARTENIR_MENUS).filter_by(
+        id_commande=commande.id_commande,
+        id_menu=id_menu,
+        id_entree=entree_id,
+        id_plat_choisi=plat_id,
+        id_dessert=dessert_id
+    ).first()
 
-    if item_panier:
-        item_panier.quantite += 1
+    if menu:
+        menu.quantite = (menu.quantite or 0) + 1
     else:
-        item_panier = APPARTENIR_PLATS(id_commande=commande.id_commande, id_plat=id_plat_int, quantite=1)
-        db.session.add(item_panier)
-
-    total = 0
-    for item in commande.plats:
-        total += item.plat.prix * item.quantite
-    for item in commande.menus:
-        total += item.menu.prix * item.quantite
-    commande.montant_total = total
+        # Create the row, explicitly setting id_dessert to None when not chosen so the INSERT includes the column
+        menu = APPARTENIR_MENUS(
+            id_commande=commande.id_commande,
+            id_menu=id_menu,
+            quantite=1,
+            id_entree=entree_id,
+            id_plat_choisi=plat_id,
+            id_dessert=dessert_id if dessert_id is not None else None
+        )
+        db.session.add(menu)
     db.session.commit()
 
-    flash("Plat ajouté au panier avec succès !", "success")
-    return redirect(request.referrer or url_for('produits'))
+    flash("Menu ajouté au panier.", "success")
+    return redirect(request.referrer or url_for('panier'))
+
 
 @app.route('/contact/')
 def contact():

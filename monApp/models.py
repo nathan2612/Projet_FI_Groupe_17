@@ -149,8 +149,16 @@ class APPARTENIR_MENUS(db.Model):
 	commande = db.relationship('COMMANDE', back_populates='menus')
 	menu = db.relationship('MENU', back_populates='appartenir_menus')
 
+	id_entree = db.Column(db.Integer, db.ForeignKey('plats.id_plat'), primary_key=True)
+	id_plat_choisi = db.Column(db.Integer, db.ForeignKey('plats.id_plat'), primary_key=True)
+	id_dessert = db.Column(db.Integer, db.ForeignKey('plats.id_plat'), primary_key=True)
+
+	entree = db.relationship('PLAT', foreign_keys=[id_entree])
+	plat_choisi = db.relationship('PLAT', foreign_keys=[id_plat_choisi])
+	dessert = db.relationship('PLAT', foreign_keys=[id_dessert])
+
 	def __repr__(self):
-		return f"<AppartenirMenus commande={self.id_commande} menu={self.id_menu} qty={self.quantite}>"
+		return f"<AppartenirMenus commande={self.id_commande} menu={self.id_menu} qty={self.quantite} entree={self.id_entree} plat={self.id_plat_choisi} dessert={self.id_dessert}>"
 
 
 class AVIS(db.Model):
@@ -221,26 +229,32 @@ CREATE TRIGGER trg_insert_stock_menus
 BEFORE INSERT ON appartenir_menus
 FOR EACH ROW
 BEGIN
-	DECLARE fini INT DEFAULT 0;
-	DECLARE plat_id INT;
-	DECLARE les_plats CURSOR FOR
-		SELECT id_plat FROM contenir WHERE id_menu = NEW.id_menu;
-
-	DECLARE CONTINUE HANDLER FOR NOT FOUND SET fini = 1;
-
+	-- When inserting a menu line, decrement stock only for the chosen plats (if provided)
 	IF (SELECT statut FROM commandes WHERE id_commande = NEW.id_commande) != 'En commande' THEN
-		OPEN les_plats; -- Le curseur doit être ouvert après la condition IF
-		WHILE not fini do
-			FETCH les_plats INTO plat_id;
-			IF not fini THEN
-				IF (SELECT stock FROM definir_stock WHERE id_plat = plat_id and jour = (select DATE(date_commande) from commandes where id_commande = NEW.id_commande)) - NEW.quantite >= 0 THEN
-					UPDATE definir_stock SET stock = stock - NEW.quantite WHERE id_plat = plat_id and jour = (select DATE(date_commande) from commandes where id_commande = NEW.id_commande);
-				ELSE
-					SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT='Stock insuffisant pour commander le menu';
-				END IF;
+		-- entree
+		IF NEW.id_entree IS NOT NULL THEN
+			IF (SELECT stock FROM definir_stock WHERE id_plat = NEW.id_entree AND jour = (SELECT DATE(date_commande) FROM commandes WHERE id_commande = NEW.id_commande)) - NEW.quantite >= 0 THEN
+				UPDATE definir_stock SET stock = stock - NEW.quantite WHERE id_plat = NEW.id_entree AND jour = (SELECT DATE(date_commande) FROM commandes WHERE id_commande = NEW.id_commande);
+			ELSE
+				SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT='Stock insuffisant pour l''entrée du menu';
 			END IF;
-		END WHILE;
-		CLOSE les_plats;
+		END IF;
+		-- plat
+		IF NEW.id_plat_choisi IS NOT NULL THEN
+			IF (SELECT stock FROM definir_stock WHERE id_plat = NEW.id_plat_choisi AND jour = (SELECT DATE(date_commande) FROM commandes WHERE id_commande = NEW.id_commande)) - NEW.quantite >= 0 THEN
+				UPDATE definir_stock SET stock = stock - NEW.quantite WHERE id_plat = NEW.id_plat_choisi AND jour = (SELECT DATE(date_commande) FROM commandes WHERE id_commande = NEW.id_commande);
+			ELSE
+				SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT='Stock insuffisant pour le plat du menu';
+			END IF;
+		END IF;
+		-- dessert
+		IF NEW.id_dessert IS NOT NULL THEN
+			IF (SELECT stock FROM definir_stock WHERE id_plat = NEW.id_dessert AND jour = (SELECT DATE(date_commande) FROM commandes WHERE id_commande = NEW.id_commande)) - NEW.quantite >= 0 THEN
+				UPDATE definir_stock SET stock = stock - NEW.quantite WHERE id_plat = NEW.id_dessert AND jour = (SELECT DATE(date_commande) FROM commandes WHERE id_commande = NEW.id_commande);
+			ELSE
+				SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT='Stock insuffisant pour le dessert du menu';
+			END IF;
+		END IF;
 	END IF;
 END;''')
 
@@ -251,26 +265,41 @@ CREATE TRIGGER trg_update_stock_menus
 BEFORE UPDATE ON appartenir_menus
 FOR EACH ROW
 BEGIN
-	DECLARE fini INT DEFAULT 0;
-	DECLARE plat_id INT;
-	DECLARE les_plats CURSOR FOR
-		SELECT id_plat FROM contenir WHERE id_menu = NEW.id_menu;
-
-	DECLARE CONTINUE HANDLER FOR NOT FOUND SET fini = 1;
-
+	-- On update: restore old quantities then apply new ones (both in same transaction)
 	IF (SELECT statut FROM commandes WHERE id_commande = NEW.id_commande) != 'En commande' THEN
-		OPEN les_plats; -- Le curseur doit être ouvert après la condition IF
-		WHILE not fini do
-			FETCH les_plats INTO plat_id;
-			IF not fini THEN
-				IF (SELECT stock FROM definir_stock WHERE id_plat = plat_id and jour = (select DATE(date_commande) from commandes where id_commande = NEW.id_commande)) + OLD.quantite - NEW.quantite >= 0 THEN
-					UPDATE definir_stock SET stock = stock + OLD.quantite - NEW.quantite WHERE id_plat = plat_id and jour = (select DATE(date_commande) from commandes where id_commande = NEW.id_commande);
-				ELSE
-					SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT='Stock insuffisant pour commander le menu';
-				END IF;
+		-- add back old quantities
+		IF OLD.id_entree IS NOT NULL THEN
+			UPDATE definir_stock SET stock = stock + OLD.quantite WHERE id_plat = OLD.id_entree AND jour = (SELECT DATE(date_commande) FROM commandes WHERE id_commande = OLD.id_commande);
+		END IF;
+		IF OLD.id_plat_choisi IS NOT NULL THEN
+			UPDATE definir_stock SET stock = stock + OLD.quantite WHERE id_plat = OLD.id_plat_choisi AND jour = (SELECT DATE(date_commande) FROM commandes WHERE id_commande = OLD.id_commande);
+		END IF;
+		IF OLD.id_dessert IS NOT NULL THEN
+			UPDATE definir_stock SET stock = stock + OLD.quantite WHERE id_plat = OLD.id_dessert AND jour = (SELECT DATE(date_commande) FROM commandes WHERE id_commande = OLD.id_commande);
+		END IF;
+
+		-- now subtract new quantities, checking availability
+		IF NEW.id_entree IS NOT NULL THEN
+			IF (SELECT stock FROM definir_stock WHERE id_plat = NEW.id_entree AND jour = (SELECT DATE(date_commande) FROM commandes WHERE id_commande = NEW.id_commande)) - NEW.quantite >= 0 THEN
+				UPDATE definir_stock SET stock = stock - NEW.quantite WHERE id_plat = NEW.id_entree AND jour = (SELECT DATE(date_commande) FROM commandes WHERE id_commande = NEW.id_commande);
+			ELSE
+				SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT='Stock insuffisant pour l''entrée du menu';
 			END IF;
-		END WHILE;
-		CLOSE les_plats; -- Le curseur doit être fermé avant la fin du bloc IF
+		END IF;
+		IF NEW.id_plat_choisi IS NOT NULL THEN
+			IF (SELECT stock FROM definir_stock WHERE id_plat = NEW.id_plat_choisi AND jour = (SELECT DATE(date_commande) FROM commandes WHERE id_commande = NEW.id_commande)) - NEW.quantite >= 0 THEN
+				UPDATE definir_stock SET stock = stock - NEW.quantite WHERE id_plat = NEW.id_plat_choisi AND jour = (SELECT DATE(date_commande) FROM commandes WHERE id_commande = NEW.id_commande);
+			ELSE
+				SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT='Stock insuffisant pour le plat du menu';
+			END IF;
+		END IF;
+		IF NEW.id_dessert IS NOT NULL THEN
+			IF (SELECT stock FROM definir_stock WHERE id_plat = NEW.id_dessert AND jour = (SELECT DATE(date_commande) FROM commandes WHERE id_commande = NEW.id_commande)) - NEW.quantite >= 0 THEN
+				UPDATE definir_stock SET stock = stock - NEW.quantite WHERE id_plat = NEW.id_dessert AND jour = (SELECT DATE(date_commande) FROM commandes WHERE id_commande = NEW.id_commande);
+			ELSE
+				SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT='Stock insuffisant pour le dessert du menu';
+			END IF;
+		END IF;
 	END IF;
 END;''')
 
