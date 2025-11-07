@@ -1,14 +1,12 @@
 {% extends "base.html" %}
 
 {% block styles %}
-    {# Ce lien est crucial ! Il charge le CSS pour CETTE page #}
     <link rel="stylesheet" href="{{ url_for('static', filename='detail.css') }}">
 {% endblock %}
 
 {% block main %}
     <div class="page-content-wrapper">
         <main class="plat-container">
-            {# Affiche l'image du plat. Si aucune image n'est définie, utilise une image par défaut. #}
             <div class="plat-image-wrapper">
                 <img src="{{ url_for('static', filename='images/' + plat.image_url) }}" alt="Photo de {{ plat.nom_plat }}" class="plat-image">
             </div>
@@ -21,7 +19,6 @@
                     {{ plat.longue_description or plat.description }}
                 </p>
                 
-                {# Affiche le bouton ou un message de rupture de stock #}
                 {% if stock_disponible > 0 %}
                     <form action="{{ url_for('ajouter_au_panier') }}" method="POST">
                         <input type="hidden" name="id_plat" value="{{ plat.id_plat }}">
@@ -41,8 +38,8 @@
                 </div>
             </header>
             {% set allergenes = [
-                {'nom': 'vegetarien', 'icone': 'Gluten.png'},
-                {'nom': 'vegan', 'icone': 'Gluten.png'},
+                {'nom': 'vegetarien', 'icone': 'Vegetarien.png'},
+                {'nom': 'vegan', 'icone': 'Vegan.png'},
                 {'nom': 'gluten', 'icone': 'Gluten.png'},
                 {'nom': 'lactose', 'icone': 'Lactose.png'},
                 {'nom': 'fruit_a_coque','icone': 'Fruits à coque.png'},

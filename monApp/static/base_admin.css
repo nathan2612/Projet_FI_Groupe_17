@@ -1,10 +1,8 @@
-/* static/base_admin.css */
-
 :root {
-    --admin-sidebar-bg: #1f2937; /* Gris-bleu très foncé */
-    --admin-sidebar-text: #d1d5db; /* Gris clair */
-    --admin-sidebar-hover-bg: #374151; /* Gris plus clair pour le survol */
-    --admin-sidebar-active-bg: #4a69bd; /* Bleu du dashboard pour l'élément actif */
+    --admin-sidebar-bg: #1f2937;
+    --admin-sidebar-text: #d1d5db;
+    --admin-sidebar-hover-bg: #374151;
+    --admin-sidebar-active-bg: #4a69bd;
     --admin-sidebar-active-text: #ffffff;
     --admin-content-bg: #f9fafb; /* Fond très clair pour le contenu */
     --admin-font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
@@ -30,7 +28,7 @@ body {
     padding: 20px;
     display: flex;
     flex-direction: column;
-    flex-shrink: 0; /* Empêche le sidebar de rétrécir */
+    flex-shrink: 0;
     box-shadow: 2px 0 10px rgba(0,0,0,0.1);
     z-index: 10;
 }
@@ -65,7 +63,7 @@ body {
     font-weight: 500;
     display: flex;
     align-items: center;
-    gap: 12px; /* Espace entre l'icône et le texte */
+    gap: 12px;
 }
 
 .sidebar .nav-links a:hover {
@@ -79,7 +77,6 @@ body {
 }
 
 .sidebar .logout-link a {
-    /* Utilise le même style que les liens de navigation pour la cohérence */
     color: var(--admin-sidebar-text);
     text-decoration: none;
     display: flex;
@@ -97,6 +94,5 @@ body {
 
 .content {
     flex-grow: 1;
-    /* Le padding est maintenant géré par les conteneurs internes comme .dashboard-container */
-    overflow-y: auto; /* Permet le scroll si le contenu est trop long */
+    overflow-y: auto;
 }

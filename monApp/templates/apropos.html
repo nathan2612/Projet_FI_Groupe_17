@@ -1,15 +1,12 @@
 {% extends "base.html" %}
 
 {% block styles %}
-    {# Ce lien est crucial ! Il charge le CSS pour CETTE page #}
     <link rel="stylesheet" href="{{ url_for('static', filename='propos.css') }}">
 {% endblock %}
 
 {% block main %}
-    {# Ce conteneur va devenir "flexible" grâce au CSS #}
     <div class="page-content-wrapper"> 
 
-        {# COLONNE 1 : Le texte #}
         <div class="about-text-container">
             <h1>A propos de l'Oumami</h1>
             <h2>Subheading for description or instructions</h2>
@@ -24,13 +21,7 @@
             </div>
         </div>
 
-        {# COLONNE 2 : L'image #}
         <div class="about-image-container">
-            
-            {# 
-              VOICI LA CORRECTION IMPORTANTE :
-              On utilise url_for() avec votre nom de fichier.
-            #}
             <img src="{{ url_for('static', filename='images/sushi-sur-la-table.jpg') }}" alt="Plat Oumami - sushi sur la table">
 
         </div>
