@@ -39,6 +39,192 @@
     gap: 0.75rem;
 }
 
+/*******************************************************************************
+ * DASHBOARD SPECIFIC STYLES (for admin_index.html)
+ * Encapsulated under .dashboard-container to avoid conflicts with other admin pages.
+ ******************************************************************************/
+.dashboard-container {
+    /* Dashboard specific variables */
+    --dashboard-bg: #f8f9fa;
+    --dashboard-card-bg: #ffffff;
+    --dashboard-text-primary: #212529;
+    --dashboard-text-secondary: #6c757d;
+    --dashboard-border-color: #dee2e6;
+    --dashboard-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+    --dashboard-radius: 12px;
+    --dashboard-primary-color: #4a69bd; /* Un bleu doux */
+    --dashboard-green-positive: #10b981;
+    --dashboard-red-negative: #ef4444;
+
+    padding: 2rem;
+    background-color: var(--dashboard-bg);
+}
+
+.dashboard-container .dashboard-header {
+    margin-bottom: 2rem;
+}
+
+.dashboard-container .dashboard-header h1 {
+    font-size: 2rem;
+    font-weight: 700;
+    color: var(--dashboard-text-primary);
+    margin: 0 0 0.25rem 0;
+}
+
+.dashboard-container .dashboard-header p {
+    font-size: 1rem;
+    color: var(--dashboard-text-secondary);
+    margin: 0;
+}
+
+/* --- Cartes de statistiques principales --- */
+.dashboard-container .stats-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 1.5rem;
+    margin-bottom: 2rem;
+}
+
+.dashboard-container .stat-card {
+    background-color: var(--dashboard-card-bg);
+    border-radius: var(--dashboard-radius);
+    padding: 1.5rem;
+    box-shadow: var(--dashboard-shadow);
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.dashboard-container .stat-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 15px rgba(0, 0, 0, 0.07);
+}
+
+.dashboard-container .stat-icon {
+    font-size: 2rem;
+    color: var(--dashboard-primary-color);
+    background-color: #eef2ff; /* Fond léger pour l'icône */
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-shrink: 0;
+}
+
+.dashboard-container .stat-info .stat-label {
+    font-size: 0.9rem;
+    color: var(--dashboard-text-secondary);
+    margin-bottom: 0.25rem;
+}
+
+.dashboard-container .stat-info .stat-value {
+    font-size: 2rem;
+    font-weight: 700;
+    color: var(--dashboard-text-primary);
+    line-height: 1.2;
+}
+
+.dashboard-container .stat-info .stat-sub {
+    font-size: 0.9rem;
+    color: var(--dashboard-text-secondary);
+    margin-top: 0.25rem;
+}
+
+/* --- Grille pour les autres cartes --- */
+.dashboard-container .dashboard-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 1.5rem;
+}
+
+.dashboard-container .dashboard-card {
+    background-color: var(--dashboard-card-bg);
+    border-radius: var(--dashboard-radius);
+    padding: 1.5rem;
+    box-shadow: var(--dashboard-shadow);
+}
+
+.dashboard-container .dashboard-card.full-width {
+    grid-column: 1 / -1; /* Prend toute la largeur */
+}
+
+.dashboard-container .card-title {
+    font-size: 1.2rem;
+    font-weight: 600;
+    color: var(--dashboard-text-primary);
+    margin: 0 0 1.5rem 0;
+    border-bottom: 1px solid var(--dashboard-border-color);
+    padding-bottom: 0.75rem;
+}
+
+/* --- Listes (Top ventes, Ruptures) --- */
+.dashboard-container .item-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.dashboard-container .item-list li {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 0.95rem;
+}
+
+.dashboard-container .item-list .item-name {
+    color: var(--dashboard-text-primary);
+}
+
+.dashboard-container .item-list .item-count, .dashboard-container .item-list .item-status {
+    font-weight: 600;
+    padding: 0.25rem 0.6rem;
+    border-radius: 6px;
+    font-size: 0.85rem;
+}
+
+.dashboard-container .item-list .item-count {
+    background-color: #eef2ff;
+    color: var(--dashboard-primary-color);
+}
+
+.dashboard-container .item-list .item-status.out-of-stock {
+    background-color: #fee2e2;
+    color: var(--dashboard-red-negative);
+}
+
+.dashboard-container .empty-state {
+    color: var(--dashboard-text-secondary);
+    font-style: italic;
+}
+
+/* --- Liste de comparaison --- */
+.dashboard-container .comparison-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+}
+
+.dashboard-container .comparison-badge {
+    display: inline-block;
+    padding: 0.2rem 0.5rem;
+    border-radius: 6px;
+    font-weight: bold;
+    font-size: 0.8rem;
+    color: white;
+    margin-left: 0.5rem;
+}
+.dashboard-container .comparison-badge.positive { background-color: var(--dashboard-green-positive); }
+.dashboard-container .comparison-badge.negative { background-color: var(--dashboard-red-negative); }
+
 .search-bar input[type="text"] {
     flex-grow: 1;
     padding: 0.6rem 1rem;
