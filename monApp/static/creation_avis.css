@@ -1,11 +1,9 @@
-/* Conteneur principal de la page */
 .review-page-wrapper {
     max-width: 700px;
     margin: 40px auto;
     padding: 20px;
 }
 
-/* Carte contenant le formulaire */
 .review-card {
     background-color: var(--bg-color);
     border: 1px solid #e0e0e0;
@@ -20,7 +18,6 @@
     box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
 }
 
-/* En-tête du formulaire */
 .review-header {
     text-align: center;
     margin-bottom: 30px;
@@ -40,7 +37,6 @@
     color: #bbb;
 }
 
-/* Styles généraux pour les groupes de formulaire */
 .form-group {
     margin-bottom: 25px;
 }
@@ -52,10 +48,9 @@
     font-size: 1em;
 }
 
-/* Style des étoiles */
 .rating-stars {
     display: inline-flex;
-    flex-direction: row-reverse; /* Pour que le survol fonctionne de droite à gauche */
+    flex-direction: row-reverse;
     font-size: 2.5em;
     justify-content: center;
 }
@@ -78,7 +73,6 @@
     color: #ffc107;
 }
 
-/* Champ de texte pour le commentaire */
 textarea {
     width: 100%;
     padding: 12px;
@@ -90,7 +84,6 @@ textarea {
     min-height: 120px;
 }
 
-/* Informations sur la publication */
 .publish-info {
     display: flex;
     align-items: center;
@@ -108,14 +101,12 @@ textarea {
     color: #ccc;
 }
 
-/* Boutons d'action */
 .form-actions {
     display: flex;
     justify-content: flex-end;
     gap: 15px;
 }
 
-/* Styles génériques pour les boutons */
 .btn {
     display: inline-block;
     font-weight: 600;
@@ -131,10 +122,9 @@ textarea {
     transition: all 0.2s ease-in-out;
 }
 
-/* Style pour le bouton principal (Publier) */
 .btn-primary {
     color: #fff;
-    background-color: #4285f4; /* Bleu Google */
+    background-color: #4285f4;
     border-color: #4285f4;
 }
 
@@ -143,7 +133,6 @@ textarea {
     border-color: #357ae8;
 }
 
-/* Style pour le bouton secondaire (Annuler) */
 .btn-secondary {
     color: #333;
     background-color: #e9ecef;
@@ -153,5 +142,4 @@ textarea {
 .btn-secondary:hover {
     background-color: #d6dade;
     border-color: #d6dade;
-}
 }

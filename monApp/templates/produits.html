@@ -56,7 +56,6 @@
         <h1>Nos Plats</h1>
 
         <div class="menu-grid">
-            {# Boucle sur chaque plat pour l'afficher #}
             {% for plat in produits %}
                  <div class="menu-card">
                      <a href="{{ url_for('detail_plat', id_plat=plat.id_plat) }}" class="card-image-link">

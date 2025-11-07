@@ -1,6 +1,3 @@
-/* Styles pour la barre de navigation de la carte (Plats / Menus) */
-/* Utilise les variables définies dans style.css quand disponibles */
-
 .carte-header {
   background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(0,0,0,0.02));
   padding: 18px 0;
@@ -50,7 +47,6 @@
   box-shadow: 0 10px 30px rgba(255,109,65,0.14);
 }
 
-/* Small screens: stack tabs */
 @media (max-width: 560px) {
   .carte-tabs {
     display: flex;
@@ -64,7 +60,6 @@
   }
 }
 
-/* Optional subtle separator under the nav */
 .carte-header::after {
   content: '';
   display: block;
@@ -73,7 +68,6 @@
   margin-top: 8px;
 }
 
-/* Ensure contrast when dark-mode is active */
 .dark-mode .carte-tabs {
   background: #1c1c1c;
 }

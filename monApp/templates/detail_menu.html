@@ -1,14 +1,12 @@
 {% extends "base.html" %}
 
 {% block styles %}
-    {# Ce lien est crucial ! Il charge le CSS pour CETTE page #}
     <link rel="stylesheet" href="{{ url_for('static', filename='detail_menu.css') }}">
 {% endblock %}
 
 {% block main %}
     <div class="page-content-wrapper">
         <main class="plat-container">
-            {# Affiche l'image du plat. Si aucune image n'est définie, utilise une image par défaut. #}
             <div class="plat-image-wrapper">
                 <img src="{{ url_for('static', filename='images/' + menu.image_url) }}" alt="Photo de {{ menu.nom_menu }}" class="plat-image">
             </div>
@@ -24,7 +22,6 @@
             </div>
         </main>
     </div>
-    {# Les listes `entres`, `plats` et `desserts` sont fournies directement par la vue. #}
     <div class="menu-sections">
 
         <section class="menu-course">

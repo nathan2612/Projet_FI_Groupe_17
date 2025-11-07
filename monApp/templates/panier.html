@@ -1,10 +1,8 @@
 {% extends "base.html" %}
 
 {% block styles %}
-    {# Ce lien est crucial ! Il charge le CSS pour CETTE page #}
     <link rel="stylesheet" href="{{ url_for('static', filename='panier.css') }}">
     <style>
-        /* Styles pour la pop-up de confirmation */
         .popup-overlay {
             position: fixed;
             top: 0;
@@ -39,7 +37,6 @@
         .btn-confirmer { background-color: #28a745; color: white; border-color: #28a745; }
         .btn-annuler { background-color: #f8f9fa; color: #333; }
 
-        /* Pour le mode sombre */
         .dark-mode .popup-content {
             background-color: #333;
             color: #e0e0e0;
@@ -60,7 +57,6 @@
                         <a href="{{ url_for('produits') }}" class="btn-primary">Voir nos produits</a>
                     </div>
                 {% else %}
-                    {# Boucle pour afficher les plats de la commande (utilisateur connecté) #}
                     {% for item_plat in commande.plats %}
                     <div class="cart-item">
                         <img src="{{ url_for('static', filename='images/' + (item_plat.plat.image_url or 'default.jpg')) }}" alt="{{ item_plat.plat.nom_plat }}" class="item-image">
@@ -91,7 +87,6 @@
                     </div>
                     {% endfor %}
 
-                    {# Boucle pour afficher les menus de la commande (utilisateur connecté) #}
                     {% for item_menu in commande.menus %}
                     <div class="cart-item">
                         <img src="{{ url_for('static', filename='images/' + (item_menu.menu.image_url or 'default.jpg')) }}" alt="{{ item_menu.menu.nom_menu }}" class="item-image">
@@ -143,7 +138,6 @@
         </main>
     </div>
 
-    {# --- Pop-up de confirmation de commande --- #}
     <div id="confirmation-popup" class="popup-overlay">
         <div class="popup-content">
             <h3>Confirmer la commande</h3>

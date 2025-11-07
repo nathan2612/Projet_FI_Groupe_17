@@ -1,7 +1,6 @@
 {% extends "base.html" %}
 
 {% block styles %}
-    {# Ce lien est crucial ! Il charge le CSS pour CETTE page #}
     <link rel="stylesheet" href="{{ url_for('static', filename='compte.css') }}">
 {% endblock %}
 
@@ -12,7 +11,6 @@
         <p>Gérez vos informations personnelles et votre sécurité.</p>
     </div>
 
-    <!-- Vue d'affichage (visible par défaut) -->
     <div id="info-view">
         <div class="account-card">
             <div class="card-header">
@@ -52,7 +50,6 @@
         </div>
     </div>
 
-    <!-- Vue formulaire (cachée par défaut) -->
     <div id="edit-view" style="display: none;">
         <form method="POST" action="{{ url_for('compte') }}" class="account-form">
             {{ form.hidden_tag() }}

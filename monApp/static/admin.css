@@ -1,10 +1,7 @@
-/* static/css/admin.css */
-
-/* --- Variables de couleur (basées sur ta maquette) --- */
 :root {
-    --admin-bg-page: #fdfcff; /* Fond très légèrement violet */
-    --admin-text-title: #2d3748; /* Titre "Gestion du stock" */
-    --admin-text-body: #718096;  /* Texte de description */
+    --admin-bg-page: #fdfcff;
+    --admin-text-title: #2d3748;
+    --admin-text-body: #718096;
     --admin-card-bg: #ffffff;
     --admin-card-shadow: 0 4px 12px rgba(0, 0, 0, 0.04);
     --admin-card-radius: 12px;
@@ -16,23 +13,18 @@
     --admin-btn-secondary-border: #e5e7eb;
 }
 
-/* --- Conteneur principal --- */
-/* On n'utilise PAS .page-content-wrapper car son style 
-   est dans contact.css (flex, etc.). On crée un 
-   conteneur dédié pour l'admin. */
 .admin-container {
     max-width: 900px;
-    margin: 2.5rem auto; /* 40px auto */
-    padding: 0 1.25rem; /* 20px */
+    margin: 2.5rem auto;
+    padding: 0 1.25rem;
 }
 
 .admin-container h1 {
-    font-size: 2.25rem; /* 36px */
+    font-size: 2.25rem;
     color: var(--admin-text-title);
     margin-bottom: 2rem;
 }
 
-/* --- Barre de recherche --- */
 .search-bar {
     margin-bottom: 2rem;
     display: flex;
@@ -40,11 +32,8 @@
 }
 
 /*******************************************************************************
- * DASHBOARD SPECIFIC STYLES (for admin_index.html)
- * Encapsulated under .dashboard-container to avoid conflicts with other admin pages.
  ******************************************************************************/
 .dashboard-container {
-    /* Dashboard specific variables */
     --dashboard-bg: #f8f9fa;
     --dashboard-card-bg: #ffffff;
     --dashboard-text-primary: #212529;
@@ -77,7 +66,6 @@
     margin: 0;
 }
 
-/* --- Cartes de statistiques principales --- */
 .dashboard-container .stats-grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
@@ -104,7 +92,7 @@
 .dashboard-container .stat-icon {
     font-size: 2rem;
     color: var(--dashboard-primary-color);
-    background-color: #eef2ff; /* Fond léger pour l'icône */
+    background-color: #eef2ff;
     width: 60px;
     height: 60px;
     border-radius: 50%;
@@ -133,7 +121,6 @@
     margin-top: 0.25rem;
 }
 
-/* --- Grille pour les autres cartes --- */
 .dashboard-container .dashboard-grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
@@ -148,7 +135,7 @@
 }
 
 .dashboard-container .dashboard-card.full-width {
-    grid-column: 1 / -1; /* Prend toute la largeur */
+    grid-column: 1 / -1;
 }
 
 .dashboard-container .card-title {
@@ -160,7 +147,6 @@
     padding-bottom: 0.75rem;
 }
 
-/* --- Listes (Top ventes, Ruptures) --- */
 .dashboard-container .item-list {
     list-style: none;
     padding: 0;
@@ -203,7 +189,6 @@
     font-style: italic;
 }
 
-/* --- Liste de comparaison --- */
 .dashboard-container .comparison-list {
     list-style: none;
     padding: 0;
@@ -239,10 +224,9 @@
     box-shadow: 0 0 0 3px rgba(94, 71, 194, 0.1);
 }
 
-/* --- Tableau des stocks --- */
 .stock-list {
     width: 100%;
-    overflow-x: auto; /* Pour la responsivité sur petits écrans */
+    overflow-x: auto;
 }
 
 .stock-list table {
@@ -251,7 +235,7 @@
     background-color: var(--admin-card-bg);
     border-radius: var(--admin-card-radius);
     box-shadow: var(--admin-card-shadow);
-    overflow: hidden; /* Pour que le radius s'applique aux coins */
+    overflow: hidden;
 }
 
 .stock-list th,
@@ -275,7 +259,7 @@
 }
 
 .stock-list tbody tr:last-child td {
-    border-bottom: none; /* Pas de bordure pour la dernière ligne */
+    border-bottom: none;
 }
 
 .stock-list .stock-form {
@@ -292,10 +276,9 @@
     text-align: center;
 }
 
-/* --- Style des boutons (basé sur la maquette) --- */
 .btn {
     display: inline-flex;
-    gap: 0.5rem; /* Espace entre l'icône et le texte */
+    gap: 0.5rem;
     padding: 0.6rem 1.1rem;
     border-radius: 8px;
     text-decoration: none;
@@ -308,10 +291,9 @@
 }
 
 .btn i {
-    font-size: 1.1rem; /* Taille de l'icône */
+    font-size: 1.1rem;
 }
 
-/* Bouton "Modifier" (Primaire) */
 .btn-primary {
     background-color: var(--admin-btn-primary-bg);
     color: var(--admin-btn-primary-text);
@@ -323,7 +305,6 @@
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.03);
 }
 
-/* Bouton "Voir" (Secondaire) */
 .btn-secondary {
     background-color: var(--admin-btn-secondary-bg);
     color: var(--admin-btn-secondary-text);
@@ -343,7 +324,6 @@
     font-size: 1rem;
 }
 
-/* --- Responsive pour petits écrans --- */
 @media (max-width: 768px) {
     .admin-container h1 {
         font-size: 1.8rem;

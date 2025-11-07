@@ -13,7 +13,6 @@
         </div>
 
         <form action="{{ url_for('creer_avis') }}" method="POST" class="review-form">
-            {# Section pour la note avec les étoiles #}
             <div class="form-group rating-group">
                 <label class="form-label">Votre note</label>
                 <div class="rating-stars" style="text-align: center;">
@@ -25,19 +24,16 @@
                 </div>
             </div>
 
-            {# Champ pour le commentaire #}
             <div class="form-group">
                 <label for="commentaire" class="form-label">Votre commentaire</label>
                 <textarea id="commentaire" name="commentaire" rows="6" placeholder="Décrivez votre expérience, ce que vous avez aimé ou moins aimé..." required></textarea>
             </div>
 
-            {# Informations sur la publication #}
             <div class="publish-info">
                 <i class="fas fa-info-circle"></i>
                 <span>Votre prénom sera affiché publiquement avec votre avis.</span>
             </div>
 
-            {# Boutons d'action #}
             <div class="form-actions">
                 <a href="{{ url_for('index') }}" class="btn btn-secondary">Annuler</a>
                 <button type="submit" class="btn btn-primary">Publier mon avis</button>
