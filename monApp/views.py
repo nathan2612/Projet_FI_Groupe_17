@@ -243,6 +243,7 @@ def ajouter_au_panier():
     flash("Plat ajouté au panier avec succès !", "success")
     return redirect(request.referrer or url_for('produits'))
 
+
 @app.route('/modifier-quantite-panier/', methods=['POST'])
 def modifier_quantite_panier():
     if not current_user.is_authenticated:

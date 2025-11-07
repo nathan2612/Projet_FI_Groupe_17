@@ -284,3 +284,60 @@ footer {
     color: #aaa;
     text-decoration: none;
 }
+
+/* ===== MESSAGES FLASH ===== */
+/* Conteneur pour les messages flash */
+.flash-messages-container {
+    position: fixed; /* Reste visible même si on scroll */
+    top: 80px; /* Un peu en dessous de votre header, ajustez si nécessaire */
+    right: 20px;
+    z-index: 1050; /* Au-dessus de la plupart des autres éléments */
+    width: 350px;
+    max-width: 90%; /* Pour les petits écrans */
+    display: flex; /* Pour empiler les messages */
+    flex-direction: column; /* Verticalement */
+    gap: 10px; /* Espace entre les messages */
+    pointer-events: none; /* Permet de cliquer à travers le conteneur */
+}
+
+/* Style de base pour toutes les alertes */
+.alert {
+    padding: 16px 20px; /* Plus de padding pour un look plus aéré */
+    margin-bottom: 0; /* Le gap du conteneur gère l'espacement */
+    border: none; /* Supprime la bordure par défaut */
+    border-left: 5px solid; /* Ajoute une bordure colorée à gauche pour l'accent */
+    border-radius: 8px; /* Coins plus arrondis pour un look moderne */
+    color: #fff;
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1); /* Ombre plus douce et plus diffuse */
+    opacity: 0.95;
+    transition: opacity 0.3s ease-in-out, transform 0.3s ease-out; /* Ajout de transform pour des animations futures */
+    font-size: 0.95rem; /* Légèrement plus petit pour la discrétion */
+    line-height: 1.4; /* Améliore la lisibilité */
+    display: flex; /* Pour aligner icône et texte si vous en ajoutez */
+    align-items: center;
+    pointer-events: auto; /* Permet d'interagir avec l'alerte (ex: bouton de fermeture) */
+    position: relative; /* Utile si vous ajoutez un bouton de fermeture */
+}
+
+/* Style pour les messages de succès (verts) */
+.alert-success {
+    background-color: #28a745;
+    border-color: #23923d; /* Bordure vert foncé */
+}
+
+/* Style pour les messages d'erreur (rouges) */
+.alert-error {
+    background-color: #dc3545;
+    border-color: #c82333; /* Bordure rouge foncé */
+}
+
+/* Style pour les messages d'information (bleus) */
+.alert-info {
+    background-color: #17a2b8;
+    border-color: #1591a5; /* Bordure bleu foncé */
+}
+
+/* Ajustement pour le mode sombre */
+.dark-mode .alert {
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3); /* Ombre plus prononcée en dark mode pour la visibilité */
+}

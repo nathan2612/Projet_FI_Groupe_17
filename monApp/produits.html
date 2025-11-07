@@ -1,0 +1,130 @@
+{% extends "base.html" %}
+
+{% block styles %}
+    <link rel="stylesheet" href="{{ url_for('static', filename='produits.css') }}">
+{% endblock %}
+
+{% block main %}
+
+    <div class="layout">
+        <aside class="sidebar">
+
+            <section class="panel categories-block">
+                <h3>Catégories</h3>
+                <nav class="categorie-nav sidebar-categories">
+                    <ul>
+                        <li class="{% if cat_id == None %}active{% endif %}">
+                            <a href="{{ url_for('produits') }}">
+                                <img class="categorie-thumb" src="../static/images/menu.png">
+                                <span>Tous</span>
+                            </a>
+                        </li>
+                        {% for categorie in categories %}
+                        <li class="{% if categorie.id_categorie == cat_id %}active{% endif %}">
+                            <a href="{{ url_for('produits', cat_id=categorie.id_categorie) }}">
+                                <img class="categorie-thumb" src="../static/images/{{ categorie.image_categorie }}">
+                                <span>{{ categorie.nom_categorie }}</span>
+                            </a>
+                        </li>
+                        {% endfor %}
+                    </ul>
+                </nav>
+            </section>
+
+            <section class="panel preferences-block">
+                <h3>Préférences</h3>
+                <form method="get" action="{{ url_for('produits') }}" class="filters-form sidebar-filters">
+                    {% if cat_id is not none %}
+                        <input type="hidden" name="cat_id" value="{{ cat_id }}">
+                    {% endif %}
+                    <input type="hidden" name="page" value="1">
+
+                    <label><input type="checkbox" name="vegetarien" value="1" {% if filters.vegetarien %}checked{% endif %}> Végétarien</label>
+                    <label><input type="checkbox" name="vegan" value="1" {% if filters.vegan %}checked{% endif %}> Végétalien</label>
+                    <label><input type="checkbox" name="sans_gluten" value="1" {% if filters.sans_gluten %}checked{% endif %}> Sans gluten</label>
+                    <label><input type="checkbox" name="sans_lactose" value="1" {% if filters.sans_lactose %}checked{% endif %}> Sans produits laitiers</label>
+                    <label><input type="checkbox" name="sans_fruits_a_coque" value="1" {% if filters.sans_fruits_a_coque %}checked{% endif %}> Sans fruits à coque</label>
+                    <label><input type="checkbox" name="sans_crustaces" value="1" {% if filters.sans_crustaces %}checked{% endif %}> Sans crustacés</label>
+
+                    <button type="submit" class="btn">Appliquer</button>
+                </form>
+            </section>
+
+        </aside>
+
+        <main class="container content">
+        <h1>Notre carte</h1>
+
+        <section class="menu-grid">
+            {% for produit in produits %}
+            <article class="menu-card">
+                <a href="{{ url_for('detail_plat', id_plat=produit.id_plat) }}" class="card-image-link">
+                    <img src="../static/images/{{ produit.image_url }}" alt="Photo de {{ produit.nom_plat }}">
+                </a>
+                <div class="card-content">
+                    <a href="{{ url_for('detail_plat', id_plat=produit.id_plat) }}" class="card-text-link">
+                        <h2>{{ produit.nom_plat }}</h2>
+                        <p>{{ produit.description }}</p>
+                    </a>
+                    <form action="{{ url_for('ajouter_au_panier') }}" method="post">
+                                <input type="hidden" name="id_plat" value="{{ produit.id_plat }}">
+                                <button type="submit" class="order-button">
+                                    <i class="fa-solid fa-circle-plus"></i>
+                                    <span>Commander</span>
+                                </button>
+                            </form>
+                </div>
+            </article>
+            {% endfor %}
+        </section>
+
+        <nav class="pagination" aria-label="Pagination">
+            <ul>
+                <li class="page-item {% if page == 1 %}disabled{% endif %}">
+                    {% if page > 1 %}
+                        <a href="{{ url_for('produits', cat_id=cat_id, page=page-1) }}">
+                            <img class="pager-arrow left" src="{{ url_for('static', filename='images/arrow-big-left-dash.png') }}" alt="Précédent">
+                            <span class="pager-label">Précédent</span>
+                        </a>
+                    {% else %}
+                        <span>Précédent</span>
+                    {% endif %}
+                </li>
+
+                {% set start = page - 2 if page - 2 > 1 else 1 %}
+                {% set end = page + 2 if page + 2 < total_pages else total_pages %}
+                {% if start > 1 %}
+                    <li class="page-item"><a href="{{ url_for('produits', cat_id=cat_id, page=1) }}">1</a></li>
+                    {% if start > 2 %}<li class="ellipsis">…</li>{% endif %}
+                {% endif %}
+
+                {% for p in range(start, end + 1) %}
+                    <li class="page-item {% if p == page %}active{% endif %}">
+                        {% if p == page %}
+                            <span>{{ p }}</span>
+                        {% else %}
+                            <a href="{{ url_for('produits', cat_id=cat_id, page=p) }}">{{ p }}</a>
+                        {% endif %}
+                    </li>
+                {% endfor %}
+
+                {% if end < total_pages %}
+                    {% if end < total_pages -1 %}<li class="ellipsis">…</li>{% endif %}
+                    <li class="page-item"><a href="{{ url_for('produits', cat_id=cat_id, page=total_pages) }}">{{ total_pages }}</a></li>
+                {% endif %}
+
+                <li class="page-item {% if page >= total_pages %}disabled{% endif %}">
+                    {% if page < total_pages %}
+                        <a href="{{ url_for('produits', cat_id=cat_id, page=page+1) }}">
+                            <span class="pager-label">Suivant</span>
+                            <img class="pager-arrow right" src="{{ url_for('static', filename='images/arrow-big-right-dash.png') }}" alt="Suivant">
+                        </a>
+                    {% else %}
+                        <span>Suivant</span>
+                    {% endif %}
+                </li>
+            </ul>
+        </nav>
+        </main>
+    </div>
+{% endblock %}
