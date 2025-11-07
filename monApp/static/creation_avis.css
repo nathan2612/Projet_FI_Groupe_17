@@ -1,0 +1,157 @@
+/* Conteneur principal de la page */
+.review-page-wrapper {
+    max-width: 700px;
+    margin: 40px auto;
+    padding: 20px;
+}
+
+/* Carte contenant le formulaire */
+.review-card {
+    background-color: var(--bg-color);
+    border: 1px solid #e0e0e0;
+    border-radius: 12px;
+    padding: 30px 40px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+}
+
+.dark-mode .review-card {
+    background-color: #2c2c2c;
+    border-color: #444;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+}
+
+/* En-tête du formulaire */
+.review-header {
+    text-align: center;
+    margin-bottom: 30px;
+}
+
+.review-header h1 {
+    font-size: 2.2em;
+    margin-bottom: 8px;
+}
+
+.review-header p {
+    font-size: 1.1em;
+    color: #666;
+}
+
+.dark-mode .review-header p {
+    color: #bbb;
+}
+
+/* Styles généraux pour les groupes de formulaire */
+.form-group {
+    margin-bottom: 25px;
+}
+
+.form-label {
+    display: block;
+    font-weight: 600;
+    margin-bottom: 8px;
+    font-size: 1em;
+}
+
+/* Style des étoiles */
+.rating-stars {
+    display: inline-flex;
+    flex-direction: row-reverse; /* Pour que le survol fonctionne de droite à gauche */
+    font-size: 2.5em;
+    justify-content: center;
+}
+
+.rating-stars input { display: none; }
+
+.rating-stars label {
+    color: #ccc;
+    cursor: pointer;
+    transition: color 0.2s;
+}
+
+.rating-stars:hover label,
+.rating-stars input:checked ~ label {
+    color: #ffc107;
+}
+
+.rating-stars label:hover,
+.rating-stars label:hover ~ label {
+    color: #ffc107;
+}
+
+/* Champ de texte pour le commentaire */
+textarea {
+    width: 100%;
+    padding: 12px;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    font-family: inherit;
+    font-size: 1em;
+    resize: vertical;
+    min-height: 120px;
+}
+
+/* Informations sur la publication */
+.publish-info {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 12px;
+    background-color: #f8f9fa;
+    border-radius: 8px;
+    font-size: 0.9em;
+    color: #555;
+    margin-bottom: 30px;
+}
+
+.dark-mode .publish-info {
+    background-color: #3a3a3a;
+    color: #ccc;
+}
+
+/* Boutons d'action */
+.form-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 15px;
+}
+
+/* Styles génériques pour les boutons */
+.btn {
+    display: inline-block;
+    font-weight: 600;
+    text-align: center;
+    vertical-align: middle;
+    cursor: pointer;
+    user-select: none;
+    border: 1px solid transparent;
+    padding: 0.6rem 1.2rem;
+    font-size: 1rem;
+    border-radius: 8px;
+    text-decoration: none;
+    transition: all 0.2s ease-in-out;
+}
+
+/* Style pour le bouton principal (Publier) */
+.btn-primary {
+    color: #fff;
+    background-color: #4285f4; /* Bleu Google */
+    border-color: #4285f4;
+}
+
+.btn-primary:hover {
+    background-color: #357ae8;
+    border-color: #357ae8;
+}
+
+/* Style pour le bouton secondaire (Annuler) */
+.btn-secondary {
+    color: #333;
+    background-color: #e9ecef;
+    border-color: #e9ecef;
+}
+
+.btn-secondary:hover {
+    background-color: #d6dade;
+    border-color: #d6dade;
+}
+}

@@ -727,6 +727,30 @@ def edit_stock_item(item_id):
             flash("Veuillez entrer une quantité valide.", "error")
     return redirect(url_for('admin_stock'))
 
+@app.route('/creer-avis/', methods=['GET', 'POST'])
+@login_required
+def creer_avis():
+    """ Gère la création d'un nouvel avis. """
+    if request.method == 'POST':
+        note = request.form.get('note')
+        commentaire = request.form.get('commentaire')
+
+        if not note or not commentaire:
+            flash("Veuillez fournir une note et un commentaire.", "error")
+            return redirect(url_for('creer_avis'))
+
+        nouvel_avis = AVIS(
+            id_client=current_user.id_client,
+            note=int(note),
+            commentaire=commentaire
+        )
+        db.session.add(nouvel_avis)
+        db.session.commit()
+        flash("Merci ! Votre avis a été publié avec succès.", "success")
+        return redirect(url_for('avis_page'))
+
+    return render_template("creation_avis.html")
+
 @app.route('/admin/banni/')
 def admin_banni():
     # Count non-récupéré commandes per client and order desc by count

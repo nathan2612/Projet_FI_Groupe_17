@@ -131,6 +131,7 @@
 .avis-more {
     display: flex;
     justify-content: center;
+    gap: 1rem; /* Ajoute un espace entre les boutons */
     margin-top: 32px;
 }
 
