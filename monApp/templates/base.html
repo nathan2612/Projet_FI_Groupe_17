@@ -56,6 +56,19 @@
 			{% block header %}{% endblock %}
 		</header>
 
+		{# Bloc pour afficher les messages flash #}
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            <div class="flash-messages-container">
+                {% for category, message in messages %}
+                    <div class="alert alert-{{ category }}">
+                        {{ message }}
+                    </div>
+                {% endfor %}
+            </div>
+        {% endif %}
+    {% endwith %}
+
 		<main id="main" role="main" class="container">
 			{% block main %}{% endblock %}
 		</main>
@@ -86,11 +99,23 @@
 
 		<script>
 			document.addEventListener('DOMContentLoaded', function() {
+				// Script pour faire disparaître les messages flash automatiquement
+				const flashMessagesContainer = document.querySelector('.flash-messages-container');
+				if (flashMessagesContainer) {
+					const alerts = flashMessagesContainer.querySelectorAll('.alert');
+					alerts.forEach(alert => {
+						setTimeout(() => {
+							alert.style.opacity = '0'; // Déclenche la transition de fondu
+							alert.addEventListener('transitionend', () => {
+								alert.remove(); // Supprime l'élément du DOM après la transition
+							}, { once: true }); // S'assure que l'écouteur n'est exécuté qu'une seule fois
+						}, 5000); // Le message disparaît après 5 secondes (5000 millisecondes)
+					});
+				}
+
 				const themeToggle = document.getElementById('theme-toggle');
 				const body = document.body;
 				const themeIcon = themeToggle.querySelector('i');
-	
-				// Applique le thème sauvegardé au chargement de la page
 				const applyTheme = () => {
 					const savedTheme = localStorage.getItem('theme');
 					if (savedTheme === 'dark') {
@@ -103,8 +128,6 @@
 						themeIcon.classList.add('fa-sun');
 					}
 				};
-	
-				// Gère le clic sur le bouton
 				themeToggle.addEventListener('click', () => {
 					body.classList.toggle('dark-mode');
 					
@@ -112,7 +135,6 @@
 					localStorage.setItem('theme', newTheme);
 					applyTheme(); // Met à jour l'icône
 				});
-	
 				applyTheme(); // Applique le thème au chargement initial
 			});
 		</script>
