@@ -50,6 +50,12 @@
 						<i class="fas fa-shopping-basket"></i>
 						<span class="btn-nav-label">Panier</span>
 					</a>
+					{% if current_user.is_authenticated and current_user.is_admin() %}
+					<a href="{{ url_for('admin_index') }}" class="btn-nav-icon" title="Admin">
+						<i class="fas fa-cog"></i>
+						<span class="btn-nav-label">Admin</span>
+					</a>
+					{% endif %}
 				</div>
 			</div>
 
@@ -133,9 +139,9 @@
 					
 					let newTheme = body.classList.contains('dark-mode') ? 'dark' : 'light';
 					localStorage.setItem('theme', newTheme);
-					applyTheme(); // Met à jour l'icône
+					applyTheme(); 
 				});
-				applyTheme(); // Applique le thème au chargement initial
+				applyTheme(); 
 			});
 		</script>
 	</body>

@@ -79,7 +79,7 @@
 								<img class="notes-img" src="{{ url_for('static', filename='images/note_etoiles/4etoiles.png') }}" alt="4 étoiles">
 								{% endif %}
 								{% if av.note == 3 %}
-								<img class="notes-img" src="{{ url_for('static', filename='images/note_etoiles/3etoiles.png') }}" alt="2 étoiles">
+								<img class="notes-img" src="{{ url_for('static', filename='images/note_etoiles/3etoiles.png') }}" alt="3 étoiles">
 								{% endif %}
 								{% if av.note == 2 %}
 								<img class="notes-img" src="{{ url_for('static', filename='images/note_etoiles/2etoiles.png') }}" alt="2 étoiles">
@@ -93,6 +93,8 @@
 					</div>
 				<div class="avis-more">
 					<a class="voir-plus" href="{{ url_for('avis_page') }}">Voir plus d'avis</a>
+					{# Ce bouton redirige vers la page de création d'avis #}
+        <a href="{{ url_for('creer_avis') }}" class="voir-plus">Donner mon avis</a>
 				</div>
 		</section>
 	

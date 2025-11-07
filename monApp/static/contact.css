@@ -1,15 +1,13 @@
-/* Conteneur principal qui centre la carte */
 .page-content-wrapper {
     display: flex;
     justify-content: center;
-    align-items: center; /* Centre la carte verticalement */
+    align-items: center;
     padding: 3rem 1rem;
     width: 100%;
     box-sizing: border-box;
-    flex-grow: 1; /* Permet au conteneur de grandir et d'occuper l'espace */
+    flex-grow: 1;
 }
 
-/* La carte qui englobe tout */
 .contact-card {
     display: flex;
     max-width: 1100px;
@@ -17,11 +15,10 @@
     background-color: var(--bg-color);
     border-radius: 16px;
     box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
-    overflow: hidden; /* Important pour que les coins arrondis s'appliquent à la carte */
+    overflow: hidden;
     border: 1px solid #eee;
 }
 
-/* Partie gauche : Informations de contact */
 .contact-info {
     flex: 1 1 45%;
     padding: 2.5rem 3rem;
@@ -86,13 +83,11 @@
     text-decoration: underline;
 }
 
-/* Partie droite : Carte Google Maps */
 .map-container {
     flex: 1 1 55%;
     min-height: 400px;
 }
 
-/* Responsive pour les petits écrans */
 @media (max-width: 980px) {
     .page-content-wrapper {
         padding: 1rem;

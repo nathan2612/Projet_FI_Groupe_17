@@ -1,30 +1,26 @@
-/* Styles généraux */
 body {
     font-family: Arial, sans-serif;
-    background-color: #f4f4f4; /* Fond légèrement gris pour le contraste */
+    background-color: #f4f4f4;
 }
 
-/* On applique le padding et le centrage au conteneur du contenu, pas au body entier */
 .page-content-wrapper {
-    padding: 50px 0; /* Espace au-dessus et en-dessous du contenu principal */
+    padding: 50px 0;
     display: flex;
     flex-direction: column;
     align-items: center;
 }
 
-/* Conteneur principal (Image et Détails) */
 .plat-container {
     display: flex;
-    max-width: 1000px; /* Largeur maximale pour le contenu */
+    max-width: 1000px;
     width: 90%;
     background-color: white;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Légère ombre */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     padding: 30px;
 }
 
-/* Partie gauche : Image */
 .plat-image-wrapper {
-    flex: 1; /* Prend la moitié de l'espace */
+    flex: 1;
     padding-right: 40px;
 }
 
@@ -32,13 +28,12 @@ body {
     width: 100%;
     height: auto;
     display: block;
-    object-fit: cover; /* Assure que l'image couvre l'espace sans déformation */
-    border-radius: 4px; /* Coins légèrement arrondis */
+    object-fit: cover;
+    border-radius: 4px;
 }
 
-/* Partie droite : Détails */
 .plat-details {
-    flex: 1; /* Prend l'autre moitié de l'espace */
+    flex: 1;
     padding-left: 20px;
 }
 
@@ -64,7 +59,7 @@ body {
 }
 
 .plat-signature {
-    display: block; /* Pour mettre Madoka sur sa propre ligne */
+    display: block;
     margin-top: 15px;
     font-style: italic;
     color: #666;
@@ -74,9 +69,8 @@ body {
     font-weight: bold;
 }
 
-/* Bouton Commander */
 .bouton-commander {
-    background-color: #333; /* Couleur de fond foncée */
+    background-color: #333;
     color: white;
     border: none;
     padding: 12px 25px;
@@ -90,11 +84,8 @@ body {
     background-color: #555;
 }
 
-/* --- Section Allergènes --- */
-
-/* Conteneur général et réinitialisations */
 .allergen-container {
-    max-width: 1000px; /* Aligné avec plat-container */
+    max-width: 1000px;
     width: 90%;
     margin: 30px auto 0 auto;
     font-family: Arial, sans-serif;
@@ -105,7 +96,6 @@ body {
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
 
-/* Style de l'en-tête */
 .allergen-header {
     display: flex;
     justify-content: space-between;
@@ -121,11 +111,10 @@ body {
     margin: 0;
 }
 
-/* Conteneur pour la flèche */
 .arrow-wrapper {
     display: flex;
     align-items: center;
-    padding: 0 10px; /* Ajoute un peu d'espace pour que la flèche ne soit pas collée au bord */
+    padding: 0 10px;
 }
 
 .dropdown-arrow {
@@ -143,7 +132,6 @@ body {
     transform: rotate(-90deg);
 }
 
-/* Liste des allergènes */
 .allergen-list {
     list-style: none;
     padding: 0;
@@ -162,7 +150,6 @@ body {
     border-bottom: none;
 }
 
-/* Style des icônes */
 .allergen-item .icon {
     display: inline-block;
     width: 24px;
@@ -172,10 +159,9 @@ body {
     background-repeat: no-repeat;
 }
 
-/* Media Query pour les petits écrans (responsive) */
 @media (max-width: 768px) {
     .plat-container {
-        flex-direction: column; /* Empile les éléments verticalement */
+        flex-direction: column;
         padding: 20px;
     }
 
@@ -193,7 +179,6 @@ body {
     }
 }
 
-/* --- Styles pour les sections Entrées / Plats / Desserts --- */
 .menu-sections {
     max-width: 1000px;
     width: 90%;
@@ -214,7 +199,7 @@ body {
 .menu-course h2 {
     font-size: 1.25rem;
     margin: 0 0 12px 0;
-    color: #1f2937; /* gris foncé */
+    color: #1f2937;
     border-bottom: 1px solid #f3f4f6;
     padding-bottom: 10px;
 }

@@ -1,15 +1,13 @@
-/* Conteneur principal qui centre la carte */
 .page-content-wrapper {
     display: flex;
     justify-content: center;
-    align-items: center; /* Centre la carte verticalement */
+    align-items: center;
     padding: 3rem 1rem;
     width: 100%;
     box-sizing: border-box;
-    flex-grow: 1; /* Permet au conteneur de grandir et d'occuper l'espace */
+    flex-grow: 1;
 }
 
-/* La carte qui englobe tout */
 .about-card {
     display: flex;
     max-width: 1100px;
@@ -21,7 +19,6 @@
     border: 1px solid #eee;
 }
 
-/* Conteneur du texte à gauche */
 .about-text-container {
     flex: 1 1 55%;
     padding: 2.5rem 3rem;
@@ -63,7 +60,6 @@
     color: #555;
 }
 
-/* Conteneur de l'image à droite */
 .about-image-container {
     flex: 1 1 45%;
     min-width: 300px;
@@ -76,10 +72,9 @@
     display: block;
 }
 
-/* Responsive pour les petits écrans */
 @media (max-width: 950px) {
     .about-card {
-        flex-direction: column-reverse; /* Met l'image en haut */
+        flex-direction: column-reverse;
     }
 
     .about-text-container {

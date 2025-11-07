@@ -5,30 +5,20 @@ from .app import app, db
 @app.cli.command()
 @click.argument('filename')
 def loaddb(filename):
-    """Creates the tables and populates them with data from a YAML file.
-
-    Expected YAML keys: context, categories, plats, clients,
-    commandes, menus, contenir, appartenir_plats, appartenir_menus, avis, definir_stock
-    """
-
     import yaml
     from datetime import datetime
 
-    # création de toutes les tables
     db.drop_all()
     db.create_all()
 
-    # chargement du YAML
     with open(filename, 'r', encoding='utf-8') as file:
         data = yaml.safe_load(file)
 
-    # import des modèles locaux
     from .models import (
         CATEGORIE, PLAT, CLIENT, COMMANDE, MENU,
         CONTENIR, APPARTENIR_PLATS, APPARTENIR_MENUS, AVIS, DEFINIR_STOCK
     )
 
-    # helpers pour parsing date/time
     def parse_date(s):
         if s is None:
             return None
@@ -49,8 +39,6 @@ def loaddb(filename):
         except Exception:
             return None
 
-    # Insertions par sections (ordre pour respecter FK)
-    # 1) categories
     for entry in data.get('categories', []) or []:
         obj = CATEGORIE(
             id_categorie=entry.get('id_categorie'),
@@ -60,7 +48,6 @@ def loaddb(filename):
         db.session.merge(obj)
     db.session.commit()
 
-    # 2) plats
     for entry in data.get('plats', []) or []:
         obj = PLAT(
             id_plat=entry.get('id_plat'),
@@ -81,30 +68,32 @@ def loaddb(filename):
         db.session.merge(obj)
     db.session.commit()
 
-    # 11) definir_stock
     for entry in data.get('definir_stock', []) or []:
         obj = DEFINIR_STOCK(
             id_plat=entry.get('id_plat'),
-            jour=parse_date(entry.get('jour')),
+            jour=parse_date(datetime.today()),
             stock=entry.get('stock')
         )
         db.session.merge(obj)
     db.session.commit()
 
-    # 3) clients
+    from hashlib import sha256
+    m = sha256()
     for entry in data.get('clients', []) or []:
+        m.update(entry.get('mot_de_passe').encode())
         obj = CLIENT(
             id_client=entry.get('id_client'),
             nom=entry.get('nom'),
             prenom=entry.get('prenom'),
             telephone=entry.get('telephone'),
-            mot_de_passe=entry.get('mot_de_passe'),
-            banni=entry.get('banni', False)
+            mot_de_passe=m.hexdigest(),
+            banni=entry.get('banni', False),
+            # Rôle de l'utilisateur : 'user' (par défaut) ou 'admin'
+            role=entry.get('role', 'user')
         )
         db.session.merge(obj)
     db.session.commit()
 
-    # 4) menus
     for entry in data.get('menus', []) or []:
         obj = MENU(
             id_menu=entry.get('id_menu'),
@@ -116,7 +105,6 @@ def loaddb(filename):
         db.session.merge(obj)
     db.session.commit()
 
-    # 5) contenir (menu -> plat)
     for entry in data.get('contenir', []) or []:
         obj = CONTENIR(
             id_menu=entry.get('id_menu'),
@@ -144,7 +132,6 @@ def loaddb(filename):
         db.session.merge(obj)
     db.session.commit()
 
-    # 7) appartenir_plats (lignes de commande pour plats)
     for entry in data.get('appartenir_plats', []) or []:
         obj = APPARTENIR_PLATS(
             id_commande=entry.get('id_commande'),
@@ -154,7 +141,6 @@ def loaddb(filename):
         db.session.merge(obj)
     db.session.commit()
 
-    # 8) appartenir_menus (lignes de commande pour menus)
     for entry in data.get('appartenir_menus', []) or []:
         obj = APPARTENIR_MENUS(
             id_commande=entry.get('id_commande'),
@@ -168,7 +154,6 @@ def loaddb(filename):
         db.session.merge(obj)
     db.session.commit()
 
-    # 10) avis
     for entry in data.get('avis', []) or []:
         obj = AVIS(
             id_avis=entry.get('id_avis'),
@@ -183,6 +168,5 @@ def loaddb(filename):
 
 @app.cli.command()
 def syncdb():
-    '''Creates all missing tables. '''
     db.create_all()
     lg.warning('Database synchronized!')

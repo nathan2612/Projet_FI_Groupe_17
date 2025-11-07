@@ -10,7 +10,6 @@ from monApp.models import (
 
 @pytest.fixture(scope='session')
 def testapp():
-    # Use a dedicated test database. You can override with TEST_DATABASE_URL env var.
     app.config.update({
         "TESTING": True,
         "SQLALCHEMY_DATABASE_URI":'mysql+pymysql://joubert:joubert@servinfo-maria:3306/DBjoubert?charset=utf8mb4',
@@ -18,11 +17,8 @@ def testapp():
     })
 
     with app.app_context():
-        # Ensure a clean slate on the target DB once per test session
         db.drop_all()
         db.create_all()
-        # --- ORM seed data for tests ---
-        # Categories
         cats = [
             CATEGORIE(id_categorie=1, nom_categorie='Entrées', description='Entrées froides et chaudes'),
             CATEGORIE(id_categorie=2, nom_categorie='Plats principaux', description='Plats mijotés et sautés'),
@@ -33,7 +29,6 @@ def testapp():
         db.session.add_all(cats)
         db.session.commit()
 
-        # Plats
         plats = [
             PLAT(id_plat=1, id_categorie=1, nom_plat='Nems au porc', description='Nems croustillants', prix=Decimal('5.50'), disponible=True),
             PLAT(id_plat=2, id_categorie=1, nom_plat='Raviolis vapeur', description='Raviolis poulet', prix=Decimal('6.00'), disponible=True),
@@ -48,7 +43,6 @@ def testapp():
         db.session.add_all(plats)
         db.session.commit()
 
-        # Definir_stock (per-day stock)
         stocks = [
             DEFINIR_STOCK(id_plat=1, jour=date(2025,10,21), stock=40),
             DEFINIR_STOCK(id_plat=2, jour=date(2025,10,21), stock=30),
@@ -63,7 +57,6 @@ def testapp():
         db.session.add_all(stocks)
         db.session.commit()
 
-        # Clients
         clients = [
             CLIENT(id_client=1, nom_client='Dupont', prenom_client='Alice', telephone='0601020304', banni=False),
             CLIENT(id_client=2, nom_client='Martin', prenom_client='Bob', telephone='0602030405', banni=False),
@@ -74,7 +67,6 @@ def testapp():
         db.session.add_all(clients)
         db.session.commit()
 
-        # Menus
         menus = [
             MENU(id_menu=1, nom_menu='Menu Canard', description='Entrée + Canard + Dessert', prix=Decimal('18.00')),
             MENU(id_menu=2, nom_menu='Menu Crevettes', description='Entrée + Crevettes + Riz', prix=Decimal('17.50')),
@@ -83,7 +75,6 @@ def testapp():
         db.session.add_all(menus)
         db.session.commit()
 
-        # Contenir (menu compositions)
         contenir_rows = [
             CONTENIR(id_menu=1, id_plat=1),
             CONTENIR(id_menu=1, id_plat=3),
@@ -98,7 +89,6 @@ def testapp():
         db.session.add_all(contenir_rows)
         db.session.commit()
 
-        # Commandes
         commandes = [
             COMMANDE(id_commande=1, id_client=1, date_commande=datetime(2025,10,21,12,00,0), statut='En commande', montant_total=Decimal('0.00'), sur_place=False, nombre_personnes=1),
             COMMANDE(id_commande=2, id_client=2, date_commande=datetime(2025,10,21,12,00,0), statut='En commande', montant_total=Decimal('0.00'), sur_place=True, nombre_personnes=4),
@@ -108,7 +98,6 @@ def testapp():
         db.session.add_all(commandes)
         db.session.commit()
 
-        # Appartenir_plats (lignes de commande)
         lignes = [
             APPARTENIR_PLATS(id_commande=1, id_plat=1, quantite=2),
             APPARTENIR_PLATS(id_commande=1, id_plat=5, quantite=1),
@@ -119,7 +108,6 @@ def testapp():
         db.session.add_all(lignes)
         db.session.commit()
 
-        # Appartenir_menus
         menu_lines = [
             APPARTENIR_MENUS(id_commande=4, id_menu=2, quantite=2),
             APPARTENIR_MENUS(id_commande=3, id_menu=3, quantite=1),
@@ -127,7 +115,6 @@ def testapp():
         db.session.add_all(menu_lines)
         db.session.commit()
 
-        # Avis
         avis = [
             AVIS(id_avis=1, id_client=1, note=5, commentaire='Très bon service'),
             AVIS(id_avis=2, id_client=2, note=4, commentaire='Plats savoureux'),
@@ -142,7 +129,4 @@ def client(testapp):
 
 
 def pytest_sessionfinish(session, exitstatus):
-    """Called after whole test run finishes.
-    Prints a short summary message (exit status and number of collected tests).
-    """
     os.system("flask loaddb monApp/data/data.yml")

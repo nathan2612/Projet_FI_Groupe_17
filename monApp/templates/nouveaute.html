@@ -1,20 +1,16 @@
 {% extends "base.html" %}
 
 {% block styles %}
-    {# On change le nom du fichier CSS ici #}
     <link rel="stylesheet" href="{{ url_for('static', filename='nouveaute.css') }}">
 {% endblock %}
 
 {% block main %}
     <div class="page-content-wrapper"> 
 
-        {# Colonne de gauche pour l'image (le calendrier) #}
         <div class="nouveaute-image-container">
-            {# Assurez-vous que le nom du fichier image est correct #}
             <img src="{{ url_for('static', filename='images/calendrier.png') }}" alt="Calendrier d'ouverture de fin d'année Oumami">
         </div>
 
-        {# Colonne de droite pour le texte #}
         <div class="nouveaute-text-container">
             <h1>Repas de la Saint-Sylvestre</h1>
             <p class="date-event">4 décembre 2023</p>

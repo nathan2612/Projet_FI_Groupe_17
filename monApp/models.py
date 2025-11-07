@@ -50,15 +50,19 @@ class CLIENT(db.Model,UserMixin):
 	telephone = db.Column(db.String(15), unique=True)
 	mot_de_passe = db.Column(db.String(255))
 	banni = db.Column(db.Boolean, default=False)
+	# Rôle de l'utilisateur : 'user' (par défaut) ou 'admin'
+	role = db.Column(db.String(20), default='user')
 
 	commandes = db.relationship('COMMANDE', back_populates='client')
 	avis = db.relationship('AVIS', back_populates='client')
 
 	def get_id(self):
 		return self.id_client
+	def is_admin(self):
+		return self.role == 'admin'	
 
 	def __repr__(self):
-		return f"<Client {self.nom_client} {self.prenom_client} ({self.id_client})>"
+		return f"<Client {self.nom} {self.prenom} ({self.id_client})>"
 	
 @login_manager.user_loader
 def load_user(telephone):

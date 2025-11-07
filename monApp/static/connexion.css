@@ -19,12 +19,10 @@
     border: 1px solid #eee;
 }
 
-/* Côté image (gauche) */
 .login-image-side {
     flex: 1 1 45%;
-    display: none; /* Caché par défaut sur mobile */
+    display: none;
 }
-
 .login-image-side img {
     width: 100%;
     height: 100%;
@@ -32,7 +30,6 @@
     display: block;
 }
 
-/* Côté formulaire (droite) */
 .login-form-side {
     flex: 1 1 55%;
     padding: 2.5rem 3rem;
@@ -54,7 +51,6 @@
     margin-bottom: 2.5rem;
 }
 
-/* Groupe pour label + champ */
 .login-form-group {
     margin-bottom: 1.5rem;
 }
@@ -67,7 +63,6 @@
     color: var(--text-color);
 }
 
-/* Champ de saisie spécifique */
 .login-form-input {
     width: 100%;
     padding: 0.75rem;
@@ -89,7 +84,6 @@
     color: #aaa;
 }
 
-/* Bouton de connexion spécifique */
 .login-form-button {
     width: 100%;
     padding: 0.85rem;
@@ -127,6 +121,6 @@
 
 @media (min-width: 769px) {
     .login-image-side {
-        display: block; /* Affiche l'image sur les écrans plus larges */
+        display: block;
     }
 }
