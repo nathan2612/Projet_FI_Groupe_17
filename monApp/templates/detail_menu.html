@@ -1,0 +1,82 @@
+{% extends "base.html" %}
+
+{% block styles %}
+    {# Ce lien est crucial ! Il charge le CSS pour CETTE page #}
+    <link rel="stylesheet" href="{{ url_for('static', filename='detail_menu.css') }}">
+{% endblock %}
+
+{% block main %}
+    <div class="page-content-wrapper">
+        <main class="plat-container">
+            {# Affiche l'image du plat. Si aucune image n'est définie, utilise une image par défaut. #}
+            <div class="plat-image-wrapper">
+                <img src="{{ url_for('static', filename='images/' + menu.image_url) }}" alt="Photo de {{ menu.nom_menu }}" class="plat-image">
+            </div>
+
+            <div class="plat-details">
+                <h1 class="plat-nom">{{ menu.nom_menu }}</h1>
+                <p class="plat-prix">{{ "%.2f€"|format(menu.prix) }}</p>
+                
+                <p class="plat-description">
+                    {{ menu.longue_description or menu.description }}
+                </p>
+                
+            </div>
+        </main>
+    </div>
+    {# Les listes `entres`, `plats` et `desserts` sont fournies directement par la vue. #}
+    <div class="menu-sections">
+
+        <section class="menu-course">
+            <h2>Entrées</h2>
+            {% if entres %}
+                <ul class="menu-plats">
+                {% for c in entres %}
+                    <li class="menu-item">
+                        <a href="{{ url_for('detail_plat', id_plat=c.plat.id_plat) }}">{{ c.plat.nom_plat }}</a>
+                        <span class="prix">{{ "%.2f€"|format(c.plat.prix) }}</span>
+                        <p class="description-small">{{ c.plat.description }}</p>
+                    </li>
+                {% endfor %}
+                </ul>
+            {% else %}
+                <p class="empty-note">Aucune entrée dans ce menu.</p>
+            {% endif %}
+        </section>
+
+        <section class="menu-course">
+            <h2>Plats</h2>
+            {% if plats %}
+                <ul class="menu-plats">
+                {% for c in plats %}
+                    <li class="menu-item">
+                        <a href="{{ url_for('detail_plat', id_plat=c.plat.id_plat) }}">{{ c.plat.nom_plat }}</a>
+                        <span class="prix">{{ "%.2f€"|format(c.plat.prix) }}</span>
+                        <p class="description-small">{{ c.plat.description }}</p>
+                    </li>
+                {% endfor %}
+                </ul>
+            {% else %}
+                <p class="empty-note">Aucun plat principal dans ce menu.</p>
+            {% endif %}
+        </section>
+
+        <section class="menu-course">
+            <h2>Desserts</h2>
+            {% if desserts %}
+                <ul class="menu-plats">
+                {% for c in desserts %}
+                    <li class="menu-item">
+                        <a href="{{ url_for('detail_plat', id_plat=c.plat.id_plat) }}">{{ c.plat.nom_plat }}</a>
+                        <span class="prix">{{ "%.2f€"|format(c.plat.prix) }}</span>
+                        <p class="description-small">{{ c.plat.description }}</p>
+                    </li>
+                {% endfor %}
+                </ul>
+            {% else %}
+                <p class="empty-note">Aucun dessert dans ce menu.</p>
+            {% endif %}
+        </section>
+
+    </div>
+{% endblock %}

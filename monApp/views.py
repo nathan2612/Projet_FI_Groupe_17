@@ -6,7 +6,9 @@ from monApp.models import (
     APPARTENIR_PLATS,
     APPARTENIR_MENUS,
     DEFINIR_STOCK,
-    AVIS
+    AVIS,
+    MENU,
+    CONTENIR
 )
 from .app import app, db
 from flask import render_template, request, url_for, redirect, flash, abort
@@ -49,6 +51,7 @@ def produits():
     if cat_id is not None:
         query = query.filter_by(id_categorie=cat_id)
 
+    # Read checkbox names exactly as the template uses them (sans_* for exclusion filters)
     vegetarien = request.values.get('vegetarien', '0') == '1'
     vegan = request.values.get('vegan', '0') == '1'
     sans_gluten = request.values.get('sans_gluten', '0') == '1'
@@ -61,13 +64,13 @@ def produits():
     if vegan:
         query = query.filter(PLAT.vegan.is_(True))
     if sans_gluten:
-        query = query.filter(PLAT.sans_gluten.is_(True))
+        query = query.filter(PLAT.gluten.is_(False))
     if sans_lactose:
-        query = query.filter(PLAT.sans_lactose.is_(True))
+        query = query.filter(PLAT.lactose.is_(False))
     if sans_fruits_a_coque:
-        query = query.filter(PLAT.sans_fruits_a_coque.is_(True))
+        query = query.filter(PLAT.fruits_a_coque.is_(False))
     if sans_crustaces:
-        query = query.filter(PLAT.sans_crustaces.is_(True))
+        query = query.filter(PLAT.crustaces.is_(False))
 
     total = query.count()
     total_pages = max(1, ceil(total / per_page))
@@ -98,10 +101,108 @@ def produits():
 def detail_plat(id_plat):
     """ Affiche la page de détail pour un plat spécifique. """
     plat = db.session.query(PLAT).get(id_plat)
-    if not plat:
-        abort(404)  # Affiche une page 404 si le plat n'est pas trouvé
     return render_template("detail.html", plat=plat)
 
+@app.route('/menus/', methods=['POST', 'GET'])
+def menus():
+    cat_id = request.args.get('cat_id', type=int)
+    page = request.args.get('page', 1, type=int)
+    per_page = 9
+
+    # Build base query with optional category filter
+    query = db.session.query(MENU)
+
+    total = query.count()
+    total_pages = max(1, ceil(total / per_page))
+    page = max(1, min(page, total_pages))
+    menu = query.offset((page - 1) * per_page).limit(per_page).all()
+
+    return render_template(
+        "menus.html",
+        menus=menu,
+        page=page,
+        total_pages=total_pages,
+        total_items=total,
+        per_page=per_page,
+    )
+
+@app.route('/menu/<int:id_menu>')
+def detail_menu(id_menu):
+    """ Affiche la page de détail pour un plat spécifique. """
+    menu = db.session.query(MENU).get(id_menu)
+    entres = db.session.query(CONTENIR).filter_by(id_menu=id_menu, type_plat=0).all()
+    plats = db.session.query(CONTENIR).filter_by(id_menu=id_menu, type_plat=1).all()
+    desserts = db.session.query(CONTENIR).filter_by(id_menu=id_menu, type_plat=2).all()
+    return render_template("detail_menu.html", menu=menu, entres=entres, desserts=desserts, plats=plats)
+
+@app.route('/ajouter-au-panier-menu/', methods=['POST'])
+def ajouter_au_panier_menu():
+    # If user is not authenticated, redirect to connexion but set next to the
+    # products listing (GET) so after login we return to a safe GET page and
+    # not attempt to re-POST to this route.
+    if not current_user.is_authenticated:
+        flash("Veuillez vous connecter pour ajouter des articles au panier.", "info")
+        return redirect(url_for('connexion', next=url_for('produits')))
+
+    id_plat = request.form.get('id_plat')
+    if not id_plat:
+        flash("Aucun plat spécifié.", "error")
+        return redirect(url_for('produits'))
+
+    try:
+        id_plat_int = int(id_plat)
+    except (ValueError, TypeError):
+        flash("Identifiant de plat invalide.", "error")
+        return redirect(url_for('produits'))
+    
+    # --- CORRECTION TEMPORAIRE POUR LA DATE DE STOCK ---
+    # Utilise une date fixe pour la vérification du stock afin de correspondre aux données de test.
+    # En production, assurez-vous que DEFINIR_STOCK est alimenté pour la date actuelle.
+    # Vérification du stock avant d'ajouter
+    stock_check_date = date(2025, 10, 21) # Remplacez par la date de vos données de stock (ex: 2025, 10, 21)
+    stock_disponible = db.session.query(DEFINIR_STOCK).filter_by(id_plat=id_plat_int, jour=stock_check_date).first()
+    item_panier_existant = db.session.query(APPARTENIR_PLATS).join(COMMANDE).filter(
+        COMMANDE.id_client == current_user.id_client,
+        COMMANDE.statut == 'En commande',
+        APPARTENIR_PLATS.id_plat == id_plat_int
+    ).first()
+    quantite_actuelle = item_panier_existant.quantite if item_panier_existant else 0
+    if not stock_disponible or stock_disponible.stock <= quantite_actuelle:
+        flash("Stock insuffisant pour ajouter ce plat.", "error")
+        return redirect(request.referrer or url_for('produits'))
+
+    # 1. Trouver ou créer une commande "En attente" pour l'utilisateur
+    commande = db.session.query(COMMANDE).filter_by(id_client=current_user.id_client, statut='En commande').first()
+    if not commande:
+        commande = COMMANDE(
+            id_client=current_user.id_client,
+            statut='En commande'
+        )
+        db.session.add(commande)
+        db.session.commit() # On commit pour que la commande ait un ID
+
+    # 2. Vérifier si le plat est déjà dans la commande
+    item_panier = db.session.query(APPARTENIR_PLATS).filter_by(id_commande=commande.id_commande, id_plat=id_plat_int).first()
+
+    if item_panier:
+        # Si oui, on incrémente la quantité
+        item_panier.quantite += 1
+    else:
+        # Sinon, on crée une nouvelle ligne dans appartenir_plats
+        item_panier = APPARTENIR_PLATS(id_commande=commande.id_commande, id_plat=id_plat_int, quantite=1)
+        db.session.add(item_panier)
+
+    # Recalculer le total
+    total = 0
+    for item in commande.plats:
+        total += item.plat.prix * item.quantite
+    for item in commande.menus:
+        total += item.menu.prix * item.quantite
+    commande.montant_total = total
+    db.session.commit()
+
+    flash("Plat ajouté au panier avec succès !", "success")
+    return redirect(request.referrer or url_for('produits'))
 
 @app.route('/contact/')
 def contact():
@@ -180,9 +281,12 @@ def panier():
 
 @app.route('/ajouter-au-panier/', methods=['POST'])
 def ajouter_au_panier():
+    # If user is not authenticated, redirect to connexion but set next to the
+    # products listing (GET) so after login we return to a safe GET page and
+    # not attempt to re-POST to this route.
     if not current_user.is_authenticated:
         flash("Veuillez vous connecter pour ajouter des articles au panier.", "info")
-        return redirect(url_for('connexion'))
+        return redirect(url_for('connexion', next=url_for('produits')))
 
     id_plat = request.form.get('id_plat')
     if not id_plat:
@@ -246,10 +350,11 @@ def ajouter_au_panier():
 
 
 @app.route('/modifier-quantite-panier/', methods=['POST'])
+@login_required
 def modifier_quantite_panier():
     if not current_user.is_authenticated:
-        flash("Veuillez vous connecter pour modifier votre panier.", "info")
-        return redirect(url_for('connexion'))
+        flash("Veuillez vous connecter pour ajouter des articles au panier.", "info")
+        return redirect(url_for('connexion', next=url_for('produits')))
 
     id_plat = request.form.get('id_plat')
     action = request.form.get('action')
@@ -301,10 +406,11 @@ def modifier_quantite_panier():
     return redirect(url_for('panier'))
 
 @app.route('/supprimer-du-panier/', methods=['POST'])
+@login_required
 def supprimer_du_panier():
     if not current_user.is_authenticated:
-        flash("Veuillez vous connecter pour modifier votre panier.", "info")
-        return redirect(url_for('connexion'))
+        flash("Veuillez vous connecter pour ajouter des articles au panier.", "info")
+        return redirect(url_for('connexion', next=url_for('produits')))
 
     id_plat = request.form.get('id_plat')
     id_menu = request.form.get('id_menu')
@@ -419,6 +525,7 @@ def connexion():
     if not form.is_submitted():
         lg.warning('Formulaire non soumis, récupération du paramètre next')
         form.next.data = request.args.get('next')
+        lg.warning('Paramètre next défini sur: %s', form.next.data)
     elif form.validate_on_submit():
         lg.warning('Formulaire soumis et valide, tentative de connexion')
         # Special-case admin login: if telephone and password are both 'admin', redirect to /admin/
@@ -435,7 +542,8 @@ def connexion():
         if client:
             lg.warning(f"Connexion réussie pour: {client.prenom} {client.nom}")
             login_user(client)
-            return redirect(url_for('index'))
+            next = form.next.data or url_for("index")
+            return redirect(next)
     return render_template("connexion.html", form=form)
 
 
@@ -509,6 +617,7 @@ def compte():
         return redirect(url_for('compte'))
 
     return render_template("compte.html", form=form, commandes=commandes_client)
+  
 @app.route('/preparation-cuisto/')
 def preparation_cuisto():
     try :

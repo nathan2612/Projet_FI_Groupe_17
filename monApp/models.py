@@ -28,10 +28,10 @@ class PLAT(db.Model):
 	image_url = db.Column(db.String(255), default='default_plat.png')
 	vegetarien = db.Column(db.Boolean, default=False)
 	vegan = db.Column(db.Boolean, default=False)
-	sans_gluten = db.Column(db.Boolean, default=False)
-	sans_lactose = db.Column(db.Boolean, default=False)
-	sans_fruit_a_coque = db.Column(db.Boolean, default=False)
-	sans_crustaces = db.Column(db.Boolean, default=False)
+	gluten = db.Column(db.Boolean, default=False)
+	lactose = db.Column(db.Boolean, default=False)
+	fruit_a_coque = db.Column(db.Boolean, default=False)
+	crustaces = db.Column(db.Boolean, default=False)
 
 	categorie = db.relationship('CATEGORIE', back_populates='plats')
 	stock = db.relationship('DEFINIR_STOCK', back_populates='plat')
@@ -47,7 +47,7 @@ class CLIENT(db.Model,UserMixin):
 	id_client = db.Column(db.Integer, primary_key=True)
 	nom = db.Column(db.String(100))
 	prenom = db.Column(db.String(100))
-	telephone = db.Column(db.String(15))
+	telephone = db.Column(db.String(15), unique=True)
 	mot_de_passe = db.Column(db.String(255))
 	banni = db.Column(db.Boolean, default=False)
 
@@ -94,6 +94,7 @@ class MENU(db.Model):
 	id_menu = db.Column(db.Integer, primary_key=True)
 	nom_menu = db.Column(db.String(150))
 	description = db.Column(db.Text)
+	image_url = db.Column(db.String(255), default='default_menu.jpg')
 	prix = db.Column(db.Numeric(10, 2))
 
 	contenir = db.relationship('CONTENIR', back_populates='menu')
@@ -107,12 +108,19 @@ class CONTENIR(db.Model):
 	__tablename__ = 'contenir'
 	id_menu = db.Column(db.Integer, db.ForeignKey('menu.id_menu'), primary_key=True)
 	id_plat = db.Column(db.Integer, db.ForeignKey('plats.id_plat'), primary_key=True)
+	type_plat = db.Column(db.Integer, nullable=False, default=1)
+
+	__table_args__ = (
+		db.CheckConstraint('type_plat IN (0,1,2)', name='chk_type_mauvais'),
+	)
 
 	menu = db.relationship('MENU', back_populates='contenir')
 	plat = db.relationship('PLAT', back_populates='contenirs')
 
 	def __repr__(self):
-		return f"<Contenir menu={self.id_menu} plat={self.id_plat}>"
+		# use the actual column name `type_plat` (0=entrée,1=plat,2=dessert)
+		course_name = {0: 'entrée', 1: 'plat', 2: 'dessert'}.get(self.type_plat, str(self.type_plat))
+		return f"<Contenir menu={self.id_menu} plat={self.id_plat} type_plat={course_name}>"
 
 
 class APPARTENIR_PLATS(db.Model):

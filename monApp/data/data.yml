@@ -80,6 +80,7 @@ plats:
     nom_plat: "Mehdi Akbar"
     description: "Un etudiant en IUT"
     longue_description: "Ce plat rend hommage à la créativité et à l'innovation. Un mélange de techniques modernes et d'ingrédients traditionnels pour un résultat surprenant et délicieux."
+    crustaces: true
     prix: 17.30
   - id_plat: 11
     id_categorie: 1
@@ -276,22 +277,22 @@ clients:
   - id_client: 3
     nom: "Martin"
     prenom: "Sophie"
-    telephone: "+33611223344"
+    telephone: "+33611223345"
     mot_de_passe: "hashed_password_3"
   - id_client: 4
     nom: "Martin"
     prenom: "Sophie"
-    telephone: "+33611223344"
+    telephone: "+33611223346"
     mot_de_passe: "hashed_password_3"
   - id_client: 5
     nom: "Martin"
     prenom: "Sophie"
-    telephone: "+33611223344"
+    telephone: "+33611223347"
     mot_de_passe: "hashed_password_3"
   - id_client: 6
     nom: "Martin"
     prenom: "Sophie"
-    telephone: "+33611223344"
+    telephone: "+33611223348"
     mot_de_passe: "hashed_password_3"
 
 commandes:
@@ -382,12 +383,19 @@ menus:
 contenir:
   - id_menu: 1
     id_plat: 2
+    type_plat : 0
   - id_menu: 1
     id_plat: 5
-  - id_menu: 2
+    type_plat : 1
+  - id_menu: 1
     id_plat: 3
-  - id_menu: 2
-    id_plat: 5
+    type_plat : 2
+  - id_menu: 1
+    id_plat: 1
+    type_plat : 0
+  - id_menu: 1
+    id_plat: 4
+    type_plat : 1
 
 appartenir_plats:
   - id_commande: 1

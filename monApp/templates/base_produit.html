@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+
+{% block styles %}
+
+    <link rel="stylesheet" href="{{ url_for('static', filename='base_produit.css') }}">
+{% endblock %}
+
+{% block styles2 %}{% endblock %}
+
+{% block main %}
+    <div class="carte-header">
+    <div class="carte-nav-wrapper container">
+        <nav class="carte-nav">
+            <ul class="carte-tabs">
+                <li class="carte-tab {% if request.endpoint == 'produits' %}active{% endif %}">
+                    <a href="{{ url_for('produits') }}">Plats</a>
+                </li>
+                <li class="carte-tab {% if request.endpoint == 'menus' %}active{% endif %}">
+                    <a href="{{ url_for('menus') }}">Menus</a>
+                </li>
+            </ul>
+        </nav>
+    </div>
+    </div>
+    {% block content %}{% endblock %}
+{% endblock %}
