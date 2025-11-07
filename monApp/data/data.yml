@@ -295,7 +295,7 @@ commandes:
   - id_commande: 1
     id_client: 1
     date_commande: "2025-10-21 13:00:00"
-    statut: "non récupéré"
+    statut: "récupéré"
     montant_total: 21.50
     sur_place: false
     nombre_personnes: 1
@@ -307,27 +307,6 @@ commandes:
     montant_total: 41.00
     sur_place: true
     nombre_personnes: 2
-  - id_commande: 3
-    id_client: 1
-    date_commande: "2025-10-21 13:00:00"
-    statut: "non récupéré"
-    montant_total: 21.50
-    sur_place: false
-    nombre_personnes: 1
-  - id_commande: 4
-    id_client: 1
-    date_commande: "2025-10-21 13:00:00"
-    statut: "non récupéré"
-    montant_total: 21.50
-    sur_place: false
-    nombre_personnes: 1
-  - id_commande: 5
-    id_client: 1
-    date_commande: "2025-10-21 13:00:00"
-    statut: "non récupéré"
-    montant_total: 21.50
-    sur_place: false
-    nombre_personnes: 1
   - id_commande: 6
     id_client: 1
     date_commande: "2025-10-21 13:00:00"
@@ -370,6 +349,20 @@ commandes:
     date_commande: "2025-10-21 20:00:00"
     statut: "En attente"
     montant_total: 12.50
+    sur_place: false
+    nombre_personnes: 1
+  - id_commande: 9
+    id_client: 6
+    date_commande: "2025-11-06 14:00:00"
+    statut: "récupéré"
+    montant_total: 12.50
+    sur_place: false
+    nombre_personnes: 1
+  - id_commande: 10
+    id_client: 6
+    date_commande: "2025-11-05 20:00:00"
+    statut: "récupéré"
+    montant_total: 60.50
     sur_place: false
     nombre_personnes: 1
 
@@ -415,6 +408,9 @@ appartenir_plats:
   - id_commande: 3
     id_plat: 6
     quantite: 1
+  - id_commande: 4
+    id_plat: 2
+    quantite: 0
 
 appartenir_menus:
   - id_commande: 1
@@ -469,3 +465,10 @@ definir_stock:
   - id_plat: 8
     jour: "2025-10-21"
     stock: 60
+  - id_plat: 1
+    jour: "2025-11-07"
+    stock: 50
+  - id_plat: 2
+    jour: "2025-11-07"
+    stock: 60
+  

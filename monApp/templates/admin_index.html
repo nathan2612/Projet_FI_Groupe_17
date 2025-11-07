@@ -1,0 +1,66 @@
+{% extends 'base_admin.html' %}
+
+{% block styles %}
+    <link rel="stylesheet" href="{{ url_for('static', filename='admin.css') }}">
+{% endblock %}
+
+{% block main %}
+    <section class="admin-dashboard container">
+        <h1>Tableau de bord</h1>
+
+        <!-- Stat cards -->
+        <div class="admin-stats">
+            <div class="stat-card">
+                <div class="label">Commandes aujourd'hui</div>
+                <div class="value">{{ lst_recup_auj or 0 }}</div>
+                <div class="muted">CA : <span class="stat-badge">{{ ca_auj or 0 }} €</span></div>
+            </div>
+            <div class="stat-card">
+                <div class="label">Commandes ce mois</div>
+                <div class="value">{{ lst_recup_mois or 0 }}</div>
+                <div class="muted">CA : <span class="stat-badge">{{ ca_mois or 0 }} €</span></div>
+            </div>
+            <div class="stat-card">
+                <div class="label">Commandes cette année</div>
+                <div class="value">{{ lst_recup_annee or 0 }}</div>
+                <div class="muted">CA : <span class="stat-badge">{{ ca_annee or 0 }} €</span></div>
+            </div>
+        </div>
+
+        <div class="dashboard">
+            <div>
+                <h2>Statistiques supplémentaires</h2>
+                <p>Chiffre d'affaires d'hier : <strong>{{ ca_hier or 0 }} €</strong> — variation : <span class="muted">{{ ca_pourcentage_hier_auj or 0 }} %</span></p>
+                <p>Chiffre d'affaires du mois dernier : <strong>{{ ca_mois_dernier or 0 }} €</strong> — variation : <span class="muted">{{ ca_pourcentage_mois or 0 }} %</span></p>
+                <p>Chiffre d'affaires de l'année dernière : <strong>{{ ca_annee_derniere or 0 }} €</strong> — variation : <span class="muted">{{ ca_pourcentage_annee_derniere or 0 }} %</span></p>
+            </div>
+
+            <div>
+                <h2>Top 5 plats les plus vendus</h2>
+                <ul class="top-list">
+                    {% for plat, count in top_5_ventes %}
+                        <li>
+                            <span>{{ plat.nom_plat }}</span>
+                            <span class="stat-badge">{{ count }}</span>
+                        </li>
+                    {% else %}
+                        <li class="empty-state">Aucun plat vendu récemment.</li>
+                    {% endfor %}
+                </ul>
+
+                <h2 style="margin-top:1rem;">Plats en rupture de stock aujourd'hui</h2>
+                <ul class="top-list">
+                    {% for plat in tout_plats_rupture %}
+                        <li>
+                            <span>{{ plat[0] }}</span>
+                            <span class="muted">rupture</span>
+                        </li>
+                    {% else %}
+                        <li class="empty-state">Aucun plat en rupture de stock aujourd'hui.</li>
+                    {% endfor %}
+                </ul>
+
+            </div>
+        </div>
+    </section>
+{% endblock %}
