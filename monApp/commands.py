@@ -110,6 +110,7 @@ def loaddb(filename):
             id_menu=entry.get('id_menu'),
             nom_menu=entry.get('nom_menu'),
             description=entry.get('description'),
+            image_url=entry.get('image_url', 'default_menu.jpg'),
             prix=entry.get('prix')
         )
         db.session.merge(obj)
@@ -119,7 +120,8 @@ def loaddb(filename):
     for entry in data.get('contenir', []) or []:
         obj = CONTENIR(
             id_menu=entry.get('id_menu'),
-            id_plat=entry.get('id_plat')
+            id_plat=entry.get('id_plat'),
+            type_plat=entry.get('type_plat')
         )
         db.session.merge(obj)
     db.session.commit()

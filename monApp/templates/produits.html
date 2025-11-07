@@ -53,7 +53,7 @@
         </aside>
 
         <main class="container content">
-        <h1>Notre carte</h1>
+        <h1>Nos Plats</h1>
 
         <section class="menu-grid">
             {% for produit in produits %}
@@ -65,6 +65,7 @@
                     <a href="{{ url_for('detail_plat', id_plat=produit.id_plat) }}" class="card-text-link">
                         <h2>{{ produit.nom_plat }}</h2>
                         <p>{{ produit.description }}</p>
+                        <p>{{ produit.prix }} €</p>
                     </a>
                     <form action="{{ url_for('ajouter_au_panier') }}" method="post">
                                 <input type="hidden" name="id_plat" value="{{ produit.id_plat }}">

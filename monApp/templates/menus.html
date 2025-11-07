@@ -5,5 +5,82 @@
 {% endblock %}
 
 {% block content %}
-    <h1 class="page-title">Nos Menus</h1>
+    <div class="layout">
+
+        <main class="container content">
+        <h1>Nos Menus</h1>
+
+        <section class="menu-grid">
+            {% for menu in menus %}
+            <article class="menu-card">
+                <a href="{{ url_for('detail_menu', id_menu=menu.id_menu) }}" class="card-image-link">
+                    <img src="../static/images/{{ menu.image_url }}" alt="Photo de {{ menu.nom_menu }}">
+                </a>
+                <div class="card-content">
+                    <a href="{{ url_for('detail_menu', id_menu=menu.id_menu) }}" class="card-text-link">
+                        <h2>{{ menu.nom_menu }}</h2>
+                        <p>{{ menu.description }}</p>
+                        <p>{{ menu.prix }} €</p>
+                    </a>
+                    <form action="{{ url_for('ajouter_au_panier_menu') }}" method="post">
+                                <input type="hidden" name="id_menu" value="{{ menu.id_menu }}">
+                                <button type="submit" class="order-button">
+                                    <i class="fa-solid fa-circle-plus"></i>
+                                    <span>Commander</span>
+                                </button>
+                            </form>
+                </div>
+            </article>
+            {% endfor %}
+        </section>
+
+        <nav class="pagination" aria-label="Pagination">
+            <ul>
+                <li class="page-item {% if page == 1 %}disabled{% endif %}">
+                    {% if page > 1 %}
+                        <a href="{{ url_for('produits', page=page-1) }}">
+                            <img class="pager-arrow left" src="{{ url_for('static', filename='images/arrow-big-left-dash.png') }}" alt="Précédent">
+                            <span class="pager-label">Précédent</span>
+                        </a>
+                    {% else %}
+                        <span>Précédent</span>
+                    {% endif %}
+                </li>
+
+                {% set start = page - 2 if page - 2 > 1 else 1 %}
+                {% set end = page + 2 if page + 2 < total_pages else total_pages %}
+                {% if start > 1 %}
+                        <li class="page-item"><a href="{{ url_for('produits', page=1) }}">1</a></li>
+                    {% if start > 2 %}<li class="ellipsis">…</li>{% endif %}
+                {% endif %}
+
+                {% for p in range(start, end + 1) %}
+                    <li class="page-item {% if p == page %}active{% endif %}">
+                        {% if p == page %}
+                            <span>{{ p }}</span>
+                        {% else %}
+                                <a href="{{ url_for('produits', page=p) }}">{{ p }}</a>
+                        {% endif %}
+                    </li>
+                {% endfor %}
+
+                {% if end < total_pages %}
+                    {% if end < total_pages -1 %}<li class="ellipsis">…</li>{% endif %}
+                        <li class="page-item"><a href="{{ url_for('produits', page=total_pages) }}">{{ total_pages }}</a></li>
+                {% endif %}
+
+                <li class="page-item {% if page >= total_pages %}disabled{% endif %}">
+                    {% if page < total_pages %}
+                            <a href="{{ url_for('produits', page=page+1) }}">
+                            <span class="pager-label">Suivant</span>
+                            <img class="pager-arrow right" src="{{ url_for('static', filename='images/arrow-big-right-dash.png') }}" alt="Suivant">
+                        </a>
+                    {% else %}
+                        <span>Suivant</span>
+                    {% endif %}
+                </li>
+            </ul>
+        </nav>
+        </main>
+    </div>
 {% endblock %}
