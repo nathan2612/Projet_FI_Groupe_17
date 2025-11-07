@@ -3,48 +3,6 @@
 {% block styles %}
     {# Ce lien est crucial ! Il charge le CSS pour CETTE page #}
     <link rel="stylesheet" href="{{ url_for('static', filename='panier.css') }}">
-    <style>
-        /* Styles pour la pop-up de confirmation */
-        .popup-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(0, 0, 0, 0.6);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            z-index: 1000;
-            visibility: hidden;
-            opacity: 0;
-            transition: opacity 0.3s ease, visibility 0.3s ease;
-        }
-        .popup-overlay.is-visible {
-            visibility: visible;
-            opacity: 1;
-        }
-        .popup-content {
-            background-color: #fff;
-            padding: 30px;
-            border-radius: 8px;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
-            text-align: center;
-            max-width: 450px;
-            width: 90%;
-        }
-        .popup-content h3 { margin-top: 0; font-size: 1.5em; }
-        .popup-actions { margin-top: 20px; display: flex; justify-content: center; gap: 15px; }
-        .btn-popup { padding: 10px 20px; border-radius: 5px; border: 1px solid #ccc; cursor: pointer; font-weight: bold; }
-        .btn-confirmer { background-color: #28a745; color: white; border-color: #28a745; }
-        .btn-annuler { background-color: #f8f9fa; color: #333; }
-
-        /* Pour le mode sombre */
-        .dark-mode .popup-content {
-            background-color: #333;
-            color: #e0e0e0;
-        }
-    </style>
 {% endblock %}
 
 {% block main %}
@@ -60,7 +18,6 @@
                         <a href="{{ url_for('produits') }}" class="btn-primary">Voir nos produits</a>
                     </div>
                 {% else %}
-                    {# Boucle pour afficher les plats de la commande (utilisateur connecté) #}
                     {% for item_plat in commande.plats %}
                     <div class="cart-item">
                         <img src="{{ url_for('static', filename='images/' + (item_plat.plat.image_url or 'default.jpg')) }}" alt="{{ item_plat.plat.nom_plat }}" class="item-image">
@@ -91,13 +48,28 @@
                     </div>
                     {% endfor %}
 
-                    {# Boucle pour afficher les menus de la commande (utilisateur connecté) #}
                     {% for item_menu in commande.menus %}
                     <div class="cart-item">
                         <img src="{{ url_for('static', filename='images/' + (item_menu.menu.image_url or 'default.jpg')) }}" alt="{{ item_menu.menu.nom_menu }}" class="item-image">
                         <div class="item-details">
                             <h2>{{ item_menu.menu.nom_menu }}</h2>
                             <p class="item-price-single">{{ "%.2f€"|format(item_menu.menu.prix) }} / unité</p>
+                            {% if item_menu.entree or item_menu.plat_choisi or item_menu.dessert %}
+                            <div class="menu-choices">
+                                <strong>Choix :</strong>
+                                <ul class="choices-list">
+                                    {% if item_menu.entree %}
+                                        <li class="choice-entry">Entrée: {{ item_menu.entree.nom_plat }}</li>
+                                    {% endif %}
+                                    {% if item_menu.plat_choisi %}
+                                        <li class="choice-main">Plat: {{ item_menu.plat_choisi.nom_plat }}</li>
+                                    {% endif %}
+                                    {% if item_menu.dessert %}
+                                        <li class="choice-dessert">Dessert: {{ item_menu.dessert.nom_plat }}</li>
+                                    {% endif %}
+                                </ul>
+                            </div>
+                            {% endif %}
                         </div>
                         <div class="item-controls">
                             <form action="{{ url_for('modifier_quantite_panier') }}" method="post" class="quantity-form">
@@ -143,7 +115,6 @@
         </main>
     </div>
 
-    {# --- Pop-up de confirmation de commande --- #}
     <div id="confirmation-popup" class="popup-overlay">
         <div class="popup-content">
             <h3>Confirmer la commande</h3>
@@ -155,7 +126,7 @@
         </div>
     </div>
 
-    <script>
+<script>
         document.addEventListener('DOMContentLoaded', function() {
             const checkoutBtn = document.getElementById('checkout-btn');
             if (checkoutBtn) {
@@ -177,5 +148,5 @@
                 });
             }
         });
-    </script>
+</script>
 {% endblock %}

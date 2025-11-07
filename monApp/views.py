@@ -136,39 +136,17 @@ def detail_menu(id_menu):
     return render_template("detail_menu.html", menu=menu, entres=entres, desserts=desserts, plats=plats)
 
 @app.route('/ajouter-menu-selection/', methods=['POST'])
+@login_required
 def ajouter_menu_selection():
     """Ajoute les plats sélectionnés (entree, plat, dessert) au panier comme plats individuels."""
     if not current_user.is_authenticated:
         flash("Veuillez vous connecter pour ajouter des articles au panier.", "info")
         return redirect(url_for('connexion', next=request.referrer or url_for('produits')))
 
-    # Récupérer les sélections (peuvent être None si non choisies)
     entree_id = request.form.get('entree')
     plat_id = request.form.get('plat')
     dessert_id = request.form.get('dessert')
     id_menu = request.form.get('id_menu')
-
-    # helper to cast to int or None
-    def to_int(v):
-        try:
-            return int(v)
-        except (TypeError, ValueError):
-            return None
-
-    entree_id = to_int(entree_id)
-    plat_id = to_int(plat_id)
-    dessert_id = to_int(dessert_id)
-    id_menu = to_int(id_menu)
-
-    # Validate menu
-    if not id_menu:
-        flash("Menu invalide.", "error")
-        return redirect(request.referrer or url_for('menus'))
-
-    menu = db.session.get(MENU, id_menu)
-    if not menu:
-        flash("Menu introuvable.", "error")
-        return redirect(request.referrer or url_for('menus'))
 
     commande = db.session.query(COMMANDE).filter_by(id_client=current_user.id_client, statut='En commande').first()
     if not commande:
@@ -179,56 +157,28 @@ def ajouter_menu_selection():
         db.session.add(commande)
         db.session.commit()
 
-    # Validate that selected plats belong to this menu (if provided)
-    def choice_belongs(plat_id, type_plat):
-        if plat_id is None:
-            return True
-        return db.session.query(CONTENIR).filter_by(id_menu=id_menu, id_plat=plat_id, type_plat=type_plat).first() is not None
+    # Ensure we explicitly include id_dessert (may be None) when looking for an existing identical menu
+    menu = db.session.query(APPARTENIR_MENUS).filter_by(
+        id_commande=commande.id_commande,
+        id_menu=id_menu,
+        id_entree=entree_id,
+        id_plat_choisi=plat_id,
+        id_dessert=dessert_id
+    ).first()
 
-    if not choice_belongs(entree_id, 0):
-        flash("L'entrée sélectionnée n'appartient pas à ce menu.", "error")
-        return redirect(request.referrer or url_for('menu', id_menu=id_menu))
-    if not choice_belongs(plat_id, 1):
-        flash("Le plat sélectionné n'appartient pas à ce menu.", "error")
-        return redirect(request.referrer or url_for('menu', id_menu=id_menu))
-    if not choice_belongs(dessert_id, 2):
-        flash("Le dessert sélectionné n'appartient pas à ce menu.", "error")
-        return redirect(request.referrer or url_for('menu', id_menu=id_menu))
-
-    # Find existing menu line for this commande/menu
-    item = db.session.query(APPARTENIR_MENUS).filter_by(id_commande=commande.id_commande, id_menu=id_menu).first()
-
-    if item:
-        # If the same choices are already stored, just increment quantity.
-        if item.id_entree == entree_id and item.id_plat_choisi == plat_id and item.id_dessert == dessert_id:
-            item.quantite = (item.quantite or 0) + 1
-        else:
-            # If choices differ, update stored choices and increment quantity.
-            item.id_entree = entree_id
-            item.id_plat_choisi = plat_id
-            item.id_dessert = dessert_id
-            item.quantite = (item.quantite or 0) + 1
-        db.session.add(item)
+    if menu:
+        menu.quantite = (menu.quantite or 0) + 1
     else:
-        # create a new menu line
-        item = APPARTENIR_MENUS(
+        # Create the row, explicitly setting id_dessert to None when not chosen so the INSERT includes the column
+        menu = APPARTENIR_MENUS(
             id_commande=commande.id_commande,
             id_menu=id_menu,
             quantite=1,
             id_entree=entree_id,
             id_plat_choisi=plat_id,
-            id_dessert=dessert_id
+            id_dessert=dessert_id if dessert_id is not None else None
         )
-        db.session.add(item)
-
-    # Recalculate commande total (menus + plats)
-    db.session.flush()
-    total = 0
-    for p in commande.plats:
-        total += (p.plat.prix or 0) * (p.quantite or 0)
-    for m in commande.menus:
-        total += (m.menu.prix or 0) * (m.quantite or 0)
-    commande.montant_total = total
+        db.session.add(menu)
     db.session.commit()
 
     flash("Menu ajouté au panier.", "success")

@@ -145,10 +145,9 @@ class APPARTENIR_MENUS(db.Model):
 	commande = db.relationship('COMMANDE', back_populates='menus')
 	menu = db.relationship('MENU', back_populates='appartenir_menus')
 
-	# store the chosen plats for this menu (nullable to support legacy rows)
-	id_entree = db.Column(db.Integer, db.ForeignKey('plats.id_plat'), nullable=True)
-	id_plat_choisi = db.Column(db.Integer, db.ForeignKey('plats.id_plat'), nullable=True)
-	id_dessert = db.Column(db.Integer, db.ForeignKey('plats.id_plat'), nullable=True)
+	id_entree = db.Column(db.Integer, db.ForeignKey('plats.id_plat'), primary_key=True)
+	id_plat_choisi = db.Column(db.Integer, db.ForeignKey('plats.id_plat'), primary_key=True)
+	id_dessert = db.Column(db.Integer, db.ForeignKey('plats.id_plat'), primary_key=True)
 
 	entree = db.relationship('PLAT', foreign_keys=[id_entree])
 	plat_choisi = db.relationship('PLAT', foreign_keys=[id_plat_choisi])

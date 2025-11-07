@@ -161,9 +161,9 @@ def loaddb(filename):
             id_menu=entry.get('id_menu'),
             quantite=entry.get('quantite'),
             # support the new chosen-plat columns (may be None)
-            id_entree=entry.get('id_entree'),
-            id_plat_choisi=entry.get('id_plat_choisi'),
-            id_dessert=entry.get('id_dessert')
+            id_entree=entry.get('id_entree',None),
+            id_plat_choisi=entry.get('id_plat_choisi',None),
+            id_dessert=entry.get('id_dessert',None)
         )
         db.session.merge(obj)
     db.session.commit()
