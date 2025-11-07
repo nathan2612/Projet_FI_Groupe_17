@@ -3,6 +3,48 @@
 {% block styles %}
     {# Ce lien est crucial ! Il charge le CSS pour CETTE page #}
     <link rel="stylesheet" href="{{ url_for('static', filename='panier.css') }}">
+    <style>
+        /* Styles pour la pop-up de confirmation */
+        .popup-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.6);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            visibility: hidden;
+            opacity: 0;
+            transition: opacity 0.3s ease, visibility 0.3s ease;
+        }
+        .popup-overlay.is-visible {
+            visibility: visible;
+            opacity: 1;
+        }
+        .popup-content {
+            background-color: #fff;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+            text-align: center;
+            max-width: 450px;
+            width: 90%;
+        }
+        .popup-content h3 { margin-top: 0; font-size: 1.5em; }
+        .popup-actions { margin-top: 20px; display: flex; justify-content: center; gap: 15px; }
+        .btn-popup { padding: 10px 20px; border-radius: 5px; border: 1px solid #ccc; cursor: pointer; font-weight: bold; }
+        .btn-confirmer { background-color: #28a745; color: white; border-color: #28a745; }
+        .btn-annuler { background-color: #f8f9fa; color: #333; }
+
+        /* Pour le mode sombre */
+        .dark-mode .popup-content {
+            background-color: #333;
+            color: #e0e0e0;
+        }
+    </style>
 {% endblock %}
 
 {% block main %}
@@ -93,9 +135,47 @@
                     <span>Total</span>
                     <span class="summary-price">{{ "%.2f€"|format(total_general) }}</span>
                 </div>
-                <button class="checkout-button">Passer la commande</button>
+                <form id="checkout-form" action="{{ url_for('valider_commande') }}" method="post">
+                    <button type="button" id="checkout-btn" class="checkout-button">Passer la commande</button>
+                </form>
             </aside>
             {% endif %}
         </main>
     </div>
+
+    {# --- Pop-up de confirmation de commande --- #}
+    <div id="confirmation-popup" class="popup-overlay">
+        <div class="popup-content">
+            <h3>Confirmer la commande</h3>
+            <p>Êtes-vous sûr de vouloir passer cette commande ? Le stock sera déduit et la commande passera en attente de préparation.</p>
+            <div class="popup-actions">
+                <button id="cancel-checkout-btn" class="btn-popup btn-annuler">Annuler</button>
+                <button id="confirm-checkout-btn" class="btn-popup btn-confirmer">Confirmer</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const checkoutBtn = document.getElementById('checkout-btn');
+            if (checkoutBtn) {
+                const popup = document.getElementById('confirmation-popup');
+                const confirmBtn = document.getElementById('confirm-checkout-btn');
+                const cancelBtn = document.getElementById('cancel-checkout-btn');
+                const checkoutForm = document.getElementById('checkout-form');
+
+                checkoutBtn.addEventListener('click', function() {
+                    popup.classList.add('is-visible');
+                });
+
+                cancelBtn.addEventListener('click', function() {
+                    popup.classList.remove('is-visible');
+                });
+
+                confirmBtn.addEventListener('click', function() {
+                    checkoutForm.submit();
+                });
+            }
+        });
+    </script>
 {% endblock %}

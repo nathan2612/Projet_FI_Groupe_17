@@ -1,6 +1,6 @@
 from flask_wtf import FlaskForm
 from wtforms.fields import StringField, HiddenField, SelectField, PasswordField
-from wtforms.validators import DataRequired
+from wtforms.validators import DataRequired, EqualTo, Optional
 from monApp import db
 
 class InscriptionForm(FlaskForm):
@@ -26,3 +26,11 @@ class ConnexionForm(FlaskForm):
         m.update(self.mot_de_passe.data.encode())
         passwd = m.hexdigest()
         return unClient if passwd == unClient.mot_de_passe else None
+
+class EditProfileForm(FlaskForm):
+    prenom = StringField('Prénom', validators=[DataRequired()])
+    nom = StringField('Nom', validators=[DataRequired()])
+    telephone = StringField('Téléphone', validators=[DataRequired()])
+    current_mot_de_passe = PasswordField('Mot de passe actuel', validators=[Optional()])
+    new_mot_de_passe = PasswordField('Nouveau mot de passe', validators=[Optional()])
+    confirm_new_mot_de_passe = PasswordField('Confirmer le nouveau mot de passe', validators=[Optional(), EqualTo('new_mot_de_passe', message='Les mots de passe doivent correspondre.')])

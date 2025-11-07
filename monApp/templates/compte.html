@@ -1,0 +1,139 @@
+{% extends "base.html" %}
+
+{% block styles %}
+    {# Ce lien est crucial ! Il charge le CSS pour CETTE page #}
+    <link rel="stylesheet" href="{{ url_for('static', filename='compte.css') }}">
+{% endblock %}
+
+{% block main %}
+<div class="account-container">
+    <div class="account-header">
+        <h1>Mon Compte</h1>
+        <p>Gérez vos informations personnelles et votre sécurité.</p>
+    </div>
+
+    <!-- Vue d'affichage (visible par défaut) -->
+    <div id="info-view">
+        <div class="account-card">
+            <div class="card-header">
+                <h2>Informations Personnelles</h2>
+                <button id="edit-profile-btn" class="btn btn-secondary">
+                    <i class="fas fa-pencil-alt"></i> Modifier
+                </button>
+            </div>
+            <div class="card-body">
+                <div class="info-grid">
+                    <div class="info-group">
+                        <span class="info-label"><i class="fas fa-user"></i> Prénom</span>
+                        <span class="info-value">{{ current_user.prenom }}</span>
+                    </div>
+                    <div class="info-group">
+                        <span class="info-label"><i class="fas fa-user"></i> Nom</span>
+                        <span class="info-value">{{ current_user.nom }}</span>
+                    </div>
+                    <div class="info-group full-width">
+                        <span class="info-label"><i class="fas fa-phone"></i> Téléphone</span>
+                        <span class="info-value">{{ current_user.telephone }}</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="account-card">
+            <div class="card-header">
+                <h2>Sécurité</h2>
+            </div>
+            <div class="card-body">
+                <div class="info-group">
+                    <span class="info-label"><i class="fas fa-lock"></i> Mot de passe</span>
+                    <span class="info-value">**********</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Vue formulaire (cachée par défaut) -->
+    <div id="edit-view" style="display: none;">
+        <form method="POST" action="{{ url_for('compte') }}" class="account-form">
+            {{ form.hidden_tag() }}
+
+            <div class="account-card">
+                <div class="card-header">
+                    <h2>Modifier les Informations</h2>
+                </div>
+                <div class="card-body">
+                    <div class="form-grid">
+                        <div class="form-group">
+                            {{ form.prenom.label(class="form-label") }}
+                            {{ form.prenom(class="form-control") }}
+                        </div>
+                        <div class="form-group">
+                            {{ form.nom.label(class="form-label") }}
+                            {{ form.nom(class="form-control") }}
+                        </div>
+                        <div class="form-group full-width">
+                            {{ form.telephone.label(class="form-label") }}
+                            {{ form.telephone(class="form-control") }}
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="account-card">
+                <div class="card-header">
+                    <h2>Changer de mot de passe</h2>
+                </div>
+                <div class="card-body">
+                    <p class="subtitle">Laissez ces champs vides si vous ne souhaitez pas le changer.</p>
+                    <div class="form-grid">
+                        <div class="form-group">
+                            {{ form.current_mot_de_passe.label(class="form-label") }}
+                            {{ form.current_mot_de_passe(class="form-control", placeholder="Requis pour changer le mot de passe") }}
+                        </div>
+                        <div class="form-group">
+                            {{ form.new_mot_de_passe.label(class="form-label") }}
+                            {{ form.new_mot_de_passe(class="form-control") }}
+                        </div>
+                        <div class="form-group">
+                            {{ form.confirm_new_mot_de_passe.label(class="form-label") }}
+                            {{ form.confirm_new_mot_de_passe(class="form-control") }}
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-actions">
+                <button type="button" id="cancel-edit-btn" class="btn btn-secondary">Annuler</button>
+                <button type="submit" class="btn btn-primary">
+                    <i class="fas fa-save"></i> Enregistrer
+                </button>
+            </div>
+        </form>
+    </div>
+
+    <div class="logout-section">
+        <a href="{{ url_for('logout') }}" class="btn btn-danger">
+            <i class="fas fa-sign-out-alt"></i> Se déconnecter
+        </a>
+    </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const infoView = document.getElementById('info-view');
+    const editView = document.getElementById('edit-view');
+    const editBtn = document.getElementById('edit-profile-btn');
+    const cancelBtn = document.getElementById('cancel-edit-btn');
+
+    editBtn.addEventListener('click', () => {
+        infoView.style.display = 'none';
+        editView.style.display = 'block';
+    });
+
+    cancelBtn.addEventListener('click', () => {
+        editView.style.display = 'none';
+        infoView.style.display = 'block';
+    });
+});
+</script>
+{% endblock %}
