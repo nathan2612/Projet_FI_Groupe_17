@@ -269,11 +269,13 @@ clients:
     prenom: "Mei"
     telephone: "+33123456789"
     mot_de_passe: "hashed_password_1"
+    role : admin
   - id_client: 2
     nom: "Dupont"
     prenom: "Jean"
     telephone: "+33699887766"
     mot_de_passe: "hashed_password_2"
+    role: user
   - id_client: 3
     nom: "Martin"
     prenom: "Sophie"
@@ -482,4 +484,5 @@ definir_stock:
   - id_plat: 2
     jour: "2025-11-07"
     stock: 60
-  
+
+
