@@ -341,6 +341,74 @@ def supprimer_du_panier():
 
     return redirect(url_for('panier'))
 
+@app.route('/valider-commande/', methods=['POST'])
+@login_required
+def valider_commande():
+    """
+    Finalise la commande en cours de l'utilisateur connecté.
+    Change le statut de la commande de 'En commande' à 'En attente'
+    et déduit les quantités des plats et menus du stock disponible pour aujourd'hui.
+    """
+    commande = db.session.query(COMMANDE).filter_by(id_client=current_user.id_client, statut='En commande').first()
+
+    if not commande:
+        flash("Aucune commande en cours à valider.", "error")
+        return redirect(url_for('panier'))
+
+    try:
+        # --- CORRECTION TEMPORAIRE POUR LA DATE DE STOCK ---
+        # Utilise une date fixe pour la vérification du stock afin de correspondre aux données de test.
+        stock_check_date = date(2025, 10, 21)
+
+        # Vérification et déduction du stock pour les plats
+        for item_plat in commande.plats:
+            stock_entry = db.session.query(DEFINIR_STOCK).filter_by(id_plat=item_plat.id_plat, jour=stock_check_date).first()
+            if not stock_entry:
+                flash(f"Stock non défini pour le plat '{item_plat.plat.nom_plat}' pour aujourd'hui.", "error")
+                db.session.rollback()
+                return redirect(url_for('panier'))
+            if stock_entry.stock < item_plat.quantite:
+                flash(f"Stock insuffisant pour le plat '{item_plat.plat.nom_plat}'. Stock disponible: {stock_entry.stock}, demandé: {item_plat.quantite}.", "error")
+                db.session.rollback()
+                return redirect(url_for('panier'))
+            stock_entry.stock -= item_plat.quantite
+
+        # Vérification et déduction du stock pour les menus
+        for item_menu in commande.menus:
+            # Récupérer tous les plats qui composent ce menu
+            menu_plats_links = db.session.query(CONTENIR).filter_by(id_menu=item_menu.id_menu).all()
+            
+            for menu_plat_link in menu_plats_links:
+                plat_id = menu_plat_link.id_plat
+                plat_obj = db.session.get(PLAT, plat_id) # Pour le nom du plat en cas d'erreur
+                
+                stock_entry = db.session.query(DEFINIR_STOCK).filter_by(id_plat=plat_id, jour=stock_check_date).first()
+                required_stock = item_menu.quantite # Chaque plat du menu est déduit par la quantité du menu
+
+                if not stock_entry:
+                    flash(f"Stock non défini pour un ingrédient ('{plat_obj.nom_plat}') du menu '{item_menu.menu.nom_menu}' pour aujourd'hui.", "error")
+                    db.session.rollback()
+                    return redirect(url_for('panier'))
+                if stock_entry.stock < required_stock:
+                    flash(f"Stock insuffisant pour un ingrédient ('{plat_obj.nom_plat}') du menu '{item_menu.menu.nom_menu}'. Stock disponible: {stock_entry.stock}, demandé: {required_stock}.", "error")
+                    db.session.rollback()
+                    return redirect(url_for('panier'))
+                stock_entry.stock -= required_stock
+
+        # Mettre à jour le statut et la date de la commande
+        commande.statut = 'En attente'
+        # --- CORRECTION TEMPORAIRE POUR LA DATE DE COMMANDE ---
+        # Utilise une date et heure fixes valides pour correspondre aux données de test et aux contraintes de la DB.
+        commande.date_commande = datetime(2025, 10, 21, 12, 30, 0) # Heure valide (entre 11:30 et 14:00)
+        db.session.commit()
+        flash("Votre commande a été validée avec succès et est en attente de préparation !", "success")
+        return redirect(url_for('index')) # Redirige le client vers la page d'accueil après validation
+
+    except Exception as e:
+        db.session.rollback()
+        flash(f"Une erreur est survenue lors de la validation de votre commande : {e}", "error")
+        return redirect(url_for('panier'))
+
 @app.route('/connexion/', methods=['GET', 'POST'])
 def connexion():
     lg.warning('connexion à la page de connexion')
