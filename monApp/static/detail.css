@@ -90,6 +90,13 @@ body {
     background-color: #555;
 }
 
+/* Style pour le bouton désactivé */
+.bouton-commander:disabled {
+    background-color: #ccc;
+    color: #666;
+    cursor: not-allowed;
+}
+
 /* --- Section Allergènes --- */
 
 /* Conteneur général et réinitialisations */

@@ -55,29 +55,40 @@
         <main class="container content">
         <h1>Nos Plats</h1>
 
-        <section class="menu-grid">
-            {% for produit in produits %}
-            <article class="menu-card">
-                <a href="{{ url_for('detail_plat', id_plat=produit.id_plat) }}" class="card-image-link">
-                    <img src="../static/images/{{ produit.image_url }}" alt="Photo de {{ produit.nom_plat }}">
-                </a>
-                <div class="card-content">
-                    <a href="{{ url_for('detail_plat', id_plat=produit.id_plat) }}" class="card-text-link">
-                        <h2>{{ produit.nom_plat }}</h2>
-                        <p>{{ produit.description }}</p>
-                        <p>{{ produit.prix }} €</p>
-                    </a>
-                    <form action="{{ url_for('ajouter_au_panier') }}" method="post">
-                                <input type="hidden" name="id_plat" value="{{ produit.id_plat }}">
-                                <button type="submit" class="order-button">
-                                    <i class="fa-solid fa-circle-plus"></i>
-                                    <span>Commander</span>
-                                </button>
-                            </form>
-                </div>
-            </article>
+        <div class="menu-grid">
+            {# Boucle sur chaque plat pour l'afficher #}
+            {% for item in produits %}
+                 <div class="menu-card">
+                     <a href="{{ url_for('detail_plat', id_plat=item.plat.id_plat) }}" class="card-image-link">
+                         <img src="{{ url_for('static', filename='images/' + item.plat.image_url) }}" alt="Photo de {{ item.plat.nom_plat }}">
+                     </a>
+                     <div class="card-content">
+                         <div>
+                             <h2 class="card-title">
+                                 <a href="{{ url_for('detail_plat', id_plat=item.plat.id_plat) }}" class="card-text-link">
+                                     {{ item.plat.nom_plat }}
+                                 </a>
+                             </h2>
+                             <p>{{ item.plat.description }}</p>
+                         </div>
+                         <div class="card-footer">
+                             {% if item.stock > 0 %}
+                                 <span class="card-price">{{ "%.2f€"|format(item.plat.prix) }}</span>
+                                 <form action="{{ url_for('ajouter_au_panier') }}" method="POST">
+                                     <input type="hidden" name="id_plat" value="{{ item.plat.id_plat }}">
+                                     <button type="submit" class="order-button">
+                                         <i class="fas fa-shopping-cart"></i>
+                                         <span>Commander</span>
+                                     </button>
+                                 </form>
+                             {% else %}
+                                 <button class="order-button" disabled>Rupture de stock</button>
+                             {% endif %}
+                         </div>
+                     </div>
+                 </div>
             {% endfor %}
-        </section>
+        </div>
 
         <nav class="pagination" aria-label="Pagination">
             <ul>

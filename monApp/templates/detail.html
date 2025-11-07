@@ -21,11 +21,15 @@
                     {{ plat.longue_description or plat.description }}
                 </p>
                 
-                {# Formulaire pour ajouter le plat au panier #}
-                <form action="{{ url_for('ajouter_au_panier') }}" method="POST">
-                    <input type="hidden" name="id_plat" value="{{ plat.id_plat }}">
-                    <button type="submit" class="bouton-commander">Ajouter au panier</button>
-                </form>
+                {# Affiche le bouton ou un message de rupture de stock #}
+                {% if stock_disponible > 0 %}
+                    <form action="{{ url_for('ajouter_au_panier') }}" method="POST">
+                        <input type="hidden" name="id_plat" value="{{ plat.id_plat }}">
+                        <button type="submit" class="bouton-commander">Ajouter au panier</button>
+                    </form>
+                {% else %}
+                    <button class="bouton-commander" disabled>Rupture de stock</button>
+                {% endif %}
             </div>
         </main>
         
