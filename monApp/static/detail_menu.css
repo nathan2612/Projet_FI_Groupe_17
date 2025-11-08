@@ -330,6 +330,44 @@ body {
     margin: 8px 0 0 0;
 }
 
+/* Disabled / out-of-stock styles for menu choices */
+.menu-item.disabled {
+    opacity: 0.78; /* slightly faded */
+}
+
+.menu-choice.disabled {
+    cursor: not-allowed;
+}
+
+.menu-choice.disabled .menu-choice-content {
+    opacity: 0.65;
+    filter: grayscale(15%);
+    box-shadow: none;
+    border-color: #eceff1;
+}
+
+.menu-choice.disabled .plat-name {
+    color: #9aa1a8;
+}
+
+.menu-choice.disabled .description-small {
+    color: #9aa1a8;
+}
+
+.voir-icon.disabled {
+    pointer-events: none;
+    opacity: 0.5;
+    color: #9aa1a8;
+    background: transparent;
+    box-shadow: none;
+    cursor: not-allowed;
+}
+
+.out-of-stock-note {
+    color: #9aa1a8;
+    font-weight: 600;
+}
+
 @media (max-width: 1000px) {
     .menu-sections {
         gap: 16px;

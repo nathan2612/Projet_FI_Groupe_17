@@ -73,12 +73,18 @@
                         <div class="item-controls">
                             <form action="{{ url_for('modifier_quantite_panier') }}" method="post" class="quantity-form">
                                 <input type="hidden" name="id_menu" value="{{ item_menu.menu.id_menu }}">
+                                <input type="hidden" name="id_entree" value="{{ item_menu.entree.id_plat }}">
+                                <input type="hidden" name="id_plat_choisi" value="{{ item_menu.plat_choisi.id_plat }}">
+                                <input type="hidden" name="id_dessert" value="{{ item_menu.dessert.id_plat }}">
                                 <input type="hidden" name="action" value="decrease">
                                 <button type="submit" class="quantity-btn" title="Réduire la quantité">-</button>
                             </form>
                             <span class="quantity">{{ item_menu.quantite }}</span>
                             <form action="{{ url_for('modifier_quantite_panier') }}" method="post" class="quantity-form">
                                 <input type="hidden" name="id_menu" value="{{ item_menu.menu.id_menu }}">
+                                <input type="hidden" name="id_entree" value="{{ item_menu.entree.id_plat }}">
+                                <input type="hidden" name="id_plat_choisi" value="{{ item_menu.plat_choisi.id_plat }}">
+                                <input type="hidden" name="id_dessert" value="{{ item_menu.dessert.id_plat }}">
                                 <input type="hidden" name="action" value="increase">
                                 <button type="submit" class="quantity-btn" title="Augmenter la quantité">+</button>
                             </form>
@@ -86,6 +92,9 @@
                         <span class="item-price-total">{{ "%.2f€"|format(item_menu.menu.prix * item_menu.quantite) }}</span>
                         <form action="{{ url_for('supprimer_du_panier') }}" method="post" class="remove-form">
                             <input type="hidden" name="id_menu" value="{{ item_menu.menu.id_menu }}">
+                            <input type="hidden" name="id_entree" value="{{ item_menu.entree.id_plat }}">
+                            <input type="hidden" name="id_plat_choisi" value="{{ item_menu.plat_choisi.id_plat }}">
+                            <input type="hidden" name="id_dessert" value="{{ item_menu.dessert.id_plat }}">
                             <button type="submit" class="remove-item" title="Supprimer l'article">
                                 <i class="fas fa-times"></i>
                             </button>
