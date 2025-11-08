@@ -197,13 +197,11 @@ CREATE TRIGGER trg_insert_stock_plats
 BEFORE INSERT ON appartenir_plats
 FOR EACH ROW
 BEGIN
-	IF (SELECT statut FROM commandes WHERE id_commande = NEW.id_commande) != 'En commande' THEN
-		IF (SELECT stock FROM definir_stock WHERE id_plat = NEW.id_plat and jour = (select DATE(date_commande) from commandes where id_commande = NEW.id_commande)) - NEW.quantite >= 0 THEN
-			UPDATE definir_stock SET stock = stock - NEW.quantite WHERE id_plat = NEW.id_plat and jour = (select DATE(date_commande) from commandes where id_commande = NEW.id_commande);
-		ELSE
-			SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT='Stock insuffisant pour commander le plat';
-		END IF;
-	END IF;			 
+	IF (SELECT stock FROM definir_stock WHERE id_plat = NEW.id_plat and jour = CURDATE()) - NEW.quantite >= 0 THEN
+		UPDATE definir_stock SET stock = stock - NEW.quantite WHERE id_plat = NEW.id_plat and jour = CURDATE();
+	ELSE
+		SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT='Stock insuffisant pour commander le plat';
+	END IF;		 
 END;''')
 
 event.listen(APPARTENIR_PLATS.__table__, 'after_create', trigger_insert_stock_plats)
@@ -213,47 +211,52 @@ CREATE TRIGGER trg_update_stock_plats
 BEFORE UPDATE ON appartenir_plats
 FOR EACH ROW
 BEGIN
-	IF (SELECT statut FROM commandes WHERE id_commande = NEW.id_commande) != 'En commande' THEN
-		IF (SELECT stock FROM definir_stock WHERE id_plat = NEW.id_plat and jour = (select DATE(date_commande) from commandes where id_commande = NEW.id_commande)) + OLD.quantite - NEW.quantite >= 0 THEN
-			UPDATE definir_stock SET stock = stock + OLD.quantite - NEW.quantite WHERE id_plat = NEW.id_plat and jour = (select DATE(date_commande) from commandes where id_commande = NEW.id_commande);
-		ELSE
-			SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT='Stock insuffisant pour commander le plat';
-		END IF;
-	END IF;			 
+	IF (SELECT stock FROM definir_stock WHERE id_plat = NEW.id_plat and jour = CURDATE()) + OLD.quantite - NEW.quantite >= 0 THEN
+		UPDATE definir_stock SET stock = stock + OLD.quantite - NEW.quantite WHERE id_plat = NEW.id_plat and jour = CURDATE();
+	ELSE
+		SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT='Stock insuffisant pour commander le plat';
+	END IF;		 
 END;''')
 
 event.listen(APPARTENIR_PLATS.__table__, 'after_create', trigger_update_stock_plats)
+
+trigger_delete_stock_plats = DDL('''
+CREATE TRIGGER trg_delete_stock_plats
+BEFORE DELETE ON appartenir_plats
+FOR EACH ROW
+BEGIN
+	UPDATE definir_stock SET stock = stock + OLD.quantite WHERE id_plat = OLD.id_plat and jour = CURDATE();
+END;''')
+
+event.listen(APPARTENIR_PLATS.__table__, 'after_create', trigger_delete_stock_plats)
 
 trigger_insert_stock_menus = DDL('''
 CREATE TRIGGER trg_insert_stock_menus
 BEFORE INSERT ON appartenir_menus
 FOR EACH ROW
 BEGIN
-	-- When inserting a menu line, decrement stock only for the chosen plats (if provided)
-	IF (SELECT statut FROM commandes WHERE id_commande = NEW.id_commande) != 'En commande' THEN
-		-- entree
-		IF NEW.id_entree IS NOT NULL THEN
-			IF (SELECT stock FROM definir_stock WHERE id_plat = NEW.id_entree AND jour = (SELECT DATE(date_commande) FROM commandes WHERE id_commande = NEW.id_commande)) - NEW.quantite >= 0 THEN
-				UPDATE definir_stock SET stock = stock - NEW.quantite WHERE id_plat = NEW.id_entree AND jour = (SELECT DATE(date_commande) FROM commandes WHERE id_commande = NEW.id_commande);
-			ELSE
-				SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT='Stock insuffisant pour l''entrée du menu';
-			END IF;
+	-- entree
+	IF NEW.id_entree IS NOT NULL THEN
+		IF (SELECT stock FROM definir_stock WHERE id_plat = NEW.id_entree AND jour = CURDATE()) - NEW.quantite >= 0 THEN
+			UPDATE definir_stock SET stock = stock - NEW.quantite WHERE id_plat = NEW.id_entree AND jour = CURDATE();
+		ELSE
+			SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT='Stock insuffisant pour l''entrée du menu';
 		END IF;
-		-- plat
-		IF NEW.id_plat_choisi IS NOT NULL THEN
-			IF (SELECT stock FROM definir_stock WHERE id_plat = NEW.id_plat_choisi AND jour = (SELECT DATE(date_commande) FROM commandes WHERE id_commande = NEW.id_commande)) - NEW.quantite >= 0 THEN
-				UPDATE definir_stock SET stock = stock - NEW.quantite WHERE id_plat = NEW.id_plat_choisi AND jour = (SELECT DATE(date_commande) FROM commandes WHERE id_commande = NEW.id_commande);
-			ELSE
-				SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT='Stock insuffisant pour le plat du menu';
-			END IF;
+	END IF;						 
+	-- plat
+	IF NEW.id_plat_choisi IS NOT NULL THEN
+		IF (SELECT stock FROM definir_stock WHERE id_plat = NEW.id_plat_choisi AND jour = CURDATE()) - NEW.quantite >= 0 THEN
+			UPDATE definir_stock SET stock = stock - NEW.quantite WHERE id_plat = NEW.id_plat_choisi AND jour = CURDATE();
+		ELSE
+			SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT='Stock insuffisant pour le plat du menu';
 		END IF;
-		-- dessert
-		IF NEW.id_dessert IS NOT NULL THEN
-			IF (SELECT stock FROM definir_stock WHERE id_plat = NEW.id_dessert AND jour = (SELECT DATE(date_commande) FROM commandes WHERE id_commande = NEW.id_commande)) - NEW.quantite >= 0 THEN
-				UPDATE definir_stock SET stock = stock - NEW.quantite WHERE id_plat = NEW.id_dessert AND jour = (SELECT DATE(date_commande) FROM commandes WHERE id_commande = NEW.id_commande);
-			ELSE
-				SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT='Stock insuffisant pour le dessert du menu';
-			END IF;
+	END IF;					 
+	-- dessert
+	IF NEW.id_dessert IS NOT NULL THEN
+		IF (SELECT stock FROM definir_stock WHERE id_plat = NEW.id_dessert AND jour = CURDATE()) - NEW.quantite >= 0 THEN
+			UPDATE definir_stock SET stock = stock - NEW.quantite WHERE id_plat = NEW.id_dessert AND jour = CURDATE();
+		ELSE
+			SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT='Stock insuffisant pour le dessert du menu';
 		END IF;
 	END IF;
 END;''')
@@ -265,70 +268,79 @@ CREATE TRIGGER trg_update_stock_menus
 BEFORE UPDATE ON appartenir_menus
 FOR EACH ROW
 BEGIN
-	-- On update: restore old quantities then apply new ones (both in same transaction)
-	IF (SELECT statut FROM commandes WHERE id_commande = NEW.id_commande) != 'En commande' THEN
-		-- add back old quantities
+		-- entree
 		IF OLD.id_entree IS NOT NULL THEN
-			UPDATE definir_stock SET stock = stock + OLD.quantite WHERE id_plat = OLD.id_entree AND jour = (SELECT DATE(date_commande) FROM commandes WHERE id_commande = OLD.id_commande);
-		END IF;
-		IF OLD.id_plat_choisi IS NOT NULL THEN
-			UPDATE definir_stock SET stock = stock + OLD.quantite WHERE id_plat = OLD.id_plat_choisi AND jour = (SELECT DATE(date_commande) FROM commandes WHERE id_commande = OLD.id_commande);
-		END IF;
-		IF OLD.id_dessert IS NOT NULL THEN
-			UPDATE definir_stock SET stock = stock + OLD.quantite WHERE id_plat = OLD.id_dessert AND jour = (SELECT DATE(date_commande) FROM commandes WHERE id_commande = OLD.id_commande);
-		END IF;
-
-		-- now subtract new quantities, checking availability
-		IF NEW.id_entree IS NOT NULL THEN
-			IF (SELECT stock FROM definir_stock WHERE id_plat = NEW.id_entree AND jour = (SELECT DATE(date_commande) FROM commandes WHERE id_commande = NEW.id_commande)) - NEW.quantite >= 0 THEN
-				UPDATE definir_stock SET stock = stock - NEW.quantite WHERE id_plat = NEW.id_entree AND jour = (SELECT DATE(date_commande) FROM commandes WHERE id_commande = NEW.id_commande);
+			IF (SELECT stock FROM definir_stock WHERE id_plat = NEW.id_entree AND jour = CURDATE()) + OLD.quantite - NEW.quantite >= 0 THEN
+				UPDATE definir_stock SET stock = stock + OLD.quantite - NEW.quantite WHERE id_plat = NEW.id_entree AND jour = CURDATE();
 			ELSE
 				SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT='Stock insuffisant pour l''entrée du menu';
 			END IF;
 		END IF;
-		IF NEW.id_plat_choisi IS NOT NULL THEN
-			IF (SELECT stock FROM definir_stock WHERE id_plat = NEW.id_plat_choisi AND jour = (SELECT DATE(date_commande) FROM commandes WHERE id_commande = NEW.id_commande)) - NEW.quantite >= 0 THEN
-				UPDATE definir_stock SET stock = stock - NEW.quantite WHERE id_plat = NEW.id_plat_choisi AND jour = (SELECT DATE(date_commande) FROM commandes WHERE id_commande = NEW.id_commande);
+		-- plat
+		IF OLD.id_plat_choisi IS NOT NULL THEN
+			IF (SELECT stock FROM definir_stock WHERE id_plat = NEW.id_plat_choisi AND jour = CURDATE()) + OLD.quantite - NEW.quantite >= 0 THEN
+				UPDATE definir_stock SET stock = stock + OLD.quantite - NEW.quantite WHERE id_plat = NEW.id_plat_choisi AND jour = CURDATE();
 			ELSE
 				SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT='Stock insuffisant pour le plat du menu';
 			END IF;
 		END IF;
-		IF NEW.id_dessert IS NOT NULL THEN
-			IF (SELECT stock FROM definir_stock WHERE id_plat = NEW.id_dessert AND jour = (SELECT DATE(date_commande) FROM commandes WHERE id_commande = NEW.id_commande)) - NEW.quantite >= 0 THEN
-				UPDATE definir_stock SET stock = stock - NEW.quantite WHERE id_plat = NEW.id_dessert AND jour = (SELECT DATE(date_commande) FROM commandes WHERE id_commande = NEW.id_commande);
+		-- dessert
+		IF OLD.id_dessert IS NOT NULL THEN
+			IF (SELECT stock FROM definir_stock WHERE id_plat = NEW.id_dessert AND jour = CURDATE()) + OLD.quantite - NEW.quantite >= 0 THEN
+				UPDATE definir_stock SET stock = stock + OLD.quantite - NEW.quantite WHERE id_plat = NEW.id_dessert AND jour = CURDATE();
 			ELSE
 				SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT='Stock insuffisant pour le dessert du menu';
 			END IF;
 		END IF;
-	END IF;
 END;''')
 
 event.listen(APPARTENIR_MENUS.__table__, 'after_create', trigger_update_stock_menus)
 
+trigger_delete_stock_menus = DDL('''
+CREATE TRIGGER trg_delete_stock_menus
+BEFORE DELETE ON appartenir_menus
+FOR EACH ROW
+BEGIN
+		-- entree
+		IF OLD.id_entree IS NOT NULL THEN
+			UPDATE definir_stock SET stock = stock + OLD.quantite WHERE id_plat = OLD.id_entree AND jour = CURDATE();
+		END IF;
+		-- plat
+		IF OLD.id_plat_choisi IS NOT NULL THEN
+			UPDATE definir_stock SET stock = stock + OLD.quantite WHERE id_plat = OLD.id_plat_choisi AND jour = CURDATE();
+		END IF;
+		-- dessert
+		IF OLD.id_dessert IS NOT NULL THEN
+			UPDATE definir_stock SET stock = stock + OLD.quantite WHERE id_plat = OLD.id_dessert AND jour = CURDATE();
+		END IF;
+END;''')
+
+event.listen(APPARTENIR_MENUS.__table__, 'after_create', trigger_delete_stock_menus)
+
 # * triggers gestion commande sur_place
-trigger_insert_commande_sur_place = DDL('''
-CREATE TRIGGER trg_insert_commande_sur_place
-BEFORE INSERT ON commandes
-FOR EACH ROW
-BEGIN
-	if (select sum(nombre_personnes) from commandes where DATE(date_commande) = DATE(NEW.date_commande) and sur_place = 1 and HOUR(date_commande) = HOUR(NEW.date_commande)) + NEW.nombre_personnes > 12 then
-		SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Nombre maximum de personnes dépassé';
-	end if;
-END;''')
+#trigger_insert_commande_sur_place = DDL('''
+#CREATE TRIGGER trg_insert_commande_sur_place
+#BEFORE INSERT ON commandes
+#FOR EACH ROW
+#BEGIN
+#	if (select sum(nombre_personnes) from commandes where DATE(date_commande) = DATE(NEW.date_commande) and sur_place = 1 and HOUR(date_commande) = HOUR(NEW.date_commande)) + NEW.nombre_personnes > 12 then
+#		SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Nombre maximum de personnes dépassé';
+#	end if;
+#END;''')
+#
+#event.listen(APPARTENIR_MENUS.__table__, 'after_create', trigger_insert_commande_sur_place)
 
-event.listen(APPARTENIR_MENUS.__table__, 'after_create', trigger_insert_commande_sur_place)
-
-trigger_update_commande_sur_place = DDL('''
-CREATE TRIGGER trg_update_commande_sur_place
-BEFORE UPDATE ON commandes
-FOR EACH ROW
-BEGIN
-	if (select sum(nombre_personnes) from commandes where DATE(date_commande) = DATE(NEW.date_commande) and sur_place = 1 and HOUR(date_commande) = HOUR(NEW.date_commande)) + NEW.nombre_personnes > 12 then
-		SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Nombre maximum de personnes dépassé';
-	end if;
-END;''')
-
-event.listen(APPARTENIR_MENUS.__table__, 'after_create', trigger_update_commande_sur_place)
+#trigger_update_commande_sur_place = DDL('''
+#CREATE TRIGGER trg_update_commande_sur_place
+#BEFORE UPDATE ON commandes
+#FOR EACH ROW
+#BEGIN
+#	if (select sum(nombre_personnes) from commandes where DATE(date_commande) = DATE(NEW.date_commande) and sur_place = 1 and HOUR(date_commande) = HOUR(NEW.date_commande)) + NEW.nombre_personnes > 12 then
+#		SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Nombre maximum de personnes dépassé';
+#	end if;
+#END;''')
+#
+#event.listen(APPARTENIR_MENUS.__table__, 'after_create', trigger_update_commande_sur_place)
 
 # * triggers calcule montant total plats
 trigger_insert_calcule_montant_total_plats = DDL('''
@@ -336,11 +348,9 @@ CREATE TRIGGER trg_calcule_montant_total_plats
 AFTER INSERT ON appartenir_plats
 FOR EACH ROW
 BEGIN
-	IF (SELECT statut FROM commandes WHERE id_commande = NEW.id_commande) != 'En commande' THEN
-		UPDATE commandes
-		SET montant_total = montant_total + ((select prix from plats where id_plat = NEW.id_plat) * NEW.quantite)
-		WHERE id_commande = NEW.id_commande;
-	END IF;
+	UPDATE commandes
+	SET montant_total = montant_total + ((select prix from plats where id_plat = NEW.id_plat) * NEW.quantite)
+	WHERE id_commande = NEW.id_commande;
 END;''')
 
 event.listen(APPARTENIR_PLATS.__table__, 'after_create', trigger_insert_calcule_montant_total_plats)
@@ -350,11 +360,9 @@ CREATE TRIGGER trg_update_calcule_montant_total_plats
 AFTER UPDATE ON appartenir_plats
 FOR EACH ROW
 BEGIN
-	IF (SELECT statut FROM commandes WHERE id_commande = OLD.id_commande) != 'En commande' THEN
-		UPDATE commandes
-		SET montant_total = montant_total - ((select prix from plats where id_plat = OLD.id_plat) * OLD.quantite) + ((select prix from plats where id_plat = NEW.id_plat) * NEW.quantite)
-		WHERE id_commande = NEW.id_commande;
-	END IF;
+	UPDATE commandes
+	SET montant_total = montant_total - ((select prix from plats where id_plat = OLD.id_plat) * OLD.quantite) + ((select prix from plats where id_plat = NEW.id_plat) * NEW.quantite)
+	WHERE id_commande = NEW.id_commande;
 END;''')
 
 event.listen(APPARTENIR_PLATS.__table__, 'after_create', trigger_update_calcule_montant_total_plats)
@@ -364,11 +372,9 @@ CREATE TRIGGER trg_delete_calcule_montant_total_plats
 AFTER DELETE ON appartenir_plats
 FOR EACH ROW
 BEGIN
-	IF (SELECT statut FROM commandes WHERE id_commande = OLD.id_commande) != 'En commande' THEN
-		UPDATE commandes
-		SET montant_total = montant_total - ((select prix from plats where id_plat = OLD.id_plat) * OLD.quantite)
-		WHERE id_commande = OLD.id_commande;
-	END IF;
+	UPDATE commandes
+	SET montant_total = montant_total - ((select prix from plats where id_plat = OLD.id_plat) * OLD.quantite)
+	WHERE id_commande = OLD.id_commande;
 END;''')
 
 event.listen(APPARTENIR_PLATS.__table__, 'after_create', trigger_delete_calcule_montant_total_plats)
@@ -379,11 +385,9 @@ CREATE TRIGGER trg_insert_calcule_montant_total_menus
 AFTER INSERT ON appartenir_menus
 FOR EACH ROW
 BEGIN
-	IF (SELECT statut FROM commandes WHERE id_commande = NEW.id_commande) != 'En commande' THEN
-		UPDATE commandes
-		SET montant_total = montant_total + ((select prix from menu where id_menu = NEW.id_menu) * NEW.quantite)
-		WHERE id_commande = NEW.id_commande;
-	END IF;
+	UPDATE commandes
+	SET montant_total = montant_total + ((select prix from menu where id_menu = NEW.id_menu) * NEW.quantite)
+	WHERE id_commande = NEW.id_commande;
 END;''')
 
 event.listen(APPARTENIR_MENUS.__table__, 'after_create', trigger_insert_calcule_montant_total_menus)
@@ -393,11 +397,9 @@ CREATE TRIGGER trg_update_calcule_montant_total_menus
 AFTER UPDATE ON appartenir_menus
 FOR EACH ROW
 BEGIN
-	IF (SELECT statut FROM commandes WHERE id_commande = OLD.id_commande) != 'En commande' THEN
-		UPDATE commandes
-		SET montant_total = montant_total - ((select prix from menu where id_menu = OLD.id_menu) * OLD.quantite) + ((select prix from menu where id_menu = NEW.id_menu) * NEW.quantite)
-		WHERE id_commande = NEW.id_commande;
-	END IF;
+	UPDATE commandes
+	SET montant_total = montant_total - ((select prix from menu where id_menu = OLD.id_menu) * OLD.quantite) + ((select prix from menu where id_menu = NEW.id_menu) * NEW.quantite)
+	WHERE id_commande = NEW.id_commande;
 END;''')
 
 event.listen(APPARTENIR_MENUS.__table__, 'after_create', trigger_update_calcule_montant_total_menus)
@@ -407,11 +409,9 @@ CREATE TRIGGER trg_delete_calcule_montant_total_menus
 AFTER DELETE ON appartenir_menus
 FOR EACH ROW
 BEGIN
-	IF (SELECT statut FROM commandes WHERE id_commande = OLD.id_commande) != 'En commande' THEN
-		UPDATE commandes
-		SET montant_total = montant_total - ((select prix from menu where id_menu = OLD.id_menu) * OLD.quantite)
-		WHERE id_commande = OLD.id_commande;
-	END IF;
+	UPDATE commandes
+	SET montant_total = montant_total - ((select prix from menu where id_menu = OLD.id_menu) * OLD.quantite)
+	WHERE id_commande = OLD.id_commande;
 END;''')
 
 event.listen(APPARTENIR_MENUS.__table__, 'after_create', trigger_delete_calcule_montant_total_menus)

@@ -32,7 +32,8 @@
             {% if entres %}
                 <ul class="menu-plats">
                 {% for c in entres %}
-                    <li class="menu-item">
+                    <li class="menu-item{% if c.plat.stock_disponible <= 0 %} disabled{% endif %}">
+                        {% if c.plat.stock_disponible > 0 %}
                         <label class="menu-choice">
                             <input type="radio" name="entree" value="{{ c.plat.id_plat }}">
                             <span class="menu-choice-content">
@@ -46,6 +47,21 @@
                                 <path d="M13 5l7 7-7 7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
                             </svg>
                         </a>
+                        {% else %}
+                        <label class="menu-choice disabled">
+                            <input type="radio" name="entree" value="{{ c.plat.id_plat }}" disabled>
+                            <span class="menu-choice-content">
+                                <div class="plat-name">{{ c.plat.nom_plat }}</div>
+                                <p class="description-small">{{ c.plat.description }}</p>
+                            </span>
+                        </label>
+                        <span class="voir-icon disabled" aria-hidden="true" style="pointer-events:none; opacity:0.5;">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                                <path d="M5 12h14" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                <path d="M13 5l7 7-7 7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            </svg>
+                        </span>
+                        {% endif %}
                     </li>
                 {% endfor %}
                 </ul>
@@ -59,7 +75,8 @@
             {% if plats %}
                 <ul class="menu-plats">
                 {% for c in plats %}
-                    <li class="menu-item">
+                    <li class="menu-item{% if c.plat.stock_disponible <= 0 %} disabled{% endif %}">
+                        {% if c.plat.stock_disponible > 0 %}
                         <label class="menu-choice">
                             <input type="radio" name="plat" value="{{ c.plat.id_plat }}">
                             <span class="menu-choice-content">
@@ -73,6 +90,16 @@
                                 <path d="M13 5l7 7-7 7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
                             </svg>
                         </a>
+                        {% else %}
+                        <label class="menu-choice disabled">
+                            <input type="radio" name="plat" value="{{ c.plat.id_plat }}" disabled>
+                            <span class="menu-choice-content">
+                                <div class="plat-name">{{ c.plat.nom_plat }}</div>
+                                <p class="description-small">{{ c.plat.description }}</p>
+                            </span>
+                        </label>
+                        <span class="out-of-stock-note" style="opacity:0.6;">Indisponible</span>
+                        {% endif %}
                     </li>
                 {% endfor %}
                 </ul>
@@ -86,7 +113,8 @@
             {% if desserts %}
                 <ul class="menu-plats">
                 {% for c in desserts %}
-                    <li class="menu-item">
+                    <li class="menu-item{% if c.plat.stock_disponible <= 0 %} disabled{% endif %}">
+                        {% if c.plat.stock_disponible > 0 %}
                         <label class="menu-choice">
                             <input type="radio" name="dessert" value="{{ c.plat.id_plat }}">
                             <span class="menu-choice-content">
@@ -100,6 +128,21 @@
                                 <path d="M13 5l7 7-7 7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
                             </svg>
                         </a>
+                        {% else %}
+                        <label class="menu-choice disabled">
+                            <input type="radio" name="dessert" value="{{ c.plat.id_plat }}" disabled>
+                            <span class="menu-choice-content">
+                                <div class="plat-name">{{ c.plat.nom_plat }}</div>
+                                <p class="description-small">{{ c.plat.description }}</p>
+                            </span>
+                        </label>
+                        <span class="voir-icon disabled" aria-hidden="true" style="pointer-events:none; opacity:0.5;">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                                <path d="M5 12h14" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                <path d="M13 5l7 7-7 7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            </svg>
+                        </span>
+                        {% endif %}
                     </li>
                 {% endfor %}
                 </ul>

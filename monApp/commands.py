@@ -115,16 +115,12 @@ def loaddb(filename):
     db.session.commit()
 
     # 6) commandes
-    original_statuts = {}
     for entry in data.get('commandes', []) or []:
-        cmd_id = entry.get('id_commande')
-        original_statuts[cmd_id] = entry.get('statut')
         obj = COMMANDE(
-            id_commande=cmd_id,
+            id_commande=entry.get('id_commande'),
             id_client=entry.get('id_client'),
             date_commande=datetime.strptime(entry.get('date_commande'), '%Y-%m-%d %H:%M:%S'),
-            # force 'En commande' during import to avoid stock triggers
-            statut='En commande',
+            statut=entry.get('statut'),
             montant_total=entry.get('montant_total'),
             sur_place=entry.get('sur_place'),
             nombre_personnes=entry.get('nombre_personnes')

@@ -87,11 +87,8 @@ def produits():
     page = max(1, min(page, total_pages))
     produits = query.offset((page - 1) * per_page).limit(per_page).all()
 
-    today = date.today()
-    stock_check_date = date.today()
-    
     ids_plats = [p.id_plat for p in produits]
-    stocks_db = db.session.query(DEFINIR_STOCK).filter(DEFINIR_STOCK.id_plat.in_(ids_plats), DEFINIR_STOCK.jour == stock_check_date).all()
+    stocks_db = db.session.query(DEFINIR_STOCK).filter(DEFINIR_STOCK.id_plat.in_(ids_plats), DEFINIR_STOCK.jour == date.today()).all()
     stocks_map = {s.id_plat: s.stock for s in stocks_db}
 
     for plat in produits:
@@ -161,6 +158,20 @@ def detail_menu(id_menu):
     entres = db.session.query(CONTENIR).filter_by(id_menu=id_menu, type_plat=0).all()
     plats = db.session.query(CONTENIR).filter_by(id_menu=id_menu, type_plat=1).all()
     desserts = db.session.query(CONTENIR).filter_by(id_menu=id_menu, type_plat=2).all()
+
+    today = date.today()
+    all_plat_ids = set()
+    for c in (entres or []) + (plats or []) + (desserts or []):
+        if c and getattr(c, 'id_plat', None) is not None:
+            all_plat_ids.add(c.id_plat)
+    if all_plat_ids:
+        stocks = db.session.query(DEFINIR_STOCK).filter(DEFINIR_STOCK.id_plat.in_(list(all_plat_ids)), DEFINIR_STOCK.jour == today).all()
+        stocks_map = {s.id_plat: s.stock for s in stocks}
+    else:
+        stocks_map = {}
+    for c in (entres or []) + (plats or []) + (desserts or []):
+        c.plat.stock_disponible = stocks_map.get(c.id_plat, 0)
+
     return render_template("detail_menu.html", menu=menu, entres=entres, desserts=desserts, plats=plats)
    
 @app.route('/ajouter-menu-selection/', methods=['POST'])
@@ -174,6 +185,10 @@ def ajouter_menu_selection():
     dessert_id = request.form.get('dessert')
     id_menu = request.form.get('id_menu')
 
+    if not entree_id or not plat_id or not dessert_id or not id_menu:
+        flash("Veuillez sélectionner une entrée, un plat principal et un dessert.", "error")
+        return redirect(request.referrer or url_for('menus'))
+
     commande = db.session.query(COMMANDE).filter_by(id_client=current_user.id_client, statut='En commande').first()
     if not commande:
         commande = COMMANDE(
@@ -183,7 +198,6 @@ def ajouter_menu_selection():
         db.session.add(commande)
         db.session.commit()
 
-    # Ensure we explicitly include id_dessert (may be None) when looking for an existing identical menu
     menu = db.session.query(APPARTENIR_MENUS).filter_by(
         id_commande=commande.id_commande,
         id_menu=id_menu,
@@ -195,7 +209,6 @@ def ajouter_menu_selection():
     if menu:
         menu.quantite = (menu.quantite or 0) + 1
     else:
-        # Create the row, explicitly setting id_dessert to None when not chosen so the INSERT includes the column
         menu = APPARTENIR_MENUS(
             id_commande=commande.id_commande,
             id_menu=id_menu,
@@ -258,8 +271,6 @@ def set_statut(cmd_id):
 
     return redirect(request.referrer or url_for('commandes'))
 
-
-
 @app.route('/nouveautes/')
 def nouveaute():
     return render_template("nouveaute.html")
@@ -283,27 +294,6 @@ def ajouter_au_panier():
         return redirect(url_for('connexion', next=url_for('produits')))
 
     id_plat = request.form.get('id_plat')
-    if not id_plat:
-        flash("Aucun plat spécifié.", "error")
-        return redirect(url_for('produits'))
-
-    try:
-        id_plat_int = int(id_plat)
-    except (ValueError, TypeError):
-        flash("Identifiant de plat invalide.", "error")
-        return redirect(url_for('produits'))
-    
-    stock_check_date = date.today()
-    stock_disponible = db.session.query(DEFINIR_STOCK).filter_by(id_plat=id_plat_int, jour=stock_check_date).first()
-    item_panier_existant = db.session.query(APPARTENIR_PLATS).join(COMMANDE).filter(
-        COMMANDE.id_client == current_user.id_client,
-        COMMANDE.statut == 'En commande',
-        APPARTENIR_PLATS.id_plat == id_plat_int
-    ).first()
-    quantite_actuelle = item_panier_existant.quantite if item_panier_existant else 0
-    if not stock_disponible or stock_disponible.stock <= quantite_actuelle:
-        flash("Stock insuffisant pour ajouter ce plat.", "error")
-        return redirect(request.referrer or url_for('produits'))
 
     commande = db.session.query(COMMANDE).filter_by(id_client=current_user.id_client, statut='En commande').first()
     if not commande:
@@ -314,21 +304,18 @@ def ajouter_au_panier():
         db.session.add(commande)
         db.session.commit()
 
-    item_panier = db.session.query(APPARTENIR_PLATS).filter_by(id_commande=commande.id_commande, id_plat=id_plat_int).first()
+    item_panier = db.session.query(APPARTENIR_PLATS).filter_by(id_commande=commande.id_commande, id_plat=id_plat).first()
 
-    if item_panier:
-        item_panier.quantite += 1
-    else:
-        item_panier = APPARTENIR_PLATS(id_commande=commande.id_commande, id_plat=id_plat_int, quantite=1)
-        db.session.add(item_panier)
-
-    total = 0
-    for item in commande.plats:
-        total += item.plat.prix * item.quantite
-    for item in commande.menus:
-        total += item.menu.prix * item.quantite
-    commande.montant_total = total
-    db.session.commit()
+    try:
+        if item_panier:
+            item_panier.quantite += 1
+        else:
+            item_panier = APPARTENIR_PLATS(id_commande=commande.id_commande, id_plat=id_plat, quantite=1)
+            db.session.add(item_panier)
+            db.session.commit()
+    except Exception:
+        lg.warning("Erreur lors de l'ajout au panier : pas de stock disponible.")
+        db.session.rollback()
 
     flash("Plat ajouté au panier avec succès !", "success")
     return redirect(request.referrer or url_for('produits'))
@@ -337,51 +324,39 @@ def ajouter_au_panier():
 @app.route('/modifier-quantite-panier/', methods=['POST'])
 @login_required
 def modifier_quantite_panier():
-    if not current_user.is_authenticated:
-        flash("Veuillez vous connecter pour ajouter des articles au panier.", "info")
-        return redirect(url_for('connexion', next=url_for('produits')))
-
     id_plat = request.form.get('id_plat')
+    id_menu = request.form.get('id_menu')
+    id_entree = request.form.get('id_entree')
+    id_plat_choisi = request.form.get('id_plat_choisi')
+    id_dessert = request.form.get('id_dessert')
     action = request.form.get('action')
+    commande = db.session.query(COMMANDE).filter_by(
+        id_client=current_user.id_client, statut='En commande').first()
+    if id_plat:
+        item = db.session.query(APPARTENIR_PLATS).filter_by(
+            id_commande=commande.id_commande, id_plat=id_plat).first()
+    elif id_menu:
+        item = db.session.query(APPARTENIR_MENUS).filter_by(
+            id_commande=commande.id_commande,
+            id_menu=id_menu,
+            id_entree=id_entree,
+            id_plat_choisi=id_plat_choisi,
+            id_dessert=id_dessert
+        ).first()
 
-    if not id_plat or not action:
-        flash("Action invalide.", "error")
-        return redirect(url_for('panier'))
+    if action == 'increase':
+        item.quantite += 1
+    else:
+        item.quantite -= 1
+
+    if item.quantite <= 0:
+        db.session.delete(item)
 
     try:
-        id_plat_int = int(id_plat)
-    except (ValueError, TypeError):
-        flash("Identifiant de plat invalide.", "error")
-        return redirect(url_for('panier'))
-
-    commande = db.session.query(COMMANDE).filter_by(id_client=current_user.id_client, statut='En commande').first()
-    if commande:
-        item = db.session.query(APPARTENIR_PLATS).filter_by(id_commande=commande.id_commande, id_plat=id_plat_int).first()
-        if item:
-            stock_check_date = date.today()
-            if action == 'increase':
-                jour_verification = commande.date_commande.date() if commande.date_commande else stock_check_date
-                stock_disponible = db.session.query(DEFINIR_STOCK).filter_by(id_plat=id_plat_int, jour=jour_verification).first()
-                if stock_disponible and item.quantite < stock_disponible.stock:
-                    item.quantite += 1
-                    flash("Quantité mise à jour.", "success")
-                else:
-                    flash("Stock insuffisant pour ajouter cet article.", "error")
-            elif action == 'decrease':
-                item.quantite -= 1
-
-            if item.quantite <= 0:
-                db.session.delete(item)
-                flash("Plat supprimé du panier.", "success")
-            
-            total = 0
-            for item_plat in commande.plats:
-                total += item_plat.plat.prix * item_plat.quantite
-            for item_menu in commande.menus:
-                total += item_menu.menu.prix * item_menu.quantite
-            commande.montant_total = total
-            db.session.commit()
-
+        db.session.commit()
+    except Exception:
+        lg.warning("Erreur lors de la modification de la quantité dans le panier.")
+        db.session.rollback()
     return redirect(url_for('panier'))
 
 @app.route('/supprimer-du-panier/', methods=['POST'])
@@ -393,89 +368,35 @@ def supprimer_du_panier():
 
     id_plat = request.form.get('id_plat')
     id_menu = request.form.get('id_menu')
-
-    try:
-        id_plat_int = int(id_plat) if id_plat else None
-    except (ValueError, TypeError):
-        id_plat_int = None
+    id_entree = request.form.get('id_entree')
+    id_plat_choisi = request.form.get('id_plat_choisi')
+    id_dessert = request.form.get('id_dessert')
 
     commande = db.session.query(COMMANDE).filter_by(id_client=current_user.id_client, statut='En commande').first()
-    if commande:
-        if id_plat_int:
-            item = db.session.query(APPARTENIR_PLATS).filter_by(id_commande=commande.id_commande, id_plat=id_plat_int).first()
-            if item:
-                db.session.delete(item)
-                flash("Plat supprimé du panier.", "success")
-        elif id_menu:
-            item = db.session.query(APPARTENIR_MENUS).filter_by(id_commande=commande.id_commande, id_menu=id_menu).first()
-            if item:
-                db.session.delete(item)
-                flash("Menu supprimé du panier.", "success")
-        
+    if id_plat:
+        item = db.session.query(APPARTENIR_PLATS).filter_by(id_commande=commande.id_commande, id_plat=id_plat).first()
         if item:
-            total = 0
-            db.session.flush() 
-            for item_plat in commande.plats:
-                total += item_plat.plat.prix * item_plat.quantite
-            for item_menu in commande.menus:
-                total += item_menu.menu.prix * item_menu.quantite
-            commande.montant_total = total
-            db.session.commit()
-        else:
-                db.session.commit()
-
+            db.session.delete(item)
+            flash("Plat supprimé du panier.", "success")
+    elif id_menu:
+        item = db.session.query(APPARTENIR_MENUS).filter_by(id_commande=commande.id_commande, id_menu=id_menu, id_entree=id_entree, id_plat_choisi=id_plat_choisi, id_dessert=id_dessert).first()
+        if item:
+            db.session.delete(item)
+            flash("Menu supprimé du panier.", "success")
+        
+    db.session.commit()
     return redirect(url_for('panier'))
 
 @app.route('/valider-commande/', methods=['POST'])
 @login_required
 def valider_commande():
     commande = db.session.query(COMMANDE).filter_by(id_client=current_user.id_client, statut='En commande').first()
-
-    if not commande:
-        flash("Aucune commande en cours à valider.", "error")
-        return redirect(url_for('panier'))
-
     try:
-        stock_check_date = date.today()
-
-        for item_plat in commande.plats:
-            stock_entry = db.session.query(DEFINIR_STOCK).filter_by(id_plat=item_plat.id_plat, jour=stock_check_date).first()
-            if not stock_entry:
-                flash(f"Stock non défini pour le plat '{item_plat.plat.nom_plat}' pour aujourd'hui.", "error")
-                db.session.rollback()
-                return redirect(url_for('panier'))
-            if stock_entry.stock < item_plat.quantite:
-                flash(f"Stock insuffisant pour le plat '{item_plat.plat.nom_plat}'. Stock disponible: {stock_entry.stock}, demandé: {item_plat.quantite}.", "error")
-                db.session.rollback()
-                return redirect(url_for('panier'))
-            stock_entry.stock -= item_plat.quantite
-
-        for item_menu in commande.menus:
-            menu_plats_links = db.session.query(CONTENIR).filter_by(id_menu=item_menu.id_menu).all()
-            
-            for menu_plat_link in menu_plats_links:
-                plat_id = menu_plat_link.id_plat
-                plat_obj = db.session.get(PLAT, plat_id)
-                
-                stock_entry = db.session.query(DEFINIR_STOCK).filter_by(id_plat=plat_id, jour=stock_check_date).first()
-                required_stock = item_menu.quantite # Chaque plat du menu est déduit par la quantité du menu
-
-                if not stock_entry:
-                    flash(f"Stock non défini pour un ingrédient ('{plat_obj.nom_plat}') du menu '{item_menu.menu.nom_menu}' pour aujourd'hui.", "error")
-                    db.session.rollback()
-                    return redirect(url_for('panier'))
-                if stock_entry.stock < required_stock:
-                    flash(f"Stock insuffisant pour un ingrédient ('{plat_obj.nom_plat}') du menu '{item_menu.menu.nom_menu}'. Stock disponible: {stock_entry.stock}, demandé: {required_stock}.", "error")
-                    db.session.rollback()
-                    return redirect(url_for('panier'))
-                stock_entry.stock -= required_stock
-
         commande.statut = 'En attente'
-        commande.date_commande = datetime(2025, 10, 21, 12, 30, 0)
+        commande.date_commande = datetime.now().replace(hour=12, minute=0, second=0, microsecond=0)   #remplacer par datetime.now() pour l'heure actuelle plus tard
         db.session.commit()
         flash("Votre commande a été validée avec succès et est en attente de préparation !", "success")
         return redirect(url_for('index'))
-
     except Exception as e:
         db.session.rollback()
         flash(f"Une erreur est survenue lors de la validation de votre commande : {e}", "error")

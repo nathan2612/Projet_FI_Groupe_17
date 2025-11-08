@@ -334,8 +334,6 @@ commandes:
     montant_total: 21.50
     sur_place: false
     nombre_personnes: 1
-
-
   - id_commande: 3
     id_client: 3
     date_commande: "2025-10-21 19:30:00"
@@ -459,32 +457,82 @@ avis:
 
 definir_stock:
   - id_plat: 1
-    jour: "2025-10-21"
-    stock: 50
+    stock: 2
   - id_plat: 2
-    jour: "2025-10-21"
-    stock: 60
+    stock: 50
   - id_plat: 3
-    jour: "2025-10-21"
     stock: 50
   - id_plat: 4
-    jour: "2025-10-21"
     stock: 50
   - id_plat: 5
-    jour: "2025-10-21"
-    stock: 40
+    stock: 50
   - id_plat: 6
-    jour: "2025-10-21"
     stock: 50
   - id_plat: 7
-    jour: "2025-10-21"
-    stock: 100
-  - id_plat: 8
-    jour: "2025-10-21"
-    stock: 60
-  - id_plat: 1
-    jour: "2025-11-07"
     stock: 50
-  - id_plat: 2
-    jour: "2025-11-07"
-    stock: 60
+  - id_plat: 8
+    stock: 50
+  - id_plat: 9
+    stock: 50
+  - id_plat: 10
+    stock: 50
+  - id_plat: 11
+    stock: 50
+  - id_plat: 12
+    stock: 50
+  - id_plat: 13
+    stock: 50
+  - id_plat: 14
+    stock: 50
+  - id_plat: 15
+    stock: 50
+  - id_plat: 16
+    stock: 50
+  - id_plat: 17
+    stock: 50
+  - id_plat: 18
+    stock: 50
+  - id_plat: 19
+    stock: 50
+  - id_plat: 20
+    stock: 50
+  - id_plat: 21
+    stock: 50
+  - id_plat: 22
+    stock: 50
+  - id_plat: 23
+    stock: 50
+  - id_plat: 24
+    stock: 50
+  - id_plat: 25
+    stock: 50
+  - id_plat: 26
+    stock: 50
+  - id_plat: 27
+    stock: 50
+  - id_plat: 28
+    stock: 50
+  - id_plat: 29
+    stock: 50
+  - id_plat: 30
+    stock: 50
+  - id_plat: 31
+    stock: 50
+  - id_plat: 32
+    stock: 50
+  - id_plat: 33
+    stock: 50
+  - id_plat: 34
+    stock: 50
+  - id_plat: 35
+    stock: 50
+  - id_plat: 36
+    stock: 50
+  - id_plat: 37
+    stock: 50
+  - id_plat: 38
+    stock: 50
+  - id_plat: 39
+    stock: 50
+  - id_plat: 40
+    stock: 50
