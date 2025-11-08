@@ -31,9 +31,25 @@
                                     {% for ligne in cmd.plats %}
                                         <li><span class="item-name">{{ ligne.plat.nom_plat }}</span> <span class="item-quantity">x {{ ligne.quantite }}</span></li>
                                     {% endfor %}
-                                    {% for ligne in cmd.menus %}
-                                        <li><span class="item-name">{{ ligne.menu.nom_menu }}</span> <span class="item-quantity">x {{ ligne.quantite }}</span></li>
-                                    {% endfor %}
+                                        {% for ligne in cmd.menus %}
+                                            <li>
+                                                <div class="item-main">
+                                                    <span class="item-name">{{ ligne.menu.nom_menu }}</span>
+                                                    <span class="item-quantity">x {{ ligne.quantite }}</span>
+                                                </div>
+                                                <div class="menu-choices">
+                                                    {% if ligne.entree %}
+                                                        <small class="choice">Entrée: {{ ligne.entree.nom_plat }}</small>
+                                                    {% endif %}
+                                                    {% if ligne.plat_choisi %}
+                                                        <small class="choice">Plat: {{ ligne.plat_choisi.nom_plat }}</small>
+                                                    {% endif %}
+                                                    {% if ligne.dessert %}
+                                                        <small class="choice">Dessert: {{ ligne.dessert.nom_plat }}</small>
+                                                    {% endif %}
+                                                </div>
+                                            </li>
+                                        {% endfor %}
                                 </ul>
                             </div>
                             <div class="commande-meta">

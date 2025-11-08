@@ -305,7 +305,6 @@ commandes:
     montant_total: 21.50
     sur_place: false
     nombre_personnes: 1
-
   - id_commande: 2
     id_client: 2
     date_commande: "2025-10-21 12:00:00"
@@ -396,6 +395,15 @@ contenir:
   - id_menu: 1
     id_plat: 4
     type_plat : 1
+  - id_menu: 1
+    id_plat: 6
+    type_plat : 0
+  - id_menu: 1
+    id_plat: 7
+    type_plat : 0
+  - id_menu: 1
+    id_plat: 8
+    type_plat : 0
 
 appartenir_plats:
   - id_commande: 1

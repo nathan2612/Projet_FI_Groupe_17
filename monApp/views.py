@@ -73,12 +73,10 @@ def produits():
         query = query.filter(PLAT.vegan.is_(True))
     if sans_gluten:
         query = query.filter(PLAT.gluten.is_(False))
-
-
     if sans_lactose:
         query = query.filter(PLAT.lactose.is_(False))
     if sans_fruits_a_coque:
-        query = query.filter(PLAT.fruits_a_coque.is_(False))
+        query = query.filter(PLAT.fruit_a_coque.is_(False))
     if sans_crustaces:
         query = query.filter(PLAT.crustaces.is_(False))
 
