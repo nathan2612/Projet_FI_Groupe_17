@@ -1,5 +1,6 @@
 import click
 import logging as lg
+import random
 from .app import app, db
 
 @app.cli.command()
@@ -58,12 +59,12 @@ def loaddb(filename):
             prix=entry.get('prix'),
             disponible=entry.get('disponible', True),
             image_url=entry.get('image_url', 'default_plat.png'),
-            vegetarien=entry.get('vegetarien', False),
-            vegan=entry.get('vegan', False),
-            gluten=entry.get('gluten', False),
-            lactose=entry.get('lactose', False),
-            fruit_a_coque=entry.get('fruit_a_coque', False),
-            crustaces=entry.get('crustaces', False)
+            vegetarien=entry.get('vegetarien', random.choice([True, False])),
+            vegan=entry.get('vegan', random.choice([True, False])),
+            gluten=entry.get('gluten', random.choice([True, False])),
+            lactose=entry.get('lactose', random.choice([True, False])),
+            fruit_a_coque=entry.get('fruit_a_coque', random.choice([True, False])),
+            crustaces=entry.get('crustaces', random.choice([True, False]))
         )
         db.session.merge(obj)
     db.session.commit()

@@ -240,6 +240,8 @@ body {
     gap: 7px;
     /* slightly increased padding so cards breathe a little */
     padding: 12px 12px 10px 12px;
+    /* reserve space on the right so long titles don't collide with the "voir" icon */
+    padding-right: 48px;
     border-radius: 10px;
     background: linear-gradient(180deg, #ffffff 0%, #fcfeff 100%);
     border: 1px solid #e6eef8;
@@ -263,6 +265,9 @@ body {
 
 .plat-name {
     margin-bottom: 6px;
+    /* prevent very long single-line names from visually touching the icon */
+    display: block;
+    word-break: break-word;
 }
 
 .menu-item .prix {

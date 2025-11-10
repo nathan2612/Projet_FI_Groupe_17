@@ -104,6 +104,11 @@
     border-bottom: 1px dashed var(--border-color, #eee);
 }
 
+/* When a menu has chosen items, stack the name/quantity and choices */
+.item-list li .item-main{ display:flex; justify-content:space-between; width:100%; }
+.menu-choices{ display:block; margin-top:6px; color: var(--text-secondary-color, #6c757d); font-size:0.92rem; }
+.menu-choices .choice{ display:block; margin-top:2px; }
+
 .item-list li:last-child {
     border-bottom: none;
 }
