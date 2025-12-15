@@ -6,8 +6,8 @@
 
 .carte-nav-wrapper {
   max-width: 1200px;
-  margin: 0 auto;
-  padding: 0 16px;
+  margin: 0px;
+  padding: 0px;
 }
 
 .carte-nav {
@@ -58,14 +58,6 @@
     padding: 8px 10px;
     font-size: 0.95rem;
   }
-}
-
-.carte-header::after {
-  content: '';
-  display: block;
-  height: 6px;
-  background: linear-gradient(90deg, rgba(255,109,65,0.06), transparent 40%);
-  margin-top: 8px;
 }
 
 .dark-mode .carte-tabs {

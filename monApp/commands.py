@@ -80,7 +80,7 @@ def loaddb(filename):
 
     from hashlib import sha256
     for entry in data.get('clients', []) or []:
-		m = sha256()
+        m = sha256()
         m.update(entry.get('mot_de_passe').encode())
         obj = CLIENT(
             id_client=entry.get('id_client'),
