@@ -17,7 +17,7 @@ def loaddb(filename):
 
     from .models import (
         CATEGORIE, PLAT, CLIENT, COMMANDE, MENU,
-        CONTENIR, APPARTENIR_PLATS, APPARTENIR_MENUS, AVIS, DEFINIR_STOCK
+        CONTENIR, APPARTENIR_PLATS, APPARTENIR_MENUS, AVIS, DEFINIR_STOCK,RESERVATION,SERVICE,SALLE
     )
 
     def parse_date(s):
@@ -123,7 +123,6 @@ def loaddb(filename):
             date_commande=datetime.strptime(entry.get('date_commande'), '%Y-%m-%d %H:%M:%S'),
             statut=entry.get('statut'),
             montant_total=entry.get('montant_total'),
-            sur_place=entry.get('sur_place'),
             nombre_personnes=entry.get('nombre_personnes')
         )
         db.session.merge(obj)
@@ -157,6 +156,34 @@ def loaddb(filename):
             id_client=entry.get('id_client'),
             note=entry.get('note'),
             commentaire=entry.get('commentaire')
+        )
+        db.session.merge(obj)
+    db.session.commit()
+
+    for entry in data.get('service', []) or []:
+        obj = SERVICE(
+            id_service=entry.get('id_service'),
+            heure_debut=entry.get('heure_debut'),
+            heure_fin=entry.get('heure_fin')
+        )
+        db.session.merge(obj)
+    db.session.commit()
+
+    for entry in data.get('reservation', []) or []:
+        obj = RESERVATION(
+            id_reservation=entry.get('id_reservation'),
+            id_client=entry.get('id_client'),
+            id_service=entry.get('id_service'),
+            nb_personne=entry.get('nb_personne')
+        )
+        db.session.merge(obj)
+    db.session.commit()
+
+    for entry in data.get('salle', []) or []:
+        obj = SALLE(
+            id_parametre=entry.get('id_parametre'),
+            cle=entry.get('cle'),
+            valeur=entry.get('valeur')
         )
         db.session.merge(obj)
     db.session.commit()

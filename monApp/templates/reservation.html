@@ -1,0 +1,46 @@
+{% extends 'base.html' %}
+
+{% block styles %}
+	<link rel="stylesheet" href="{{ url_for('static', filename='reservation.css') }}">
+{% endblock %}
+
+{% block main %}
+<div class="container">
+	<div class="form-container">
+		<h1>Réserver une table</h1>
+		<p class="subtitle">Réservez votre place pour profiter de nos plats sur place</p>
+		
+		<form method="POST" action="{{ url_for('reservation') }}">
+			{{ form.csrf_token }}
+			{{ form.id_client }}
+			
+			<div class="form-group">
+				<label for="id_service">{{ form.id_service.label }}</label>
+				{{ form.id_service(class="form-control") }}
+				{% if form.id_service.errors %}
+					<div class="error-message">
+						{% for error in form.id_service.errors %}
+							<p>{{ error }}</p>
+						{% endfor %}
+					</div>
+				{% endif %}
+			</div>
+			
+			<div class="form-group">
+				<label for="nb_personne">{{ form.nb_personne.label }}</label>
+				{{ form.nb_personne(class="form-control", type="number", min="1", max="12") }}
+				{% if form.nb_personne.errors %}
+					<div class="error-message">
+						{% for error in form.nb_personne.errors %}
+							<p>{{ error }}</p>
+						{% endfor %}
+					</div>
+				{% endif %}
+			</div>
+			
+			<button type="submit" class="btn-submit">Réserver</button>
+			<a href="{{ url_for('index') }}" class="btn-cancel">Annuler</a>
+		</form>
+	</div>
+</div>
+{% endblock %}

@@ -8,12 +8,14 @@ from monApp.models import (
     DEFINIR_STOCK,
     AVIS,
     MENU,
-    CONTENIR
+    CONTENIR,
+    RESERVATION,
+    SERVICE
 )
 from .app import app, db
 from flask import render_template, request, url_for, redirect, flash, abort
 from functools import wraps
-from .forms import InscriptionForm, ConnexionForm, EditProfileForm
+from .forms import InscriptionForm, ConnexionForm, EditProfileForm, ReservationForm
 from flask_login import login_user, logout_user, login_required, current_user
 from sqlalchemy import func, desc
 from hashlib import sha256
@@ -460,6 +462,13 @@ def compte():
         .all()
     )
 
+    reservations_client = (
+        db.session.query(RESERVATION)
+        .filter_by(id_client=current_user.id_client)
+        .order_by(RESERVATION.id_reservation.desc())
+        .all()
+    )
+
     form = EditProfileForm(obj=current_user)
 
     if form.validate_on_submit():
@@ -481,13 +490,13 @@ def compte():
                 flash("Votre mot de passe a été mis à jour.", "success")
             else:
                 flash("Le mot de passe actuel est incorrect.", "error")
-                return render_template("compte.html", form=form, commandes=commandes_client)
+                return render_template("compte.html", form=form, commandes=commandes_client, reservations=reservations_client)
 
         db.session.commit()
         flash("Vos informations ont été mises à jour avec succès !", "success")
         return redirect(url_for('compte'))
 
-    return render_template("compte.html", form=form, commandes=commandes_client)
+    return render_template("compte.html", form=form, commandes=commandes_client, reservations=reservations_client)
   
 @app.route('/preparation-cuisto/')
 def preparation_cuisto():
@@ -734,7 +743,24 @@ def admin_index():
     )
 
 
-
+@app.route('/reservation/', methods=['GET', 'POST'])
+@login_required
+def reservation():
+    form = ReservationForm()
+    
+    if form.validate_on_submit():
+        nouvelle_reservation = RESERVATION(
+            id_client=current_user.id_client,
+            id_service=form.id_service.data,
+            nb_personne=form.nb_personne.data
+        )
+        db.session.add(nouvelle_reservation)
+        db.session.commit()
+        
+        flash("Votre réservation a été enregistrée avec succès !", "success")
+        return redirect(url_for('compte'))
+    
+    return render_template('reservation.html', form=form)
 
 if __name__ == "__main__":
     app.run()

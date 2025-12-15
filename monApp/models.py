@@ -55,6 +55,7 @@ class CLIENT(db.Model,UserMixin):
 
 	commandes = db.relationship('COMMANDE', back_populates='client')
 	avis = db.relationship('AVIS', back_populates='client')
+	reservations = db.relationship('RESERVATION', back_populates='client')
 
 	def get_id(self):
 		return self.id_client
@@ -75,13 +76,12 @@ class COMMANDE(db.Model):
 	date_commande = db.Column(db.DateTime, nullable=True)
 	statut = db.Column(db.String(50), default='En commande')
 	montant_total = db.Column(db.Numeric(10, 2),default=0.00)
-	sur_place = db.Column(db.Boolean, default=False)
 	nombre_personnes = db.Column(db.Integer)
 
 	__table_args__ = (
 		db.CheckConstraint('nombre_personnes <= 12', name='chk_nombre_personnes'),
 		db.CheckConstraint("statut IN ('En commande', 'En attente', 'En préparation', 'Prêt','non récupéré','récupéré')", name='chk_statut_valide'),
-		db.CheckConstraint("date_commande IS NULL OR (TIME(date_commande) BETWEEN '11:30:00' AND '14:00:00') OR ((TIME(date_commande) BETWEEN '17:00:00' AND '20:00:00' AND sur_place=0))", name='chk_heure_valide'),
+		db.CheckConstraint("date_commande IS NULL OR (TIME(date_commande) BETWEEN '11:30:00' AND '14:00:00') OR ((TIME(date_commande) BETWEEN '17:00:00' AND '20:00:00'))", name='chk_heure_valide'),
 		db.CheckConstraint("date_commande IS NULL OR WEEKDAY(DATE(date_commande)) IN (0, 1, 2, 3, 4)", name='chk_commande_jour_valide'),
 	)
 
@@ -184,6 +184,42 @@ class DEFINIR_STOCK(db.Model):
 
 	def __repr__(self):
 		return f"<DefinirStock plat={self.id_plat} jour={self.jour} stock={self.stock}>"
+	
+class RESERVATION(db.Model):
+	__tablename__ = 'reservation'
+	id_reservation = db.Column(db.Integer, primary_key = True)
+	id_client = db.Column(db.Integer, db.ForeignKey('clients.id_client'))
+	id_service = db.Column(db.Integer, db.ForeignKey('service.id_service'))
+	nb_personne = db.Column(db.Integer)
+
+	client = db.relationship('CLIENT', back_populates='reservations')
+	service = db.relationship('SERVICE', back_populates='reservations')
+
+	def __repr__(self):
+		return f"<Reservation {self.id_reservation} client={self.id_client} service={self.id_service} nb_personne={self.nb_personne}>"
+
+
+class SERVICE(db.Model):
+	__tablename__ = 'service'
+	id_service = db.Column(db.Integer,primary_key=True)
+	heure_debut = db.Column(db.Time)
+	heure_fin = db.Column(db.Time)
+
+	reservations = db.relationship('RESERVATION', back_populates='service')
+
+	def __repr__(self):
+		return f"<Service {self.id_service} debut={self.heure_debut} fin={self.heure_fin}>"
+
+
+class SALLE(db.Model):
+	__tablename__ = 'salle'
+	id_parametre = db.Column(db.Integer, primary_key=True)
+	cle = db.Column(db.String(100), unique=True)
+	valeur = db.Column(db.String(255))
+
+	def __repr__(self):
+		return f"<Parametre {self.cle}={self.valeur}>"
+
 
 @login_manager.user_loader
 def load_user(username):
