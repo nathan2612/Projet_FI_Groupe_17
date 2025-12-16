@@ -529,6 +529,38 @@ def compte():
         return redirect(url_for('compte'))
 
     return render_template("compte.html", form=form, commandes=commandes_client)
+
+@app.route('/annuler-commande/<int:id_commande>/', methods=['POST'])
+@login_required
+def annuler_commande(id_commande):
+    commande = db.session.query(COMMANDE).filter_by(
+        id_commande=id_commande, 
+        id_client=current_user.id_client
+    ).first()
+    
+    if not commande:
+        flash("Commande introuvable.", "error")
+        return redirect(url_for('compte'))
+    
+    if commande.statut != 'En attente':
+        flash("Seules les commandes en attente peuvent être annulées.", "error")
+        return redirect(url_for('compte'))
+    
+    try:
+        
+        # Supprimer directement via requête les relations
+        db.session.query(APPARTENIR_PLATS).filter_by(id_commande=id_commande).delete()
+        db.session.query(APPARTENIR_MENUS).filter_by(id_commande=id_commande).delete()
+        
+        # Supprimer la commande
+        db.session.delete(commande)
+        db.session.commit()
+        flash("Votre commande a été annulée avec succès.", "success")
+    except Exception as e:
+        db.session.rollback()
+        flash(f"Erreur lors de l'annulation : {e}", "error")
+    
+    return redirect(url_for('compte'))
   
 @app.route('/preparation-cuisto/')
 def preparation_cuisto():
