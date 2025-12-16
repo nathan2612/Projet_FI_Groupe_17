@@ -465,6 +465,7 @@ def compte():
     reservations_client = (
         db.session.query(RESERVATION)
         .filter_by(id_client=current_user.id_client)
+        .filter(RESERVATION.date_reservation >= date.today())
         .order_by(RESERVATION.id_reservation.desc())
         .all()
     )
@@ -496,7 +497,7 @@ def compte():
         flash("Vos informations ont été mises à jour avec succès !", "success")
         return redirect(url_for('compte'))
 
-    return render_template("compte.html", form=form, commandes=commandes_client, reservations=reservations_client)
+    return render_template("compte.html", form=form, commandes=commandes_client, reservations=reservations_client, today=date.today())
   
 @app.route('/preparation-cuisto/')
 def preparation_cuisto():
@@ -751,16 +752,46 @@ def reservation():
     if form.validate_on_submit():
         nouvelle_reservation = RESERVATION(
             id_client=current_user.id_client,
+            date_reservation=form.date_reservation.data,
             id_service=form.id_service.data,
             nb_personne=form.nb_personne.data
         )
         db.session.add(nouvelle_reservation)
-        db.session.commit()
-        
-        flash("Votre réservation a été enregistrée avec succès !", "success")
+        try:
+            db.session.commit()
+            flash("Votre réservation a été enregistrée avec succès !", "success")
+            return redirect(url_for('compte'))
+        except Exception as e:
+            db.session.rollback()
+            flash(f"Il y a plus de place pour ce service ce jour ci")
+    
+    return render_template('reservation.html', form=form, today=date.today())
+
+@app.route('/annuler-reservation/<int:id_reservation>', methods=['POST'])
+@login_required
+def annuler_reservation(id_reservation):
+    reservation = db.session.query(RESERVATION).filter_by(
+        id_reservation=id_reservation,
+        id_client=current_user.id_client
+    ).first()
+    
+    if not reservation:
+        flash("Réservation introuvable.", "error")
         return redirect(url_for('compte'))
     
-    return render_template('reservation.html', form=form)
+    if reservation.date_reservation <= date.today():
+        flash("Impossible d'annuler une réservation le jour même ou passée.", "error")
+        return redirect(url_for('compte'))
+    
+    try:
+        db.session.delete(reservation)
+        db.session.commit()
+        flash("Votre réservation a été annulée avec succès.", "success")
+    except Exception as e:
+        db.session.rollback()
+        flash(f"Erreur lors de l'annulation : {str(e)}", "error")
+    
+    return redirect(url_for('compte'))
 
 if __name__ == "__main__":
     app.run()

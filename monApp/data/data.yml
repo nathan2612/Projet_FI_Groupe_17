@@ -551,14 +551,27 @@ reservation:
     id_client : 1
     id_service : 1
     nb_personne : 5
+    date_reservation : "2025-10-21"
   - id_reservation : 2
     id_client : 2
     id_service : 2
     nb_personne : 4
+    date_reservation : "2025-10-21"
   - id_reservation : 3
     id_client : 3
     id_service : 3
     nb_personne : 6
+    date_reservation : "2025-10-21"
+  - id_reservation : 4
+    id_client : 3
+    id_service : 3
+    nb_personne : 6
+    date_reservation : "2025-10-21"
+  - id_reservation : 5
+    id_client : 3
+    id_service : 3
+    nb_personne : 6
+    date_reservation : "2025-10-22"
 
 salle:
   - id_parametre : 1

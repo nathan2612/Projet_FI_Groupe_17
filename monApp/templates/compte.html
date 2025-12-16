@@ -116,20 +116,40 @@
 
     <div class="orders-section">
         <h2>Mes Réservations</h2>
+        <p class="info-note"><i class="fas fa-info-circle"></i> Pour annuler une réservation le jour même, merci de nous appeler au 02.54.79.05.48</p>
         {% if reservations %}
             <div class="orders-list">
                 {% for reservation in reservations %}
                     <div class="order-card">
-                        <p><strong>Réservation #{{ reservation.id_reservation }}</strong></p>
-                        <p>
-                            <strong>Service :</strong> 
-                            {% if reservation.service %}
-                                {{ reservation.service.heure_debut.strftime('%H:%M') }} - {{ reservation.service.heure_fin.strftime('%H:%M') }}
-                            {% else %}
-                                Non défini
-                            {% endif %}
-                        </p>
-                        <p><strong>Nombre de personnes :</strong> {{ reservation.nb_personne }}</p>
+                        <div class="reservation-info">
+                            <p><strong>Réservation #{{ reservation.id_reservation }}</strong></p>
+                            <p>
+                                <strong>Date :</strong> 
+                                {% if reservation.date_reservation %}
+                                    {{ reservation.date_reservation.strftime('%d/%m/%Y') }}
+                                {% else %}
+                                    Non définie
+                                {% endif %}
+                            </p>
+                            <p>
+                                <strong>Service :</strong> 
+                                {% if reservation.service %}
+                                    {{ reservation.service.heure_debut.strftime('%H:%M') }} - {{ reservation.service.heure_fin.strftime('%H:%M') }}
+                                {% else %}
+                                    Non défini
+                                {% endif %}
+                            </p>
+                            <p><strong>Nombre de personnes :</strong> {{ reservation.nb_personne }}</p>
+                        </div>
+                        {% if reservation.date_reservation and reservation.date_reservation > today %}
+                        <div class="reservation-actions">
+                            <form method="POST" action="{{ url_for('annuler_reservation', id_reservation=reservation.id_reservation) }}" style="display: inline;">
+                                <button type="submit" class="btn-cancel-reservation" onclick="return confirm('Êtes-vous sûr de vouloir annuler cette réservation ?');">
+                                    <i class="fas fa-times"></i> Annuler
+                                </button>
+                            </form>
+                        </div>
+                        {% endif %}
                     </div>
                 {% endfor %}
             </div>

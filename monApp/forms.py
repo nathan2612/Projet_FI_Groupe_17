@@ -1,5 +1,5 @@
 from flask_wtf import FlaskForm
-from wtforms.fields import StringField, HiddenField, SelectField, PasswordField, IntegerField
+from wtforms.fields import StringField, HiddenField, SelectField, PasswordField, IntegerField, DateField
 from wtforms.validators import DataRequired, EqualTo, Optional
 from monApp import db
 
@@ -37,6 +37,7 @@ class EditProfileForm(FlaskForm):
 
 class ReservationForm(FlaskForm):
     id_client = HiddenField('id_client')
+    date_reservation = DateField('Date de réservation', format='%Y-%m-%d', validators=[DataRequired()])
     id_service = SelectField('Service', coerce=int, validators=[DataRequired()])
     nb_personne = IntegerField('Nombre de personnes', validators=[DataRequired()])
     

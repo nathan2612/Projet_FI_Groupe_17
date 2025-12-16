@@ -188,6 +188,7 @@ class DEFINIR_STOCK(db.Model):
 class RESERVATION(db.Model):
 	__tablename__ = 'reservation'
 	id_reservation = db.Column(db.Integer, primary_key = True)
+	date_reservation = db.Column(db.Date)
 	id_client = db.Column(db.Integer, db.ForeignKey('clients.id_client'))
 	id_service = db.Column(db.Integer, db.ForeignKey('service.id_service'))
 	nb_personne = db.Column(db.Integer)
@@ -215,18 +216,49 @@ class SALLE(db.Model):
 	__tablename__ = 'salle'
 	id_parametre = db.Column(db.Integer, primary_key=True)
 	cle = db.Column(db.String(100), unique=True)
-	valeur = db.Column(db.String(255))
+	valeur = db.Column(db.Integer)
 
 	def __repr__(self):
 		return f"<Parametre {self.cle}={self.valeur}>"
 
+trigger_insert_reservation = DDL('''
+CREATE TRIGGER trg_insert_reservation
+BEFORE INSERT ON reservation
+FOR EACH ROW
+BEGIN
+    DECLARE capacite_max INT;
+    DECLARE total_reserve INT;
 
-@login_manager.user_loader
-def load_user(username):
-    return db.session.get(CLIENT, username)
-	
+    SELECT valeur INTO capacite_max FROM salle WHERE cle = 'capacite';
+    
+    SELECT COALESCE(SUM(nb_personne), 0) INTO total_reserve FROM reservation WHERE id_service = NEW.id_service AND date_reservation = NEW.date_reservation;
 
-# DDL trigger creation for MySQL/MariaDB: create trigger after table creation
+    IF total_reserve + NEW.nb_personne > capacite_max THEN
+        SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Capacité du restaurant dépassée pour ce service';
+    END IF;
+END;''')
+
+event.listen(RESERVATION.__table__, 'after_create', trigger_insert_reservation)
+
+trigger_update_reservation = DDL('''
+CREATE TRIGGER trg_update_reservation
+BEFORE UPDATE ON reservation
+FOR EACH ROW
+BEGIN
+    DECLARE capacite_max INT;
+    DECLARE total_reserve INT;
+    
+    SELECT valeur INTO capacite_max FROM salle WHERE cle = 'capacite';
+    
+    SELECT COALESCE(SUM(nb_personne), 0) INTO total_reserve FROM reservation WHERE id_service = NEW.id_service AND date_reservation = NEW.date_reservation AND id_reservation != NEW.id_reservation;
+    
+    IF total_reserve + NEW.nb_personne > capacite_max THEN
+        SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Capacité du restaurant dépassée pour ce service';
+    END IF;
+END;''')
+
+event.listen(RESERVATION.__table__, 'after_create', trigger_update_reservation)
+
 # * triggers gestion stock plats
 trigger_insert_stock_plats = DDL('''
 CREATE TRIGGER trg_insert_stock_plats
@@ -353,32 +385,6 @@ END;''')
 
 event.listen(APPARTENIR_MENUS.__table__, 'after_create', trigger_delete_stock_menus)
 
-# * triggers gestion commande sur_place
-#trigger_insert_commande_sur_place = DDL('''
-#CREATE TRIGGER trg_insert_commande_sur_place
-#BEFORE INSERT ON commandes
-#FOR EACH ROW
-#BEGIN
-#	if (select sum(nombre_personnes) from commandes where DATE(date_commande) = DATE(NEW.date_commande) and sur_place = 1 and HOUR(date_commande) = HOUR(NEW.date_commande)) + NEW.nombre_personnes > 12 then
-#		SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Nombre maximum de personnes dépassé';
-#	end if;
-#END;''')
-#
-#event.listen(APPARTENIR_MENUS.__table__, 'after_create', trigger_insert_commande_sur_place)
-
-#trigger_update_commande_sur_place = DDL('''
-#CREATE TRIGGER trg_update_commande_sur_place
-#BEFORE UPDATE ON commandes
-#FOR EACH ROW
-#BEGIN
-#	if (select sum(nombre_personnes) from commandes where DATE(date_commande) = DATE(NEW.date_commande) and sur_place = 1 and HOUR(date_commande) = HOUR(NEW.date_commande)) + NEW.nombre_personnes > 12 then
-#		SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Nombre maximum de personnes dépassé';
-#	end if;
-#END;''')
-#
-#event.listen(APPARTENIR_MENUS.__table__, 'after_create', trigger_update_commande_sur_place)
-
-# * triggers calcule montant total plats
 trigger_insert_calcule_montant_total_plats = DDL('''
 CREATE TRIGGER trg_calcule_montant_total_plats
 AFTER INSERT ON appartenir_plats

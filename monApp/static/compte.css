@@ -190,9 +190,24 @@
         }
         .orders-section h2 {
             margin-top: 0;
-            margin-bottom: 1.5rem;
+            margin-bottom: 1rem;
             border-bottom: 2px solid var(--primary-color);
             padding-bottom: 0.5rem;
+        }
+        .info-note {
+            background-color: #e3f2fd;
+            color: #1976d2;
+            padding: 0.75rem 1rem;
+            border-radius: 6px;
+            margin-bottom: 1.5rem;
+            font-size: 0.9rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            border-left: 4px solid #1976d2;
+        }
+        .info-note i {
+            font-size: 1.1rem;
         }
         .order-card {
             background-color: var(--bg-color);
@@ -200,11 +215,39 @@
             border-radius: 8px;
             padding: 1rem;
             margin-bottom: 1rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 1rem;
+            border-left: 3px solid #ff6d41;
+        }
+        .reservation-info {
+            flex: 1;
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
             gap: 1rem;
+        }
+        .reservation-actions {
+            display: flex;
             align-items: center;
-            border-left: 3px solid #ff6d41;
+        }
+        .btn-cancel-reservation {
+            background-color: #dc3545;
+            color: white;
+            border: none;
+            padding: 0.6rem 1.2rem;
+            border-radius: 8px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            transition: all 0.2s;
+        }
+        .btn-cancel-reservation:hover {
+            background-color: #c82333;
+            transform: translateY(-1px);
         }
         .order-card:not(:last-child) {
             padding-bottom: 1.5rem;

@@ -142,7 +142,6 @@ def loaddb(filename):
             id_commande=entry.get('id_commande'),
             id_menu=entry.get('id_menu'),
             quantite=entry.get('quantite'),
-            # support the new chosen-plat columns (may be None)
             id_entree=entry.get('id_entree',None),
             id_plat_choisi=entry.get('id_plat_choisi',None),
             id_dessert=entry.get('id_dessert',None)
@@ -160,6 +159,15 @@ def loaddb(filename):
         db.session.merge(obj)
     db.session.commit()
 
+    for entry in data.get('salle', []) or []:
+        obj = SALLE(
+            id_parametre=entry.get('id_parametre'),
+            cle=entry.get('cle'),
+            valeur=entry.get('valeur')
+        )
+        db.session.merge(obj)
+    db.session.commit()
+
     for entry in data.get('service', []) or []:
         obj = SERVICE(
             id_service=entry.get('id_service'),
@@ -172,18 +180,10 @@ def loaddb(filename):
     for entry in data.get('reservation', []) or []:
         obj = RESERVATION(
             id_reservation=entry.get('id_reservation'),
+            date_reservation=datetime.strptime(entry.get('date_reservation'), '%Y-%m-%d'),
             id_client=entry.get('id_client'),
             id_service=entry.get('id_service'),
             nb_personne=entry.get('nb_personne')
-        )
-        db.session.merge(obj)
-    db.session.commit()
-
-    for entry in data.get('salle', []) or []:
-        obj = SALLE(
-            id_parametre=entry.get('id_parametre'),
-            cle=entry.get('cle'),
-            valeur=entry.get('valeur')
         )
         db.session.merge(obj)
     db.session.commit()
