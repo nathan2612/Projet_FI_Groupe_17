@@ -466,7 +466,7 @@ def compte():
         db.session.query(RESERVATION)
         .filter_by(id_client=current_user.id_client)
         .filter(RESERVATION.date_reservation >= date.today())
-        .order_by(RESERVATION.id_reservation.desc())
+        .order_by(RESERVATION.date_reservation.asc())
         .all()
     )
 
