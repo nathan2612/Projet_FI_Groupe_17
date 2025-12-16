@@ -1,0 +1,47 @@
+{% extends 'base_admin.html' %}
+
+{% block styles %}
+<link rel="stylesheet" href="{{ url_for('static', filename='admin.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='admin_plat.css') }}">
+{% endblock %}
+
+{% block main %}
+<div class="admin-page">
+    <h1>{{ action }} un menu</h1>
+    <form method="post">
+        {{ form.hidden_tag() }}
+        <div>
+            {{ form.nom_menu.label }}<br>
+            {{ form.nom_menu(size=50) }}
+        </div>
+        <div>
+            {{ form.description.label }}<br>
+            {{ form.description(rows=4, cols=80) }}
+        </div>
+        <div>
+            {{ form.prix.label }}<br>
+            {{ form.prix(size=10) }}
+        </div>
+        <div>
+            {{ form.image_url.label }}<br>
+            {{ form.image_url(size=80) }}
+        </div>
+        <div>
+            {{ form.entrees.label }}<br>
+            {{ form.entrees(multiple=True, size=5) }}
+        </div>
+        <div>
+            {{ form.plats.label }}<br>
+            {{ form.plats(multiple=True, size=5) }}
+        </div>
+        <div>
+            {{ form.desserts.label }}<br>
+            {{ form.desserts(multiple=True, size=5) }}
+        </div>
+        <div>
+            {{ form.submit() }}
+            <a href="{{ url_for('admin_menus') }}">Annuler</a>
+        </div>
+    </form>
+</div>
+{% endblock %}

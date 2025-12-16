@@ -1,0 +1,164 @@
+:root {
+    --form-bg: #ffffff;
+    --form-border: #e6e6f0;
+    --form-radius: 10px;
+    --label-color: #374151;
+    --input-color: #111827;
+    --muted: #6b7280;
+    --accent: #5e47c2;
+    --accent-bg: #f4f2fa;
+    --btn-bg: #f4f2fa;
+    --btn-text: #5e47c2;
+}
+
+.admin-page {
+    max-width: 900px;
+    margin: 2.5rem auto;
+    padding: 1.5rem;
+}
+
+.admin-page h1 {
+    color: var(--label-color);
+    margin-bottom: 1rem;
+    font-size: 1.8rem;
+}
+
+.admin-page form {
+    background: var(--form-bg);
+    padding: 1.25rem;
+    border: 1px solid var(--form-border);
+    border-radius: var(--form-radius);
+    box-shadow: 0 6px 18px rgba(15, 23, 42, 0.06);
+}
+
+.admin-page form > div {
+    margin-bottom: 0.9rem;
+}
+
+.admin-page label {
+    display: block;
+    font-weight: 600;
+    color: var(--label-color);
+    margin-bottom: 0.35rem;
+}
+
+.admin-page input[type="text"],
+.admin-page input[type="number"],
+.admin-page textarea,
+.admin-page select {
+    width: 100%;
+    padding: 0.6rem 0.9rem;
+    border: 1px solid var(--form-border);
+    border-radius: 8px;
+    color: var(--input-color);
+    font-size: 0.95rem;
+    background: #fff;
+}
+
+.admin-page textarea { resize: vertical; }
+
+.admin-page .checkbox-row {
+    display: flex;
+    gap: 1rem;
+    flex-wrap: wrap;
+    align-items: center;
+}
+
+.admin-page .checkbox-row label { font-weight: 500; color: var(--muted); }
+
+.admin-page .actions {
+    display: flex;
+    gap: 0.75rem;
+    margin-top: 1rem;
+}
+
+.admin-page .actions .btn {
+    padding: 0.6rem 1rem;
+    border-radius: 8px;
+    font-weight: 700;
+}
+
+.admin-page .btn-primary { background: var(--btn-bg); color: var(--btn-text); border: 1px solid rgba(94,71,194,0.08); }
+.admin-page .btn-primary:hover { box-shadow: 0 4px 12px rgba(94,71,194,0.08); }
+
+.admin-page .btn-cancel { background: transparent; color: var(--muted); border: none; text-decoration: underline; }
+
+.admin-table {
+    width: 100%;
+    border-collapse: collapse;
+    background: var(--form-bg);
+    border: 1px solid var(--form-border);
+    border-radius: var(--form-radius);
+    box-shadow: 0 6px 18px rgba(15, 23, 42, 0.06);
+    margin-top: 1rem;
+}
+
+.admin-table thead {
+    background: #f9f8fe;
+}
+
+.admin-table th {
+    padding: 0.9rem 1.25rem;
+    text-align: left;
+    font-weight: 600;
+    color: var(--label-color);
+    border-bottom: 1px solid var(--form-border);
+    font-size: 0.9rem;
+}
+
+.admin-table td {
+    padding: 0.9rem 1.25rem;
+    color: var(--input-color);
+    border-bottom: 1px solid #f0f0f5;
+}
+
+.admin-table tbody tr:hover {
+    background: #fafbff;
+}
+
+.admin-table a,
+.admin-table button {
+    display: inline-block;
+    padding: 0.5rem 0.75rem;
+    margin-right: 0.5rem;
+    border-radius: 6px;
+    text-decoration: none;
+    font-weight: 500;
+    border: 1px solid rgba(94,71,194,0.15);
+    background: var(--accent-bg);
+    color: var(--accent);
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.admin-table a:hover,
+.admin-table button:hover {
+    background: #e8e4f5;
+    box-shadow: 0 2px 6px rgba(94,71,194,0.1);
+}
+
+.admin-table button {
+    border: none;
+    padding: 0.5rem 0.75rem;
+}
+
+.admin-page select[multiple] {
+    height: auto;
+    min-height: 100px;
+}
+
+
+.admin-table form {
+    display: inline-block;
+    margin: 0;
+    padding: 0;
+    border: none;
+    background: transparent;
+    box-shadow: none;
+    border-radius: 0;
+}
+
+.admin-table form button {
+    margin: 0;
+    width: auto;
+}
