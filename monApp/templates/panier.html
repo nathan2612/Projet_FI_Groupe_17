@@ -106,6 +106,16 @@
 
             {% if commande and (commande.plats or commande.menus) %}
             <aside class="cart-summary">
+                <div class="pickup-time-section">
+                    <h3>Heure de retrait</h3>
+                    <select name="heure_retrait" id="heure_retrait" class="time-select">
+                        <option value="">Sélectionner une heure</option>
+                        {% for heure in heures_retrait %}
+                            <option value="{{ heure }}">{{ heure }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                
                 <h3>Récapitulatif</h3>
                 <div class="summary-line">
                     <span>Sous-total</span>
@@ -116,7 +126,15 @@
                     <span class="summary-price">{{ "%.2f€"|format(total_general) }}</span>
                 </div>
                 <form id="checkout-form" action="{{ url_for('valider_commande') }}" method="post">
-                    <button type="button" id="checkout-btn" class="checkout-button">Passer la commande</button>
+                    <input type="hidden" name="heure_retrait" id="heure_retrait_hidden">
+                    {% if panier_depasse %}
+                        <div class="warning-message">
+                            Montant supérieur à 100€. Veuillez commander directement en magasin.
+                        </div>
+                        <button id="checkout-btn" class="checkout-button" disabled style="background-color: gray;">Passer la commande</button>
+                    {% else %}
+                        <button type="button" id="checkout-btn" class="checkout-button">Passer la commande</button>
+                    {% endif %}
                 </form>
             </aside>
             {% endif %}
@@ -142,8 +160,16 @@
                 const confirmBtn = document.getElementById('confirm-checkout-btn');
                 const cancelBtn = document.getElementById('cancel-checkout-btn');
                 const checkoutForm = document.getElementById('checkout-form');
+                const heureSelect = document.getElementById('heure_retrait');
+                const heureHidden = document.getElementById('heure_retrait_hidden');
 
                 checkoutBtn.addEventListener('click', function() {
+                    // Vérifier que l'heure est sélectionnée
+                    if (!heureSelect.value) {
+                        alert('Veuillez sélectionner une heure de retrait');
+                        heureSelect.focus();
+                        return;
+                    }
                     popup.classList.add('is-visible');
                 });
 
@@ -152,6 +178,8 @@
                 });
 
                 confirmBtn.addEventListener('click', function() {
+                    // Copier l'heure sélectionnée dans le champ caché
+                    heureHidden.value = heureSelect.value;
                     checkoutForm.submit();
                 });
             }
