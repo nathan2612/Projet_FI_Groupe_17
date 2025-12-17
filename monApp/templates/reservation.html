@@ -73,4 +73,22 @@
 		{% endif %}
 	</div>
 </div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const dateInput = document.getElementById('date_reservation');
+    
+    if (dateInput) {
+        dateInput.addEventListener('change', function() {
+            const selectedDate = new Date(this.value + 'T00:00:00');
+            const dayOfWeek = selectedDate.getDay(); // 0 = Dimanche, 1 = Lundi
+            
+            if (dayOfWeek === 0 || dayOfWeek === 1) {
+                alert('Nous sommes fermé les lundi et dimanche.');
+                this.value = '';
+            }
+        });
+    }
+});
+</script>
 {% endblock %}

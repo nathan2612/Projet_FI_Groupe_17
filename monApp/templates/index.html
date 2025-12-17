@@ -66,6 +66,55 @@
 			</a>
 		</div>
 	</section>
+	{% if menu_du_jour %}
+	<section class="menu-du-jour container">
+		<h2>Menu du jour</h2>
+		<div class="menu-du-jour-card">
+			<div class="menu-du-jour-header">
+				<h3>{{ menu_du_jour.nom_menu }}</h3>
+				<p class="menu-prix">{{ menu_du_jour.prix }} €</p>
+			</div>
+			<p class="menu-description">{{ menu_du_jour.description }}</p>
+			
+			<div class="menu-du-jour-plats">
+				{% if menu_du_jour.entres %}
+				<div class="menu-section">
+					<h4><i class="fas fa-leaf"></i> Entrées</h4>
+					<ul>
+						{% for contenir in menu_du_jour.entres %}
+						<li>{{ contenir.plat.nom_plat }}</li>
+						{% endfor %}
+					</ul>
+				</div>
+				{% endif %}
+				
+				{% if menu_du_jour.plats %}
+				<div class="menu-section">
+					<h4><i class="fas fa-utensils"></i> Plats</h4>
+					<ul>
+						{% for contenir in menu_du_jour.plats %}
+						<li>{{ contenir.plat.nom_plat }}</li>
+						{% endfor %}
+					</ul>
+				</div>
+				{% endif %}
+				
+				{% if menu_du_jour.desserts %}
+				<div class="menu-section">
+					<h4><i class="fas fa-ice-cream"></i> Desserts</h4>
+					<ul>
+						{% for contenir in menu_du_jour.desserts %}
+						<li>{{ contenir.plat.nom_plat }}</li>
+						{% endfor %}
+					</ul>
+				</div>
+				{% endif %}
+			</div>
+			
+			<a href="{{ url_for('detail_menu', id_menu=menu_du_jour.id_menu) }}" class="btn-commander">Découvrir ce menu</a>
+		</div>
+	</section>
+	{% endif %}
 		<section class="avis">
 			<h2>Ce que nos clients disent de nous</h2>
 					<div class="avis-list simple">

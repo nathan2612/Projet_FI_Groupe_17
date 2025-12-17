@@ -586,3 +586,6 @@ salle:
   - id_parametre : 1
     cle : 'capacite'
     valeur : 12
+  - id_parametre : 2
+    cle : 'menu_du_jour'
+    valeur : 1
