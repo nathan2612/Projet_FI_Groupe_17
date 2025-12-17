@@ -196,6 +196,10 @@ class RESERVATION(db.Model):
 	client = db.relationship('CLIENT', back_populates='reservations')
 	service = db.relationship('SERVICE', back_populates='reservations')
 
+	__table_args__ = (
+		db.CheckConstraint("date_reservation IS NULL OR WEEKDAY(DATE(date_reservation)) IN (1, 2, 3, 4, 5)", name='chk_reservation_jour_valide'),
+	)
+
 	def __repr__(self):
 		return f"<Reservation {self.id_reservation} client={self.id_client} service={self.id_service} nb_personne={self.nb_personne}>"
 

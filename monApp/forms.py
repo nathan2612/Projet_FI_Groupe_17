@@ -44,7 +44,6 @@ class ReservationForm(FlaskForm):
     
     def __init__(self, *args, **kwargs):
         super(ReservationForm, self).__init__(*args, **kwargs)
-        # Les choix seront remplis dynamiquement dans la vue
         self.id_service.choices = []
 
 class ServiceForm(FlaskForm):

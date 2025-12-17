@@ -25,8 +25,9 @@
                 </li>
                 <li {% if request.endpoint == 'admin_reservations' %}class="active"{% endif %}>
                     <a href="{{ url_for('admin_reservations') }}"><i class="fas fa-calendar-check"></i> Réservations</a>
-                </li>
-                <li {% if request.endpoint == 'admin_banni' %}class="active"{% endif %}>
+                </li>                <li {% if request.endpoint == 'admin_menu_du_jour' %}class="active"{% endif %}>
+                    <a href="{{ url_for('admin_menu_du_jour') }}"><i class="fas fa-star"></i> Menu du jour</a>
+                </li>                <li {% if request.endpoint == 'admin_banni' %}class="active"{% endif %}>
                     <a href="{{ url_for('admin_banni') }}"><i class="fas fa-user-slash"></i> Clients à bannir</a>
                 </li>
                 <li {% if request.endpoint == 'admin_bannis' %}class="active"{% endif %}>

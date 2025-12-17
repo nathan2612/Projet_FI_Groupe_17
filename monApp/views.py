@@ -41,8 +41,21 @@ def index():
         avis_list = db.session.query(AVIS).all()
     except Exception:
         avis_list = []
+        
+    menu_du_jour = None
+    menu_entry = db.session.query(SALLE).filter_by(cle='menu_du_jour').first()
+    if menu_entry != None:
+        menu_id = int(menu_entry.valeur)
+        menu_du_jour = db.session.query(MENU).get(menu_id)
+        if menu_du_jour:
+            entres = db.session.query(CONTENIR).filter_by(id_menu=menu_id, type_plat=0).all()
+            plats = db.session.query(CONTENIR).filter_by(id_menu=menu_id, type_plat=1).all()
+            desserts = db.session.query(CONTENIR).filter_by(id_menu=menu_id, type_plat=2).all()
+            menu_du_jour.entres = entres
+            menu_du_jour.plats = plats
+            menu_du_jour.desserts = desserts
 
-    return render_template("index.html", AVIS=avis_list)
+    return render_template("index.html", AVIS=avis_list, menu_du_jour=menu_du_jour)
 
 @app.route('/avis/', endpoint='avis_page')
 def avis():
@@ -794,6 +807,47 @@ def unban_client(client_id):
     db.session.commit()
     flash(f"Client {client.prenom} {client.nom} débanni.", 'success')
     return redirect(url_for('admin_bannis'))
+
+@app.route('/admin/menu-du-jour/', methods=['GET', 'POST'])
+@admin_required
+def admin_menu_du_jour():
+    if request.method == 'POST':
+        menu_id = request.form.get('menu_id')
+        
+        if menu_id:
+            # Vérifier que le menu existe
+            menu = db.session.query(MENU).get(menu_id)
+            if not menu:
+                flash("Menu introuvable.", "error")
+                return redirect(url_for('admin_menu_du_jour'))
+            
+            # Créer ou mettre à jour l'entrée dans SALLE
+            menu_entry = db.session.query(SALLE).filter_by(cle='menu_du_jour').first()
+            if menu_entry:
+                menu_entry.valeur = int(menu_id)
+            else:
+                menu_entry = SALLE(cle='menu_du_jour', valeur=int(menu_id))
+                db.session.add(menu_entry)
+            
+            db.session.commit()
+            flash(f"Menu du jour mis à jour : {menu.nom_menu}", "success")
+        else:
+            # Supprimer le menu du jour
+            menu_entry = db.session.query(SALLE).filter_by(cle='menu_du_jour').first()
+            if menu_entry:
+                db.session.delete(menu_entry)
+                db.session.commit()
+            flash("Menu du jour désactivé.", "success")
+        
+        return redirect(url_for('admin_menu_du_jour'))
+    
+    # GET : afficher la page
+    menus = db.session.query(MENU).all()
+    menu_entry = db.session.query(SALLE).filter_by(cle='menu_du_jour').first()
+    menu_actuel_id = int(menu_entry.valeur) if menu_entry and menu_entry.valeur else None
+    
+    return render_template('admin_menu_du_jour.html', menus=menus, menu_actuel_id=menu_actuel_id)
+
 
 @app.route('/admin-index/')
 @admin_required
