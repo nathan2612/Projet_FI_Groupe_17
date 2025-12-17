@@ -415,7 +415,6 @@ def supprimer_du_panier():
 def valider_commande():
     commande = db.session.query(COMMANDE).filter_by(id_client=current_user.id_client, statut='En commande').first()
     
-    # Récupérer l'heure de retrait depuis le formulaire
     heure_retrait = request.form.get('heure_retrait')
     
     if not heure_retrait:
@@ -423,7 +422,6 @@ def valider_commande():
         return redirect(url_for('panier'))
     
     try:
-        # Créer la date de commande avec la date d'aujourd'hui et l'heure sélectionnée
         date_aujourdhui = datetime.now().date()
         heure_parts = heure_retrait.split(':')
         heure = int(heure_parts[0])
@@ -469,7 +467,16 @@ def connexion():
 def inscription():
     form = InscriptionForm()
     if form.validate_on_submit():
-        if not db.session.query(CLIENT).filter_by(telephone=form.telephone.data).first() and form.mot_de_passe.data == form.confirmation_mot_de_passe.data:
+        existing_client = db.session.query(CLIENT).filter_by(telephone=form.telephone.data).first()
+        if existing_client:
+            flash("Ce numéro de téléphone est déjà utilisé.", "error")
+            return render_template("inscription.html", form=form)
+        
+        if form.mot_de_passe.data != form.confirmation_mot_de_passe.data:
+            flash("Les mots de passe ne correspondent pas.", "error")
+            return render_template("inscription.html", form=form)
+        
+        try:
             from hashlib import sha256
             m = sha256()
             m.update(form.mot_de_passe.data.encode())
@@ -481,7 +488,15 @@ def inscription():
             )
             db.session.add(new_client)
             db.session.commit()
-        return redirect(url_for('connexion'))
+            
+            login_user(new_client)
+            flash("Inscription réussie ! Bienvenue chez Traiteur Oumami.", "success")
+            return redirect(url_for('index'))
+        except Exception as e:
+            db.session.rollback()
+            flash("Une erreur est survenue lors de l'inscription. Veuillez réessayer.", "error")
+            return render_template("inscription.html", form=form)
+    
     return render_template("inscription.html", form=form)
 
 @app.route('/logout')
