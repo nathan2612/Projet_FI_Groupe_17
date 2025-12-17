@@ -6,10 +6,9 @@ from monApp.models import (
 from monApp import db
 
 def test_categorie_init():
-    cat = CATEGORIE(id_categorie=1, nom_categorie='Entrées', description='Plats d\'entrée')
+    cat = CATEGORIE(id_categorie=1, nom_categorie='Entrées')
     assert cat.id_categorie == 1
     assert cat.nom_categorie == 'Entrées'
-    assert cat.description == 'Plats d\'entrée'
 
 def test_plat_init():
     plat = PLAT(id_plat=1, id_categorie=1, nom_plat='Salade César', description='Salade avec poulet, croûtons et parmesan', prix=9.99, disponible=True)
@@ -21,10 +20,10 @@ def test_plat_init():
     assert plat.disponible is True
 
 def test_client_init():
-    client = CLIENT(id_client=1, nom_client='Doe', prenom_client='John', telephone='0123456789', banni=False)
+    client = CLIENT(id_client=1, nom='Doe', prenom='John', telephone='0123456789', banni=False)
     assert client.id_client == 1
-    assert client.nom_client == 'Doe'
-    assert client.prenom_client == 'John'
+    assert client.nom == 'Doe'
+    assert client.prenom == 'John'
     assert client.telephone == '0123456789'
     assert client.banni is False
     assert client.get_id() == 1
@@ -75,6 +74,3 @@ def test_definir_stock_init():
     assert definir_stock.jour == date(2024, 1, 1)
     assert definir_stock.stock == 50
     assert definir_stock.stock == 50
-
-
-

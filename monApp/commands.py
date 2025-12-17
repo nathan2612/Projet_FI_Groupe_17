@@ -2,6 +2,7 @@ import click
 import logging as lg
 import random
 from .app import app, db
+from sqlalchemy import text
 
 @app.cli.command()
 @click.argument('filename')
@@ -9,7 +10,11 @@ def loaddb(filename):
     import yaml
     from datetime import datetime
 
-    db.drop_all()
+    with db.engine.connect() as connection:
+        connection.execute(text("SET FOREIGN_KEY_CHECKS=0"))
+        db.metadata.drop_all(bind=connection)
+        connection.execute(text("SET FOREIGN_KEY_CHECKS=1"))
+        connection.commit()
     db.create_all()
 
     with open(filename, 'r', encoding='utf-8') as file:
