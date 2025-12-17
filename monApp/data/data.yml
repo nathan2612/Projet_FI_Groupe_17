@@ -545,6 +545,15 @@ service:
   - id_service : 3
     heure_debut : '13:00:00'
     heure_fin : '14:00:00'
+  - id_service : 4
+    heure_debut : '18:00:00'
+    heure_fin : '19:00:00'
+  - id_service : 5
+    heure_debut : '19:00:00'
+    heure_fin : '20:00:00'
+  - id_service : 6
+    heure_debut : '7:00:00'
+    heure_fin : '8:00:00'
 
 reservation:
   - id_reservation : 1

@@ -2,6 +2,7 @@ from flask_wtf import FlaskForm
 from wtforms.fields import StringField, HiddenField, SelectField, PasswordField, IntegerField, DateField
 from wtforms.validators import DataRequired, EqualTo, Optional
 from monApp import db
+from datetime import datetime
 
 class InscriptionForm(FlaskForm):
     id_client = HiddenField('id_client')
@@ -43,6 +44,5 @@ class ReservationForm(FlaskForm):
     
     def __init__(self, *args, **kwargs):
         super(ReservationForm, self).__init__(*args, **kwargs)
-        from .models import SERVICE
-        services = db.session.query(SERVICE).all()
-        self.id_service.choices = [(s.id_service, f"{s.heure_debut.strftime('%H:%M')} - {s.heure_fin.strftime('%H:%M')}") for s in services]
+        # Les choix seront remplis dynamiquement dans la vue
+        self.id_service.choices = []

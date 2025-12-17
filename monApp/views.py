@@ -10,7 +10,8 @@ from monApp.models import (
     MENU,
     CONTENIR,
     RESERVATION,
-    SERVICE
+    SERVICE,
+    SALLE
 )
 from .app import app, db
 from flask import render_template, request, url_for, redirect, flash, abort
@@ -610,13 +611,7 @@ def admin_banni():
         .order_by(desc('nb_non_recup'))
         .all()
     )
-    clients = [
-        {
-            'client': r[0],
-            'nb_non_recup': int(r[1])
-        }
-        for r in results
-    ]
+    clients = [{'client': r[0], 'nb_non_recup': int(r[1])} for r in results]
     return render_template("admin_banni.html", clients=clients)
 
 
@@ -749,10 +744,45 @@ def admin_index():
 def reservation():
     form = ReservationForm()
     
+    selected_date = None
+    if request.method == 'GET' and request.args.get('date_reservation'):
+        date_str = request.args.get('date_reservation')
+        try:
+            selected_date = datetime.strptime(date_str, '%Y-%m-%d').date()
+        except:
+            selected_date = None
+    elif request.method == 'POST' and request.form.get('date_reservation'):
+        date_str = request.form.get('date_reservation')
+        try:
+            selected_date = datetime.strptime(date_str, '%Y-%m-%d').date()
+        except:
+            selected_date = None
+    
+    capacite_totale = db.session.query(SALLE).filter_by(cle='capacite').first().valeur
+    
+    services_avec_places = []
+    if selected_date:
+        all_services = db.session.query(SERVICE).order_by(SERVICE.heure_debut).all()
+        for service in all_services:
+            reservations = db.session.query(func.sum(RESERVATION.nb_personne)).filter(
+                RESERVATION.id_service == service.id_service,
+                RESERVATION.date_reservation == selected_date
+            ).scalar() or 0
+            places_disponibles = capacite_totale - reservations
+            if places_disponibles > 0:
+                services_avec_places.append({
+                    'id': service.id_service,
+                    'heure_debut': service.heure_debut.strftime('%H:%M'),
+                    'heure_fin': service.heure_fin.strftime('%H:%M'),
+                    'places_disponibles': places_disponibles
+                })
+        form.id_service.choices = [(s['id'], f"{s['heure_debut']} - {s['heure_fin']} ({s['places_disponibles']} places)") for s in services_avec_places]
+        if not form.date_reservation.data:
+            form.date_reservation.data = selected_date
     if form.validate_on_submit():
         nouvelle_reservation = RESERVATION(
             id_client=current_user.id_client,
-            date_reservation=form.date_reservation.data,
+            date_reservation=selected_date, 
             id_service=form.id_service.data,
             nb_personne=form.nb_personne.data
         )
@@ -763,9 +793,14 @@ def reservation():
             return redirect(url_for('compte'))
         except Exception as e:
             db.session.rollback()
-            flash(f"Il y a plus de place pour ce service ce jour ci")
+            flash(f"Il n'y a plus de place pour ce service ce jour-ci.", "error")
+            return redirect(url_for('reservation', date_reservation=selected_date.strftime('%Y-%m-%d')))
     
-    return render_template('reservation.html', form=form, today=date.today())
+    return render_template('reservation.html', 
+                         form=form, 
+                         today=date.today(),
+                         selected_date=selected_date,
+                         services_disponibles=services_avec_places)
 
 @app.route('/annuler-reservation/<int:id_reservation>', methods=['POST'])
 @login_required
