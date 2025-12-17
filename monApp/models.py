@@ -47,7 +47,7 @@ class CLIENT(db.Model,UserMixin):
 	id_client = db.Column(db.Integer, primary_key=True)
 	nom = db.Column(db.String(100))
 	prenom = db.Column(db.String(100))
-	telephone = db.Column(db.String(15), unique=True)
+	telephone = db.Column(db.String(15), unique=True, )
 	mot_de_passe = db.Column(db.String(255))
 	banni = db.Column(db.Boolean, default=False)
 	# Rôle de l'utilisateur : 'user' (par défaut) ou 'admin'

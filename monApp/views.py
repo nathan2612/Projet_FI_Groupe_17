@@ -239,7 +239,7 @@ def commandes():
         commandes_list = (
             db.session.query(COMMANDE)
             .filter(~COMMANDE.statut.in_(['En commande', 'récupéré', 'non récupéré']))
-            .order_by(COMMANDE.date_commande.desc())
+            .order_by(COMMANDE.date_commande.asc())
             .all()
         )
     except Exception:
@@ -281,12 +281,37 @@ def nouveaute():
 def panier():
     commande = None
     total_general = 0
+    heure_possible = ['11:30', '11:45', '12:00', '12:15', '12:30', '12:45', '13:00', '13:15', '13:30', '13:45', '14:00', '17:00', '17:15', '17:30', '17:45', '18:00', '18:15', '18:30', '18:45', '19:00', '19:15', '19:30', '19:45', '20:00']
+    heure_actu = datetime.now().hour*100 + datetime.now().minute
+    heures_possible = []
+    
+    for h in heure_possible:
+        if int(h.replace(":", "")) > heure_actu:
+            # Vérifier le nombre de commandes pour ce créneau
+            heure_parts = h.split(':')
+            heure_debut = datetime.now().replace(hour=int(heure_parts[0]), minute=int(heure_parts[1]), second=0, microsecond=0) #https://docs.python.org/fr/3/library/datetime.html
+            heure_fin = heure_debut + timedelta(15)
+            
+            commandes_creneau = db.session.query(COMMANDE).filter(
+                COMMANDE.date_commande >= heure_debut,
+                COMMANDE.date_commande < heure_fin,
+                COMMANDE.statut != 'En commande'
+            ).count()
+            
+            # Ajouter l'heure seulement si moins de 5 commandes
+            if commandes_creneau < 5:
+                heures_possible.append(h)
+    
+    if len(heures_possible) == 0:
+        flash("Il n'y a plus d'heures de retrait disponibles pour aujourd'hui. Veuillez revenir demain.")
 
     commande = db.session.query(COMMANDE).filter_by(id_client=current_user.id_client, statut='En commande').first()
     if commande:
         total_general = commande.montant_total or 0
+        if total_general > 100:
+            flash("Montant supérieur à 100€. Veuillez commander directement en magasin.", "warning")
 
-    return render_template("panier.html", commande=commande, total_general=total_general)
+    return render_template("panier.html", commande=commande, total_general=total_general, heures_retrait=heures_possible, panier_depasse=total_general > 100)
 
 @app.route('/ajouter-au-panier/', methods=['POST'])
 def ajouter_au_panier():
@@ -392,9 +417,23 @@ def supprimer_du_panier():
 @login_required
 def valider_commande():
     commande = db.session.query(COMMANDE).filter_by(id_client=current_user.id_client, statut='En commande').first()
+    
+    heure_retrait = request.form.get('heure_retrait')
+    
+    if not heure_retrait:
+        flash("Veuillez sélectionner une heure de retrait.", "error")
+        return redirect(url_for('panier'))
+    
     try:
+        date_aujourdhui = datetime.now().date()
+        heure_parts = heure_retrait.split(':')
+        heure = int(heure_parts[0])
+        minute = int(heure_parts[1])
+        
+        date_commande_complete = datetime.combine(date_aujourdhui, datetime.min.time().replace(hour=heure, minute=minute))
+        
         commande.statut = 'En attente'
-        commande.date_commande = datetime.now().replace(hour=12, minute=0, second=0, microsecond=0)   #remplacer par datetime.now() pour l'heure actuelle plus tard
+        commande.date_commande = date_commande_complete
         db.session.commit()
         flash("Votre commande a été validée avec succès et est en attente de préparation !", "success")
         return redirect(url_for('index'))
@@ -431,7 +470,16 @@ def connexion():
 def inscription():
     form = InscriptionForm()
     if form.validate_on_submit():
-        if not db.session.query(CLIENT).filter_by(telephone=form.telephone.data).first() and form.mot_de_passe.data == form.confirmation_mot_de_passe.data:
+        existing_client = db.session.query(CLIENT).filter_by(telephone=form.telephone.data).first()
+        if existing_client:
+            flash("Ce numéro de téléphone est déjà utilisé.", "error")
+            return render_template("inscription.html", form=form)
+        
+        if form.mot_de_passe.data != form.confirmation_mot_de_passe.data:
+            flash("Les mots de passe ne correspondent pas.", "error")
+            return render_template("inscription.html", form=form)
+        
+        try:
             from hashlib import sha256
             m = sha256()
             m.update(form.mot_de_passe.data.encode())
@@ -443,7 +491,15 @@ def inscription():
             )
             db.session.add(new_client)
             db.session.commit()
-        return redirect(url_for('connexion'))
+            
+            login_user(new_client)
+            flash("Inscription réussie ! Bienvenue chez Traiteur Oumami.", "success")
+            return redirect(url_for('index'))
+        except Exception as e:
+            db.session.rollback()
+            flash("Une erreur est survenue lors de l'inscription. Veuillez réessayer.", "error")
+            return render_template("inscription.html", form=form)
+    
     return render_template("inscription.html", form=form)
 
 @app.route('/logout')
@@ -499,6 +555,38 @@ def compte():
         return redirect(url_for('compte'))
 
     return render_template("compte.html", form=form, commandes=commandes_client, reservations=reservations_client, today=date.today())
+
+@app.route('/annuler-commande/<int:id_commande>/', methods=['POST'])
+@login_required
+def annuler_commande(id_commande):
+    commande = db.session.query(COMMANDE).filter_by(
+        id_commande=id_commande, 
+        id_client=current_user.id_client
+    ).first()
+    
+    if not commande:
+        flash("Commande introuvable.", "error")
+        return redirect(url_for('compte'))
+    
+    if commande.statut != 'En attente':
+        flash("Seules les commandes en attente peuvent être annulées.", "error")
+        return redirect(url_for('compte'))
+    
+    try:
+        
+        # Supprimer directement via requête les relations
+        db.session.query(APPARTENIR_PLATS).filter_by(id_commande=id_commande).delete()
+        db.session.query(APPARTENIR_MENUS).filter_by(id_commande=id_commande).delete()
+        
+        # Supprimer la commande
+        db.session.delete(commande)
+        db.session.commit()
+        flash("Votre commande a été annulée avec succès.", "success")
+    except Exception as e:
+        db.session.rollback()
+        flash(f"Erreur lors de l'annulation : {e}", "error")
+    
+    return redirect(url_for('compte'))
   
 @app.route('/preparation-cuisto/')
 def preparation_cuisto():

@@ -176,7 +176,23 @@
                         <p>
                             <strong>Statut :</strong> 
                             <span class="status-badge status-{{ cmd.statut | lower | replace(' ', '-') }}">{{ cmd.statut }}</span>
-                        </p>
+                       </p>
+                            {% if cmd.statut == 'En attente' %}
+                            <div class="order-actions">
+                                <form method="POST" action="{{ url_for('annuler_commande', id_commande=cmd.id_commande) }}" onsubmit="return confirm('Êtes-vous sûr de vouloir annuler cette commande ?');">
+                                    <button type="submit" class="btn btn-cancel">
+                                        <i class="fas fa-times"></i> Annuler
+                                    </button>
+                                </form>
+                            </div>
+                            {% endif %}
+                            {% if cmd.statut == "En préparation" %}
+                            <div class="order-actions">
+                                <p>
+                                    Veuillez appeler le <strong>+33 1 23 45 67 89</strong> pour savoir si il est possible de modifier ou annuler votre commande.
+                                </p>
+                            </div>
+                            {% endif %}
                     </div>
                 {% endfor %}
             </div>
