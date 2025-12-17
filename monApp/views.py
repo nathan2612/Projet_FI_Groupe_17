@@ -456,8 +456,6 @@ def connexion():
         except Exception:
             tel = ''
             pwd = ''
-        if tel == 'admin' and pwd == 'admin':
-            return redirect(url_for('admin_index'))
         client = form.get_authenticated_client()
         if client:
             login_user(client)
@@ -588,14 +586,6 @@ def annuler_commande(id_commande):
     
     return redirect(url_for('compte'))
   
-@app.route('/preparation-cuisto/')
-def preparation_cuisto():
-    try :
-        status = db.session.query(COMMANDE).all()
-    except Exception:
-        status = []
-    return render_template("preparation-cuisto.html", COMMANDE=status)
-
 @app.route('/admin/stock/')
 @admin_required
 def admin_stock():
@@ -622,20 +612,6 @@ def admin_stock():
         items_with_stock = [item for item in items_with_stock if search_term.lower() in item['item'].nom_plat.lower()]
 
     return render_template("admin_stock.html", items=items_with_stock, search_term=search_term)
-
-@app.route('/admin/stock/view/<int:item_id>')
-@admin_required
-
-def view_stock_item(item_id):
-    item = db.session.get(PLAT, item_id)
-    today = date.today()
-    stock_entry = db.session.query(DEFINIR_STOCK).filter_by(id_plat=item_id, jour=today).first()
-
-    if not item:
-        flash("Article non trouvé.", "error")
-        return redirect(url_for('admin_stock'))
-
-    return render_template("view_stock_item.html", item=item, stock=stock_entry.stock if stock_entry else 0)
 
 
 @app.route('/admin/stock/edit/<int:item_id>', methods=['GET', 'POST'])

@@ -2,17 +2,13 @@ import click
 import logging as lg
 import random
 from .app import app, db
+from sqlalchemy import text
 
 @app.cli.command()
 @click.argument('filename')
 def loaddb(filename):
     import yaml
     from datetime import datetime
-
-    # Désactiver les contraintes de clés étrangères
-    with db.engine.connect() as conn:
-        conn.execute(db.text('SET FOREIGN_KEY_CHECKS=0;'))
-        conn.commit()
     
     db.drop_all()
     db.create_all()
