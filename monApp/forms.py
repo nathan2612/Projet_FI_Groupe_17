@@ -46,3 +46,7 @@ class ReservationForm(FlaskForm):
         super(ReservationForm, self).__init__(*args, **kwargs)
         # Les choix seront remplis dynamiquement dans la vue
         self.id_service.choices = []
+
+class ServiceForm(FlaskForm):
+    heure_debut = StringField('Heure de début (HH:MM)', validators=[DataRequired()])
+    heure_fin = StringField('Heure de fin (HH:MM)', validators=[DataRequired()])

@@ -205,6 +205,7 @@ class SERVICE(db.Model):
 	id_service = db.Column(db.Integer,primary_key=True)
 	heure_debut = db.Column(db.Time)
 	heure_fin = db.Column(db.Time)
+	actif = db.Column(db.Boolean)
 
 	reservations = db.relationship('RESERVATION', back_populates='service')
 
