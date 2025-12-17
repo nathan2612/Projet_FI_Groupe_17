@@ -1,7 +1,8 @@
 from flask_wtf import FlaskForm
-from wtforms.fields import StringField, HiddenField, SelectField, PasswordField
+from wtforms.fields import StringField, HiddenField, SelectField, PasswordField, IntegerField, DateField
 from wtforms.validators import DataRequired, EqualTo, Optional
 from monApp import db
+from datetime import datetime
 
 class InscriptionForm(FlaskForm):
     id_client = HiddenField('id_client')
@@ -34,3 +35,14 @@ class EditProfileForm(FlaskForm):
     current_mot_de_passe = PasswordField('Mot de passe actuel', validators=[Optional()])
     new_mot_de_passe = PasswordField('Nouveau mot de passe', validators=[Optional()])
     confirm_new_mot_de_passe = PasswordField('Confirmer le nouveau mot de passe', validators=[Optional(), EqualTo('new_mot_de_passe', message='Les mots de passe doivent correspondre.')])
+
+class ReservationForm(FlaskForm):
+    id_client = HiddenField('id_client')
+    date_reservation = DateField('Date de réservation', format='%Y-%m-%d', validators=[DataRequired()])
+    id_service = SelectField('Service', coerce=int, validators=[DataRequired()])
+    nb_personne = IntegerField('Nombre de personnes', validators=[DataRequired()])
+    
+    def __init__(self, *args, **kwargs):
+        super(ReservationForm, self).__init__(*args, **kwargs)
+        # Les choix seront remplis dynamiquement dans la vue
+        self.id_service.choices = []

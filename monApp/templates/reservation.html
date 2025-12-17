@@ -1,0 +1,76 @@
+{% extends 'base.html' %}
+
+{% block styles %}
+	<link rel="stylesheet" href="{{ url_for('static', filename='reservation.css') }}">
+{% endblock %}
+
+{% block main %}
+<div class="container">
+	<div class="form-container">
+		<h1>Réserver une table</h1>
+		<p class="subtitle">Réservez votre place pour profiter de nos plats sur place</p>
+		
+		<!-- Formulaire pour sélectionner la date -->
+		<form method="GET" action="{{ url_for('reservation') }}">
+			<div class="form-group">
+				<label for="date_reservation">Date de réservation</label>
+				<input type="date" 
+				       name="date_reservation" 
+				       id="date_reservation" 
+				       class="form-control" 
+				       min="{{ today.strftime('%Y-%m-%d') }}"
+				       value="{{ selected_date.strftime('%Y-%m-%d') if selected_date else '' }}"
+				       required>
+			</div>
+			<button type="submit" class="btn-submit">Voir les services disponibles</button>
+		</form>
+		
+		{% if selected_date %}
+		<hr style="margin: 30px 0;">
+		
+		<!-- Affichage de la date sélectionnée -->
+		<h3>Services disponibles le {{ selected_date.strftime('%d/%m/%Y') }}</h3>
+		
+		{% if services_disponibles %}
+		<!-- Formulaire de réservation -->
+		<form method="POST" action="{{ url_for('reservation') }}">
+			{{ form.csrf_token }}
+			{{ form.id_client }}
+			
+			<!-- Champ caché pour la date -->
+			<input type="hidden" name="date_reservation" value="{{ selected_date.strftime('%Y-%m-%d') }}">
+			
+			<div class="form-group">
+				<label for="id_service">{{ form.id_service.label }}</label>
+				{{ form.id_service(class="form-control") }}
+				{% if form.id_service.errors %}
+					<div class="error-message">
+						{% for error in form.id_service.errors %}
+							<p>{{ error }}</p>
+						{% endfor %}
+					</div>
+				{% endif %}
+			</div>
+			
+			<div class="form-group">
+				<label for="nb_personne">{{ form.nb_personne.label }}</label>
+				{{ form.nb_personne(class="form-control", type="number", min="1", max="12") }}
+				{% if form.nb_personne.errors %}
+					<div class="error-message">
+						{% for error in form.nb_personne.errors %}
+							<p>{{ error }}</p>
+						{% endfor %}
+					</div>
+				{% endif %}
+			</div>
+			
+			<button type="submit" class="btn-submit">Réserver</button>
+			<a href="{{ url_for('index') }}" class="btn-cancel">Annuler</a>
+		</form>
+		{% else %}
+		<p class="no-services">Aucun service disponible pour cette date.</p>
+		{% endif %}
+		{% endif %}
+	</div>
+</div>
+{% endblock %}
