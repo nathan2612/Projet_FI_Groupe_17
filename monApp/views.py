@@ -41,8 +41,7 @@ def index():
         avis_list = db.session.query(AVIS).all()
     except Exception:
         avis_list = []
-
-    # Récupérer le menu du jour
+        
     menu_du_jour = None
     menu_entry = db.session.query(SALLE).filter_by(cle='menu_du_jour').first()
     if menu_entry != None:
