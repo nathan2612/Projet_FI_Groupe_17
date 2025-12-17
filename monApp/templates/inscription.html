@@ -30,15 +30,14 @@
 
             <div class="signup-form-group form-span-2">
                 {{ form.telephone.label }}
-                {{ form.telephone(class="signup-form-input") }}
+                {{ form.telephone(class="signup-form-input", type="tel", pattern="[0]{1}[1-9]{1}[0-9]{8}", title="Format: 0612345678", placeholder="Ex: 0612345678") }}
                 {% if form.telephone.errors %}
                     <div class="field-errors">{{ form.telephone.errors[0] }}</div>
                 {% endif %}
             </div>
-
             <div class="signup-form-group form-span-2">
                 {{ form.mot_de_passe.label }}
-                {{ form.mot_de_passe(class="signup-form-input", placeholder='8+ caractères minimum') }}
+                {{ form.mot_de_passe(class="signup-form-input", placeholder='8+ caractères minimum', minlength="8") }}
                 {% if form.mot_de_passe.errors %}
                     <div class="field-errors">{{ form.mot_de_passe.errors[0] }}</div>
                 {% endif %}
@@ -46,7 +45,7 @@
 
             <div class="signup-form-group form-span-2">
                 {{ form.confirmation_mot_de_passe.label }}
-                {{ form.confirmation_mot_de_passe(class="signup-form-input", placeholder='Confirmez le mot de passe') }}
+                {{ form.confirmation_mot_de_passe(class="signup-form-input", placeholder='Confirmez le mot de passe', minlength="8") }}
                 {% if form.confirmation_mot_de_passe.errors %}
                     <div class="field-errors">{{ form.confirmation_mot_de_passe.errors[0] }}</div>
                 {% endif %}

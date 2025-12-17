@@ -9,8 +9,18 @@ def loaddb(filename):
     import yaml
     from datetime import datetime
 
+    # Désactiver les contraintes de clés étrangères
+    with db.engine.connect() as conn:
+        conn.execute(db.text('SET FOREIGN_KEY_CHECKS=0;'))
+        conn.commit()
+    
     db.drop_all()
     db.create_all()
+    
+    # Réactiver les contraintes de clés étrangères
+    with db.engine.connect() as conn:
+        conn.execute(db.text('SET FOREIGN_KEY_CHECKS=1;'))
+        conn.commit()
 
     with open(filename, 'r', encoding='utf-8') as file:
         data = yaml.safe_load(file)
