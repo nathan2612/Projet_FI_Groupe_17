@@ -178,7 +178,8 @@ def loaddb(filename):
         obj = SERVICE(
             id_service=entry.get('id_service'),
             heure_debut=entry.get('heure_debut'),
-            heure_fin=entry.get('heure_fin')
+            heure_fin=entry.get('heure_fin'),
+            actif=entry.get('actif',True)
         )
         db.session.merge(obj)
     db.session.commit()

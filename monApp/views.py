@@ -16,7 +16,7 @@ from monApp.models import (
 from .app import app, db
 from flask import render_template, request, url_for, redirect, flash, abort
 from functools import wraps
-from .forms import InscriptionForm, ConnexionForm, EditProfileForm, ReservationForm
+from .forms import InscriptionForm, ConnexionForm, EditProfileForm, ReservationForm, ServiceForm
 from flask_login import login_user, logout_user, login_required, current_user
 from sqlalchemy import func, desc
 from hashlib import sha256
@@ -561,22 +561,15 @@ def annuler_commande(id_commande):
         id_commande=id_commande, 
         id_client=current_user.id_client
     ).first()
-    
     if not commande:
         flash("Commande introuvable.", "error")
         return redirect(url_for('compte'))
-    
     if commande.statut != 'En attente':
         flash("Seules les commandes en attente peuvent être annulées.", "error")
         return redirect(url_for('compte'))
-    
     try:
-        
-        # Supprimer directement via requête les relations
         db.session.query(APPARTENIR_PLATS).filter_by(id_commande=id_commande).delete()
         db.session.query(APPARTENIR_MENUS).filter_by(id_commande=id_commande).delete()
-        
-        # Supprimer la commande
         db.session.delete(commande)
         db.session.commit()
         flash("Votre commande a été annulée avec succès.", "success")
@@ -698,6 +691,95 @@ def ban_client(client_id):
 def admin_bannis():
     clients = db.session.query(CLIENT).filter_by(banni=True).all()
     return render_template('admin_bannis.html', clients=clients)
+
+
+@app.route('/admin/services/', methods=['GET', 'POST'])
+@admin_required
+def admin_services():
+    form = ServiceForm()
+    if form.validate_on_submit():
+        try:
+            heure_debut = datetime.strptime(form.heure_debut.data, '%H:%M').time()
+            heure_fin = datetime.strptime(form.heure_fin.data, '%H:%M').time()
+            
+            nouveau_service = SERVICE(
+                heure_debut=heure_debut,
+                heure_fin=heure_fin,
+                actif=True
+            )
+            db.session.add(nouveau_service)
+            db.session.commit()
+            flash("Service ajouté avec succès !", "success")
+            return redirect(url_for('admin_services'))
+        except ValueError:
+            flash("Format d'heure invalide. Utilisez le format HH:MM (ex: 12:00)", "error")
+        except Exception as e:
+            db.session.rollback()
+            flash(f"Erreur lors de l'ajout : {str(e)}", "error")
+    
+    services = db.session.query(SERVICE).order_by(SERVICE.heure_debut).all()
+    return render_template('admin_services.html', services=services, form=form)
+
+
+@app.route('/admin/services/toggle/<int:id_service>', methods=['POST'])
+@admin_required
+def admin_toggle_service(id_service):
+    service = db.session.query(SERVICE).filter_by(id_service=id_service).first()
+    
+    if not service:
+        flash("Service introuvable.", "error")
+        return redirect(url_for('admin_services'))
+    
+    try:
+        service.actif = not service.actif
+        db.session.commit()
+        
+        if service.actif:
+            flash("Service réactivé avec succès.", "success")
+        else:
+            flash("Service désactivé avec succès.", "success")
+    except Exception as e:
+        db.session.rollback()
+        flash(f"Erreur lors de la modification : {str(e)}", "error")
+    
+    return redirect(url_for('admin_services'))
+
+
+@app.route('/admin/reservations/')
+@admin_required
+def admin_reservations():
+    date_str = request.args.get('date', date.today().strftime('%Y-%m-%d'))
+    try:
+        selected_date = datetime.strptime(date_str, '%Y-%m-%d').date()
+    except:
+        selected_date = date.today()
+    reservations = (
+        db.session.query(RESERVATION)
+        .filter(RESERVATION.date_reservation == selected_date)
+        .order_by(RESERVATION.id_service, RESERVATION.id_reservation)
+        .all()
+    )
+    capacite_entry = db.session.query(SALLE).filter_by(cle='capacite').first()
+    capacite_totale = capacite_entry.valeur if capacite_entry else 0
+    services = db.session.query(SERVICE).order_by(SERVICE.heure_debut).all()
+    stats_services = []
+    for service in services:
+        reservations_service = [r for r in reservations if r.id_service == service.id_service]
+        nb_reservations = len(reservations_service)
+        nb_personnes = sum(r.nb_personne for r in reservations_service)
+        places_restantes = capacite_totale - nb_personnes
+        if service.actif or nb_reservations > 0:
+            stats_services.append({
+                'service': service,
+                'nb_reservations': nb_reservations,
+                'nb_personnes': nb_personnes,
+                'places_restantes': places_restantes,
+                'reservations': reservations_service
+            })
+    
+    return render_template('admin_reservations.html', 
+                         selected_date=selected_date,
+                         stats_services=stats_services)
 
 
 @app.route('/admin/unban/<int:client_id>', methods=['POST'])
@@ -826,7 +908,7 @@ def reservation():
     
     services_avec_places = []
     if selected_date:
-        all_services = db.session.query(SERVICE).order_by(SERVICE.heure_debut).all()
+        all_services = db.session.query(SERVICE).filter_by(actif=True).order_by(SERVICE.heure_debut).all()
         for service in all_services:
             reservations = db.session.query(func.sum(RESERVATION.nb_personne)).filter(
                 RESERVATION.id_service == service.id_service,

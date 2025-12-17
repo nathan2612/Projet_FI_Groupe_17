@@ -23,6 +23,9 @@
                 <li {% if request.endpoint == 'commandes' %}class="active"{% endif %}>
                     <a href="{{ url_for('commandes') }}"><i class="fas fa-receipt"></i> Commandes</a>
                 </li>
+                <li {% if request.endpoint == 'admin_reservations' %}class="active"{% endif %}>
+                    <a href="{{ url_for('admin_reservations') }}"><i class="fas fa-calendar-check"></i> Réservations</a>
+                </li>
                 <li {% if request.endpoint == 'admin_banni' %}class="active"{% endif %}>
                     <a href="{{ url_for('admin_banni') }}"><i class="fas fa-user-slash"></i> Clients à bannir</a>
                 </li>
@@ -35,6 +38,17 @@
              <a href="{{ url_for('index') }}"><i class="fas fa-sign-out-alt"></i> Retour au site</a>
         </div>
     </div>
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            <div class="flash-messages-container">
+                {% for category, message in messages %}
+                    <div class="alert alert-{{ category }}">
+                        {{ message }}
+                    </div>
+                {% endfor %}
+            </div>
+        {% endif %}
+    {% endwith %}
     <div class="content">
         {% block main %}{% endblock %}
     </div>
