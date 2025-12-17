@@ -230,3 +230,20 @@
         .grid-main { grid-column: 1 / -1; }
         .grid-aside { grid-column: 1 / -1; }
     }
+.reservation.container {
+    text-align: center;
+    padding: 40px;
+    border: 1px solid rgba(0, 0, 0, 0.08);
+    border-radius: 12px;
+    margin: 60px auto;
+    max-width: 800px;
+}
+
+.reservation .btn-commander {
+    background: #ff6d41;
+    color: white;
+}
+
+.reservation .btn-commander:hover {
+    background: #ff5722;
+}

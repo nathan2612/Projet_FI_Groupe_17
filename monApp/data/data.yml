@@ -303,70 +303,60 @@ commandes:
     date_commande: "2025-10-21 13:00:00"
     statut: "récupéré"
     montant_total: 21.50
-    sur_place: false
     nombre_personnes: 1
   - id_commande: 2
     id_client: 2
     date_commande: "2025-10-21 12:00:00"
     statut: "non récupéré"
     montant_total: 41.00
-    sur_place: true
     nombre_personnes: 2
   - id_commande: 6
     id_client: 1
     date_commande: "2025-10-21 13:00:00"
     statut: "non récupéré"
     montant_total: 21.50
-    sur_place: false
     nombre_personnes: 1
   - id_commande: 7
     id_client: 5
     date_commande: "2025-10-21 13:00:00"
     statut: "non récupéré"
     montant_total: 21.50
-    sur_place: false
     nombre_personnes: 1
   - id_commande: 8
     id_client: 5
     date_commande: "2025-10-21 13:00:00"
     statut: "non récupéré"
     montant_total: 21.50
-    sur_place: false
     nombre_personnes: 1
   - id_commande: 3
     id_client: 3
     date_commande: "2025-10-21 19:30:00"
     statut: "Prêt"
     montant_total: 15.50
-    sur_place: false
     nombre_personnes: 1
   - id_commande: 4
     id_client: 1
     date_commande: "2025-10-21 13:30:00"
     statut: "En préparation"
     montant_total: 28.00
-    sur_place: true
     nombre_personnes: 2
   - id_commande: 5
     id_client: 2
     date_commande: "2025-10-21 20:00:00"
     statut: "En attente"
     montant_total: 12.50
-    sur_place: false
     nombre_personnes: 1
   - id_commande: 9
     id_client: 6
     date_commande: "2025-11-06 14:00:00"
     statut: "récupéré"
     montant_total: 12.50
-    sur_place: false
     nombre_personnes: 1
   - id_commande: 10
     id_client: 6
     date_commande: "2025-11-05 20:00:00"
     statut: "récupéré"
     montant_total: 60.50
-    sur_place: false
     nombre_personnes: 1
 
 menus:
@@ -544,3 +534,55 @@ definir_stock:
     stock: 50
   - id_plat: 40
     stock: 50
+
+service:
+  - id_service : 1
+    heure_debut : '11:00:00'
+    heure_fin : '12:00:00'
+  - id_service : 2
+    heure_debut : '12:00:00'
+    heure_fin : '13:00:00'
+  - id_service : 3
+    heure_debut : '13:00:00'
+    heure_fin : '14:00:00'
+  - id_service : 4
+    heure_debut : '18:00:00'
+    heure_fin : '19:00:00'
+  - id_service : 5
+    heure_debut : '19:00:00'
+    heure_fin : '20:00:00'
+  - id_service : 6
+    heure_debut : '7:00:00'
+    heure_fin : '8:00:00'
+
+reservation:
+  - id_reservation : 1
+    id_client : 1
+    id_service : 1
+    nb_personne : 5
+    date_reservation : "2025-10-21"
+  - id_reservation : 2
+    id_client : 2
+    id_service : 2
+    nb_personne : 4
+    date_reservation : "2025-10-21"
+  - id_reservation : 3
+    id_client : 3
+    id_service : 3
+    nb_personne : 6
+    date_reservation : "2025-10-21"
+  - id_reservation : 4
+    id_client : 3
+    id_service : 3
+    nb_personne : 6
+    date_reservation : "2025-10-21"
+  - id_reservation : 5
+    id_client : 3
+    id_service : 3
+    nb_personne : 6
+    date_reservation : "2025-10-22"
+
+salle:
+  - id_parametre : 1
+    cle : 'capacite'
+    valeur : 12
