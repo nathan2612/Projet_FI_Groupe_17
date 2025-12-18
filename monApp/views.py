@@ -8,12 +8,15 @@ from monApp.models import (
     DEFINIR_STOCK,
     AVIS,
     MENU,
-    CONTENIR
+    CONTENIR,
+    RESERVATION,
+    SERVICE,
+    SALLE
 )
 from .app import app, db
 from flask import render_template, request, url_for, redirect, flash, abort
 from functools import wraps
-from .forms import InscriptionForm, ConnexionForm, EditProfileForm, PlatForm, MenuForm
+from .forms import InscriptionForm, ConnexionForm, EditProfileForm, ReservationForm, ServiceForm
 from flask_login import login_user, logout_user, login_required, current_user
 from sqlalchemy import func, desc
 from hashlib import sha256
@@ -38,8 +41,21 @@ def index():
         avis_list = db.session.query(AVIS).all()
     except Exception:
         avis_list = []
+        
+    menu_du_jour = None
+    menu_entry = db.session.query(SALLE).filter_by(cle='menu_du_jour').first()
+    if menu_entry != None:
+        menu_id = int(menu_entry.valeur)
+        menu_du_jour = db.session.query(MENU).get(menu_id)
+        if menu_du_jour:
+            entres = db.session.query(CONTENIR).filter_by(id_menu=menu_id, type_plat=0).all()
+            plats = db.session.query(CONTENIR).filter_by(id_menu=menu_id, type_plat=1).all()
+            desserts = db.session.query(CONTENIR).filter_by(id_menu=menu_id, type_plat=2).all()
+            menu_du_jour.entres = entres
+            menu_du_jour.plats = plats
+            menu_du_jour.desserts = desserts
 
-    return render_template("index.html", AVIS=avis_list)
+    return render_template("index.html", AVIS=avis_list, menu_du_jour=menu_du_jour)
 
 @app.route('/avis/', endpoint='avis_page')
 def avis():
@@ -236,7 +252,7 @@ def commandes():
         commandes_list = (
             db.session.query(COMMANDE)
             .filter(~COMMANDE.statut.in_(['En commande', 'récupéré', 'non récupéré']))
-            .order_by(COMMANDE.date_commande.desc())
+            .order_by(COMMANDE.date_commande.asc())
             .all()
         )
     except Exception:
@@ -278,12 +294,37 @@ def nouveaute():
 def panier():
     commande = None
     total_general = 0
+    heure_possible = ['11:30', '11:45', '12:00', '12:15', '12:30', '12:45', '13:00', '13:15', '13:30', '13:45', '14:00', '17:00', '17:15', '17:30', '17:45', '18:00', '18:15', '18:30', '18:45', '19:00', '19:15', '19:30', '19:45', '20:00']
+    heure_actu = datetime.now().hour*100 + datetime.now().minute
+    heures_possible = []
+    
+    for h in heure_possible:
+        if int(h.replace(":", "")) > heure_actu:
+            # Vérifier le nombre de commandes pour ce créneau
+            heure_parts = h.split(':')
+            heure_debut = datetime.now().replace(hour=int(heure_parts[0]), minute=int(heure_parts[1]), second=0, microsecond=0) #https://docs.python.org/fr/3/library/datetime.html
+            heure_fin = heure_debut + timedelta(15)
+            
+            commandes_creneau = db.session.query(COMMANDE).filter(
+                COMMANDE.date_commande >= heure_debut,
+                COMMANDE.date_commande < heure_fin,
+                COMMANDE.statut != 'En commande'
+            ).count()
+            
+            # Ajouter l'heure seulement si moins de 5 commandes
+            if commandes_creneau < 5:
+                heures_possible.append(h)
+    
+    if len(heures_possible) == 0:
+        flash("Il n'y a plus d'heures de retrait disponibles pour aujourd'hui. Veuillez revenir demain.")
 
     commande = db.session.query(COMMANDE).filter_by(id_client=current_user.id_client, statut='En commande').first()
     if commande:
         total_general = commande.montant_total or 0
+        if total_general > 100:
+            flash("Montant supérieur à 100€. Veuillez commander directement en magasin.", "warning")
 
-    return render_template("panier.html", commande=commande, total_general=total_general)
+    return render_template("panier.html", commande=commande, total_general=total_general, heures_retrait=heures_possible, panier_depasse=total_general > 100)
 
 @app.route('/ajouter-au-panier/', methods=['POST'])
 def ajouter_au_panier():
@@ -389,9 +430,23 @@ def supprimer_du_panier():
 @login_required
 def valider_commande():
     commande = db.session.query(COMMANDE).filter_by(id_client=current_user.id_client, statut='En commande').first()
+    
+    heure_retrait = request.form.get('heure_retrait')
+    
+    if not heure_retrait:
+        flash("Veuillez sélectionner une heure de retrait.", "error")
+        return redirect(url_for('panier'))
+    
     try:
+        date_aujourdhui = datetime.now().date()
+        heure_parts = heure_retrait.split(':')
+        heure = int(heure_parts[0])
+        minute = int(heure_parts[1])
+        
+        date_commande_complete = datetime.combine(date_aujourdhui, datetime.min.time().replace(hour=heure, minute=minute))
+        
         commande.statut = 'En attente'
-        commande.date_commande = datetime.now().replace(hour=12, minute=0, second=0, microsecond=0)  
+        commande.date_commande = date_commande_complete
         db.session.commit()
         flash("Votre commande a été validée avec succès et est en attente de préparation !", "success")
         return redirect(url_for('index'))
@@ -414,8 +469,6 @@ def connexion():
         except Exception:
             tel = ''
             pwd = ''
-        if tel == 'admin' and pwd == 'admin':
-            return redirect(url_for('admin_index'))
         client = form.get_authenticated_client()
         if client:
             login_user(client)
@@ -428,7 +481,16 @@ def connexion():
 def inscription():
     form = InscriptionForm()
     if form.validate_on_submit():
-        if not db.session.query(CLIENT).filter_by(telephone=form.telephone.data).first() and form.mot_de_passe.data == form.confirmation_mot_de_passe.data:
+        existing_client = db.session.query(CLIENT).filter_by(telephone=form.telephone.data).first()
+        if existing_client:
+            flash("Ce numéro de téléphone est déjà utilisé.", "error")
+            return render_template("inscription.html", form=form)
+        
+        if form.mot_de_passe.data != form.confirmation_mot_de_passe.data:
+            flash("Les mots de passe ne correspondent pas.", "error")
+            return render_template("inscription.html", form=form)
+        
+        try:
             from hashlib import sha256
             m = sha256()
             m.update(form.mot_de_passe.data.encode())
@@ -440,7 +502,15 @@ def inscription():
             )
             db.session.add(new_client)
             db.session.commit()
-        return redirect(url_for('connexion'))
+            
+            login_user(new_client)
+            flash("Inscription réussie ! Bienvenue chez Traiteur Oumami.", "success")
+            return redirect(url_for('index'))
+        except Exception as e:
+            db.session.rollback()
+            flash("Une erreur est survenue lors de l'inscription. Veuillez réessayer.", "error")
+            return render_template("inscription.html", form=form)
+    
     return render_template("inscription.html", form=form)
 
 @app.route('/logout')
@@ -457,6 +527,14 @@ def compte():
         db.session.query(COMMANDE)
         .filter_by(id_client=current_user.id_client)
         .order_by(COMMANDE.date_commande.desc())
+        .all()
+    )
+
+    reservations_client = (
+        db.session.query(RESERVATION)
+        .filter_by(id_client=current_user.id_client)
+        .filter(RESERVATION.date_reservation >= date.today())
+        .order_by(RESERVATION.date_reservation.asc())
         .all()
     )
 
@@ -481,22 +559,39 @@ def compte():
                 flash("Votre mot de passe a été mis à jour.", "success")
             else:
                 flash("Le mot de passe actuel est incorrect.", "error")
-                return render_template("compte.html", form=form, commandes=commandes_client)
+                return render_template("compte.html", form=form, commandes=commandes_client, reservations=reservations_client)
 
         db.session.commit()
         flash("Vos informations ont été mises à jour avec succès !", "success")
         return redirect(url_for('compte'))
 
-    return render_template("compte.html", form=form, commandes=commandes_client)
-  
-@app.route('/preparation-cuisto/')
-def preparation_cuisto():
-    try :
-        status = db.session.query(COMMANDE).all()
-    except Exception:
-        status = []
-    return render_template("preparation-cuisto.html", COMMANDE=status)
+    return render_template("compte.html", form=form, commandes=commandes_client, reservations=reservations_client, today=date.today())
 
+@app.route('/annuler-commande/<int:id_commande>/', methods=['POST'])
+@login_required
+def annuler_commande(id_commande):
+    commande = db.session.query(COMMANDE).filter_by(
+        id_commande=id_commande, 
+        id_client=current_user.id_client
+    ).first()
+    if not commande:
+        flash("Commande introuvable.", "error")
+        return redirect(url_for('compte'))
+    if commande.statut != 'En attente':
+        flash("Seules les commandes en attente peuvent être annulées.", "error")
+        return redirect(url_for('compte'))
+    try:
+        db.session.query(APPARTENIR_PLATS).filter_by(id_commande=id_commande).delete()
+        db.session.query(APPARTENIR_MENUS).filter_by(id_commande=id_commande).delete()
+        db.session.delete(commande)
+        db.session.commit()
+        flash("Votre commande a été annulée avec succès.", "success")
+    except Exception as e:
+        db.session.rollback()
+        flash(f"Erreur lors de l'annulation : {e}", "error")
+    
+    return redirect(url_for('compte'))
+  
 @app.route('/admin/stock/')
 @admin_required
 def admin_stock():
@@ -523,20 +618,6 @@ def admin_stock():
         items_with_stock = [item for item in items_with_stock if search_term.lower() in item['item'].nom_plat.lower()]
 
     return render_template("admin_stock.html", items=items_with_stock, search_term=search_term)
-
-@app.route('/admin/stock/view/<int:item_id>')
-@admin_required
-
-def view_stock_item(item_id):
-    item = db.session.get(PLAT, item_id)
-    today = date.today()
-    stock_entry = db.session.query(DEFINIR_STOCK).filter_by(id_plat=item_id, jour=today).first()
-
-    if not item:
-        flash("Article non trouvé.", "error")
-        return redirect(url_for('admin_stock'))
-
-    return render_template("view_stock_item.html", item=item, stock=stock_entry.stock if stock_entry else 0)
 
 
 @app.route('/admin/stock/edit/<int:item_id>', methods=['GET', 'POST'])
@@ -600,13 +681,7 @@ def admin_banni():
         .order_by(desc('nb_non_recup'))
         .all()
     )
-    clients = [
-        {
-            'client': r[0],
-            'nb_non_recup': int(r[1])
-        }
-        for r in results
-    ]
+    clients = [{'client': r[0], 'nb_non_recup': int(r[1])} for r in results]
     return render_template("admin_banni.html", clients=clients)
 
 
@@ -631,6 +706,95 @@ def admin_bannis():
     return render_template('admin_bannis.html', clients=clients)
 
 
+@app.route('/admin/services/', methods=['GET', 'POST'])
+@admin_required
+def admin_services():
+    form = ServiceForm()
+    if form.validate_on_submit():
+        try:
+            heure_debut = datetime.strptime(form.heure_debut.data, '%H:%M').time()
+            heure_fin = datetime.strptime(form.heure_fin.data, '%H:%M').time()
+            
+            nouveau_service = SERVICE(
+                heure_debut=heure_debut,
+                heure_fin=heure_fin,
+                actif=True
+            )
+            db.session.add(nouveau_service)
+            db.session.commit()
+            flash("Service ajouté avec succès !", "success")
+            return redirect(url_for('admin_services'))
+        except ValueError:
+            flash("Format d'heure invalide. Utilisez le format HH:MM (ex: 12:00)", "error")
+        except Exception as e:
+            db.session.rollback()
+            flash(f"Erreur lors de l'ajout : {str(e)}", "error")
+    
+    services = db.session.query(SERVICE).order_by(SERVICE.heure_debut).all()
+    return render_template('admin_services.html', services=services, form=form)
+
+
+@app.route('/admin/services/toggle/<int:id_service>', methods=['POST'])
+@admin_required
+def admin_toggle_service(id_service):
+    service = db.session.query(SERVICE).filter_by(id_service=id_service).first()
+    
+    if not service:
+        flash("Service introuvable.", "error")
+        return redirect(url_for('admin_services'))
+    
+    try:
+        service.actif = not service.actif
+        db.session.commit()
+        
+        if service.actif:
+            flash("Service réactivé avec succès.", "success")
+        else:
+            flash("Service désactivé avec succès.", "success")
+    except Exception as e:
+        db.session.rollback()
+        flash(f"Erreur lors de la modification : {str(e)}", "error")
+    
+    return redirect(url_for('admin_services'))
+
+
+@app.route('/admin/reservations/')
+@admin_required
+def admin_reservations():
+    date_str = request.args.get('date', date.today().strftime('%Y-%m-%d'))
+    try:
+        selected_date = datetime.strptime(date_str, '%Y-%m-%d').date()
+    except:
+        selected_date = date.today()
+    reservations = (
+        db.session.query(RESERVATION)
+        .filter(RESERVATION.date_reservation == selected_date)
+        .order_by(RESERVATION.id_service, RESERVATION.id_reservation)
+        .all()
+    )
+    capacite_entry = db.session.query(SALLE).filter_by(cle='capacite').first()
+    capacite_totale = capacite_entry.valeur if capacite_entry else 0
+    services = db.session.query(SERVICE).order_by(SERVICE.heure_debut).all()
+    stats_services = []
+    for service in services:
+        reservations_service = [r for r in reservations if r.id_service == service.id_service]
+        nb_reservations = len(reservations_service)
+        nb_personnes = sum(r.nb_personne for r in reservations_service)
+        places_restantes = capacite_totale - nb_personnes
+        if service.actif or nb_reservations > 0:
+            stats_services.append({
+                'service': service,
+                'nb_reservations': nb_reservations,
+                'nb_personnes': nb_personnes,
+                'places_restantes': places_restantes,
+                'reservations': reservations_service
+            })
+    
+    return render_template('admin_reservations.html', 
+                         selected_date=selected_date,
+                         stats_services=stats_services)
+
+
 @app.route('/admin/unban/<int:client_id>', methods=['POST'])
 @admin_required
 def unban_client(client_id):
@@ -643,6 +807,47 @@ def unban_client(client_id):
     db.session.commit()
     flash(f"Client {client.prenom} {client.nom} débanni.", 'success')
     return redirect(url_for('admin_bannis'))
+
+@app.route('/admin/menu-du-jour/', methods=['GET', 'POST'])
+@admin_required
+def admin_menu_du_jour():
+    if request.method == 'POST':
+        menu_id = request.form.get('menu_id')
+        
+        if menu_id:
+            # Vérifier que le menu existe
+            menu = db.session.query(MENU).get(menu_id)
+            if not menu:
+                flash("Menu introuvable.", "error")
+                return redirect(url_for('admin_menu_du_jour'))
+            
+            # Créer ou mettre à jour l'entrée dans SALLE
+            menu_entry = db.session.query(SALLE).filter_by(cle='menu_du_jour').first()
+            if menu_entry:
+                menu_entry.valeur = int(menu_id)
+            else:
+                menu_entry = SALLE(cle='menu_du_jour', valeur=int(menu_id))
+                db.session.add(menu_entry)
+            
+            db.session.commit()
+            flash(f"Menu du jour mis à jour : {menu.nom_menu}", "success")
+        else:
+            # Supprimer le menu du jour
+            menu_entry = db.session.query(SALLE).filter_by(cle='menu_du_jour').first()
+            if menu_entry:
+                db.session.delete(menu_entry)
+                db.session.commit()
+            flash("Menu du jour désactivé.", "success")
+        
+        return redirect(url_for('admin_menu_du_jour'))
+    
+    # GET : afficher la page
+    menus = db.session.query(MENU).all()
+    menu_entry = db.session.query(SALLE).filter_by(cle='menu_du_jour').first()
+    menu_actuel_id = int(menu_entry.valeur) if menu_entry and menu_entry.valeur else None
+    
+    return render_template('admin_menu_du_jour.html', menus=menus, menu_actuel_id=menu_actuel_id)
+
 
 @app.route('/admin-index/')
 @admin_required
@@ -1022,7 +1227,94 @@ def admin_delete_menu(id_menu):
         db.session.rollback()
         flash("Impossible de supprimer le menu.", "error")
     return redirect(url_for('admin_menus'))
+@app.route('/reservation/', methods=['GET', 'POST'])
+@login_required
+def reservation():
+    form = ReservationForm()
+    
+    selected_date = None
+    if request.method == 'GET' and request.args.get('date_reservation'):
+        date_str = request.args.get('date_reservation')
+        try:
+            selected_date = datetime.strptime(date_str, '%Y-%m-%d').date()
+        except:
+            selected_date = None
+    elif request.method == 'POST' and request.form.get('date_reservation'):
+        date_str = request.form.get('date_reservation')
+        try:
+            selected_date = datetime.strptime(date_str, '%Y-%m-%d').date()
+        except:
+            selected_date = None
+    
+    capacite_totale = db.session.query(SALLE).filter_by(cle='capacite').first().valeur
+    
+    services_avec_places = []
+    if selected_date:
+        all_services = db.session.query(SERVICE).filter_by(actif=True).order_by(SERVICE.heure_debut).all()
+        for service in all_services:
+            reservations = db.session.query(func.sum(RESERVATION.nb_personne)).filter(
+                RESERVATION.id_service == service.id_service,
+                RESERVATION.date_reservation == selected_date
+            ).scalar() or 0
+            places_disponibles = capacite_totale - reservations
+            if places_disponibles > 0:
+                services_avec_places.append({
+                    'id': service.id_service,
+                    'heure_debut': service.heure_debut.strftime('%H:%M'),
+                    'heure_fin': service.heure_fin.strftime('%H:%M'),
+                    'places_disponibles': places_disponibles
+                })
+        form.id_service.choices = [(s['id'], f"{s['heure_debut']} - {s['heure_fin']} ({s['places_disponibles']} places)") for s in services_avec_places]
+        if not form.date_reservation.data:
+            form.date_reservation.data = selected_date
+    if form.validate_on_submit():
+        nouvelle_reservation = RESERVATION(
+            id_client=current_user.id_client,
+            date_reservation=selected_date, 
+            id_service=form.id_service.data,
+            nb_personne=form.nb_personne.data
+        )
+        db.session.add(nouvelle_reservation)
+        try:
+            db.session.commit()
+            flash("Votre réservation a été enregistrée avec succès !", "success")
+            return redirect(url_for('compte'))
+        except Exception as e:
+            db.session.rollback()
+            flash(f"Il n'y a plus de place pour ce service ce jour-ci.", "error")
+            return redirect(url_for('reservation', date_reservation=selected_date.strftime('%Y-%m-%d')))
+    
+    return render_template('reservation.html', 
+                         form=form, 
+                         today=date.today(),
+                         selected_date=selected_date,
+                         services_disponibles=services_avec_places)
 
+@app.route('/annuler-reservation/<int:id_reservation>', methods=['POST'])
+@login_required
+def annuler_reservation(id_reservation):
+    reservation = db.session.query(RESERVATION).filter_by(
+        id_reservation=id_reservation,
+        id_client=current_user.id_client
+    ).first()
+    
+    if not reservation:
+        flash("Réservation introuvable.", "error")
+        return redirect(url_for('compte'))
+    
+    if reservation.date_reservation <= date.today():
+        flash("Impossible d'annuler une réservation le jour même ou passée.", "error")
+        return redirect(url_for('compte'))
+    
+    try:
+        db.session.delete(reservation)
+        db.session.commit()
+        flash("Votre réservation a été annulée avec succès.", "success")
+    except Exception as e:
+        db.session.rollback()
+        flash(f"Erreur lors de l'annulation : {str(e)}", "error")
+    
+    return redirect(url_for('compte'))
 
 if __name__ == "__main__":
     app.run()

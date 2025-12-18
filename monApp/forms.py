@@ -1,7 +1,9 @@
 from flask_wtf import FlaskForm
 from wtforms.fields import StringField, HiddenField, SelectField, PasswordField, BooleanField, DecimalField, TextAreaField, SubmitField, SelectMultipleField
+
 from wtforms.validators import DataRequired, EqualTo, Optional
 from monApp import db
+from datetime import datetime
 
 class InscriptionForm(FlaskForm):
     id_client = HiddenField('id_client')
@@ -121,3 +123,16 @@ class MenuForm(FlaskForm):
                 valid = False
         
         return valid
+class ReservationForm(FlaskForm):
+    id_client = HiddenField('id_client')
+    date_reservation = DateField('Date de réservation', format='%Y-%m-%d', validators=[DataRequired()])
+    id_service = SelectField('Service', coerce=int, validators=[DataRequired()])
+    nb_personne = IntegerField('Nombre de personnes', validators=[DataRequired()])
+    
+    def __init__(self, *args, **kwargs):
+        super(ReservationForm, self).__init__(*args, **kwargs)
+        self.id_service.choices = []
+
+class ServiceForm(FlaskForm):
+    heure_debut = StringField('Heure de début (HH:MM)', validators=[DataRequired()])
+    heure_fin = StringField('Heure de fin (HH:MM)', validators=[DataRequired()])

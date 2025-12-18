@@ -310,13 +310,13 @@ footer {
 
 .alert-error {
     background-color: #dc3545;
-    border-color: #c82333; /* Bordure rouge foncé */
+    border-color: #c82333; 
 }
 
-/* Style pour les messages d'information (bleus) */
+
 .alert-info {
     background-color: #17a2b8;
-    border-color: #1591a5; /* Bordure bleu foncé */
+    border-color: #1591a5; 
 }
 
 .dark-mode .alert {

@@ -2,22 +2,28 @@ import click
 import logging as lg
 import random
 from .app import app, db
+from sqlalchemy import text
 
 @app.cli.command()
 @click.argument('filename')
 def loaddb(filename):
     import yaml
     from datetime import datetime
-
+    
     db.drop_all()
     db.create_all()
+    
+    # Réactiver les contraintes de clés étrangères
+    with db.engine.connect() as conn:
+        conn.execute(db.text('SET FOREIGN_KEY_CHECKS=1;'))
+        conn.commit()
 
     with open(filename, 'r', encoding='utf-8') as file:
         data = yaml.safe_load(file)
 
     from .models import (
         CATEGORIE, PLAT, CLIENT, COMMANDE, MENU,
-        CONTENIR, APPARTENIR_PLATS, APPARTENIR_MENUS, AVIS, DEFINIR_STOCK
+        CONTENIR, APPARTENIR_PLATS, APPARTENIR_MENUS, AVIS, DEFINIR_STOCK,RESERVATION,SERVICE,SALLE
     )
 
     def parse_date(s):
@@ -123,7 +129,6 @@ def loaddb(filename):
             date_commande=datetime.strptime(entry.get('date_commande'), '%Y-%m-%d %H:%M:%S'),
             statut=entry.get('statut'),
             montant_total=entry.get('montant_total'),
-            sur_place=entry.get('sur_place'),
             nombre_personnes=entry.get('nombre_personnes')
         )
         db.session.merge(obj)
@@ -143,7 +148,6 @@ def loaddb(filename):
             id_commande=entry.get('id_commande'),
             id_menu=entry.get('id_menu'),
             quantite=entry.get('quantite'),
-            # support the new chosen-plat columns (may be None)
             id_entree=entry.get('id_entree',None),
             id_plat_choisi=entry.get('id_plat_choisi',None),
             id_dessert=entry.get('id_dessert',None)
@@ -157,6 +161,36 @@ def loaddb(filename):
             id_client=entry.get('id_client'),
             note=entry.get('note'),
             commentaire=entry.get('commentaire')
+        )
+        db.session.merge(obj)
+    db.session.commit()
+
+    for entry in data.get('salle', []) or []:
+        obj = SALLE(
+            id_parametre=entry.get('id_parametre'),
+            cle=entry.get('cle'),
+            valeur=entry.get('valeur')
+        )
+        db.session.merge(obj)
+    db.session.commit()
+
+    for entry in data.get('service', []) or []:
+        obj = SERVICE(
+            id_service=entry.get('id_service'),
+            heure_debut=entry.get('heure_debut'),
+            heure_fin=entry.get('heure_fin'),
+            actif=entry.get('actif',True)
+        )
+        db.session.merge(obj)
+    db.session.commit()
+
+    for entry in data.get('reservation', []) or []:
+        obj = RESERVATION(
+            id_reservation=entry.get('id_reservation'),
+            date_reservation=datetime.strptime(entry.get('date_reservation'), '%Y-%m-%d'),
+            id_client=entry.get('id_client'),
+            id_service=entry.get('id_service'),
+            nb_personne=entry.get('nb_personne')
         )
         db.session.merge(obj)
     db.session.commit()

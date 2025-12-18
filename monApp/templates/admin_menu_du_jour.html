@@ -1,0 +1,58 @@
+{% extends 'base_admin.html' %}
+
+{% block styles %}
+<link rel="stylesheet" href="{{ url_for('static', filename='admin_services.css') }}">
+{% endblock %}
+
+{% block title %}Gestion du Menu du Jour{% endblock %}
+
+{% block main %}
+<div class="admin-container">
+    <h1>Gestion du Menu du Jour</h1>
+    
+    <div class="section-card">
+        <h2>Sélectionner le menu du jour</h2>
+        <p>Choisissez le menu qui sera affiché en tant que "Menu du jour" sur la page d'accueil.</p>
+        
+        <form method="POST" class="menu-selection-form">
+            <div class="form-group">
+                <label for="menu_id">Menu à afficher :</label>
+                <select name="menu_id" id="menu_id" class="form-control">
+                    <option value="">-- Aucun menu (désactiver) --</option>
+                    {% for menu in menus %}
+                    <option value="{{ menu.id_menu }}" {% if menu.id_menu == menu_actuel_id %}selected{% endif %}>
+                        {{ menu.nom_menu }} - {{ menu.prix }}€
+                    </option>
+                    {% endfor %}
+                </select>
+            </div>
+            
+            <button type="submit" class="btn-primary">
+                <i class="fas fa-save"></i> Enregistrer
+            </button>
+        </form>
+    </div>
+    
+    {% if menu_actuel_id %}
+    <div class="section-card current-menu">
+        <h2>Menu actuellement affiché</h2>
+        {% for menu in menus %}
+            {% if menu.id_menu == menu_actuel_id %}
+            <div class="menu-preview">
+                <h3>{{ menu.nom_menu }}</h3>
+                <p class="menu-prix">Prix : {{ menu.prix }}€</p>
+                <p class="menu-description">{{ menu.description }}</p>
+                <a href="{{ url_for('detail_menu', id_menu=menu.id_menu) }}" class="btn-secondary" target="_blank">
+                    <i class="fas fa-eye"></i> Voir le menu
+                </a>
+            </div>
+            {% endif %}
+        {% endfor %}
+    </div>
+    {% else %}
+    <div class="section-card info-card">
+        <p><i class="fas fa-info-circle"></i> Aucun menu du jour n'est actuellement configuré.</p>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}
