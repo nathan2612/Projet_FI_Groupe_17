@@ -6,11 +6,9 @@
     <title>{% block title %}Administration{% endblock %}</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='base_admin.css') }}">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-<body class="admin-body">
     
     {% block styles %}{% endblock %}
-<body>
-    <div class="sidebar">
+</head> <body class="admin-body"> <div class="sidebar">
         <h2><a href="{{ url_for('admin_index') }}">Administration</a></h2>
         <nav class="nav-links">
             <ul>
@@ -32,6 +30,12 @@
                 </li>
                 <li {% if request.endpoint == 'admin_bannis' %}class="active"{% endif %}>
                     <a href="{{ url_for('admin_bannis') }}"><i class="fas fa-gavel"></i> Clients bannis</a>
+                </li>
+                <li {% if request.endpoint == 'admin_plats' %}class="active"{% endif %}>
+                    <a href="{{ url_for('admin_plats') }}"><i class="fas fa-utensils"></i> Gestion des plats</a>
+                </li>
+                <li {% if request.endpoint == 'admin_menus' %}class="active"{% endif %}>
+                    <a href="{{ url_for('admin_menus') }}"><i class="fas fa-list"></i> Gestion des menus</a>
                 </li>
             </ul>
         </nav>

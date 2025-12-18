@@ -939,6 +939,294 @@ def admin_index():
     )
 
 
+@app.route('/admin/plats/')
+@admin_required
+def admin_plats():
+    plats = db.session.query(PLAT).all()
+    return render_template('admin_plats.html', plats=plats)
+
+
+@app.route('/admin/plats/ajouter/', methods=['GET', 'POST'])
+@admin_required
+def admin_add_plat():
+    form = PlatForm()
+    categories = db.session.query(CATEGORIE).all()
+    form.id_categorie.choices = [(c.id_categorie, c.nom_categorie) for c in categories]
+    if form.validate_on_submit():
+        p = PLAT(
+            nom_plat=form.nom_plat.data,
+            id_categorie=form.id_categorie.data or None,
+            description=form.description.data,
+            longue_description=form.longue_description.data,
+            prix=form.prix.data,
+            disponible=(form.disponible.data == '1'),
+            image_url=form.image_url.data,
+            vegetarien=form.vegetarien.data,
+            vegan=form.vegan.data,
+            gluten=form.gluten.data,
+            lactose=form.lactose.data,
+            fruit_a_coque=form.fruit_a_coque.data,
+            crustaces=form.crustaces.data
+        )
+        db.session.add(p)
+        db.session.commit()
+        flash("Plat ajouté.", "success")
+        return redirect(url_for('admin_plats'))
+    return render_template('admin_plat_form.html', form=form, action='Ajouter')
+
+
+@app.route('/admin/plats/<int:id_plat>/editer/', methods=['GET', 'POST'])
+@admin_required
+def admin_edit_plat(id_plat):
+    plat = db.session.query(PLAT).get(id_plat)
+    if not plat:
+        flash("Plat introuvable.", "error")
+        return redirect(url_for('admin_plats'))
+    form = PlatForm(obj=plat)
+    categories = db.session.query(CATEGORIE).all()
+    form.id_categorie.choices = [(c.id_categorie, c.nom_categorie) for c in categories]
+    if form.validate_on_submit():
+        plat.nom_plat = form.nom_plat.data
+        plat.id_categorie = form.id_categorie.data or None
+        plat.description = form.description.data
+        plat.longue_description = form.longue_description.data
+        plat.prix = form.prix.data
+        plat.disponible = (form.disponible.data == '1')
+        plat.image_url = form.image_url.data
+        plat.vegetarien = form.vegetarien.data
+        plat.vegan = form.vegan.data
+        plat.gluten = form.gluten.data
+        plat.lactose = form.lactose.data
+        plat.fruit_a_coque = form.fruit_a_coque.data
+        plat.crustaces = form.crustaces.data
+        db.session.add(plat)
+        db.session.commit()
+        flash("Plat modifié.", "success")
+        return redirect(url_for('admin_plats'))
+    form.disponible.data = '1' if plat.disponible else '0'
+    return render_template('admin_plat_form.html', form=form, action='Éditer', plat=plat)
+
+
+@app.route('/admin/plats/<int:id_plat>/supprimer/', methods=['POST'])
+@admin_required
+def admin_delete_plat(id_plat):
+    plat = db.session.query(PLAT).get(id_plat)
+    if not plat:
+        flash("Plat introuvable.", "error")
+        return redirect(url_for('admin_plats'))
+    try:
+        db.session.delete(plat)
+        db.session.commit()
+        flash("Plat supprimé.", "success")
+    except Exception:
+        db.session.rollback()
+        flash("Impossible de supprimer le plat (dépendances).", "error")
+    return redirect(url_for('admin_plats'))
+
+
+
+
+@app.route('/admin/menus/')
+@admin_required
+def admin_menus():
+    menus = db.session.query(MENU).all()
+    return render_template('admin_menus.html', menus=menus)
+
+
+@app.route('/admin/menus/ajouter/', methods=['GET', 'POST'])
+@admin_required
+def admin_add_menu():
+    if request.method == 'POST':
+        try:
+            # recup les données
+            nom_menu = request.form.get('nom_menu', '').strip()
+            description = request.form.get('description', '').strip()
+            prix = request.form.get('prix', '').strip()
+            image_url = request.form.get('image_url', '').strip() or 'default_menu.jpg'
+            entrees = request.form.getlist('entrees')
+            plats = request.form.getlist('plats')
+            desserts = request.form.getlist('desserts')
+            
+            erreurs = []
+            
+            if not nom_menu:
+                erreurs.append("Le nom du menu est obligatoire.")
+            
+            if not prix:
+                erreurs.append("Le prix est obligatoire.")
+            else:
+                try:
+                    prix_float = float(prix.replace(',', '.'))
+                    if prix_float < 0:
+                        erreurs.append("Le prix ne peut pas être négatif.")
+                    elif prix_float == 0:
+                        erreurs.append("Le prix ne peut pas être zéro.")
+                except (ValueError, AttributeError):
+                    erreurs.append(f"Le prix '{prix}' n'est pas un nombre valide. Utilisez uniquement des chiffres (ex: 12.50).")
+            
+            if not entrees:
+                erreurs.append("Sélectionnez au moins une entrée.")
+            
+            if not plats:
+                erreurs.append("Sélectionnez au moins un plat principal.")
+            
+            if not desserts:
+                erreurs.append("Sélectionnez au moins un dessert.")
+            
+            # Vérifier qu'un plat n'est pas dans plusieurs catégories 
+            tous_plats = set(entrees) | set(plats) | set(desserts)
+            if len(tous_plats) < (len(entrees) + len(plats) + len(desserts)):
+                erreurs.append("Un même plat ne peut pas être sélectionné dans plusieurs catégories.")
+            # car sinon il y a un probleme dans la bd....  -_-
+
+            if erreurs:
+                for err in erreurs:
+                    flash(err, "error")
+            else:
+                # Création du menu
+                nouveau_menu = MENU(
+                    nom_menu=nom_menu,
+                    description=description or None,
+                    prix=prix_float,
+                    image_url=image_url
+                )
+                db.session.add(nouveau_menu)
+                db.session.flush()
+                
+                for e_id in entrees:
+                    db.session.add(CONTENIR(id_menu=nouveau_menu.id_menu, id_plat=int(e_id), type_plat=0))
+                
+                for p_id in plats:
+                    db.session.add(CONTENIR(id_menu=nouveau_menu.id_menu, id_plat=int(p_id), type_plat=1))
+                
+                for d_id in desserts:
+                    db.session.add(CONTENIR(id_menu=nouveau_menu.id_menu, id_plat=int(d_id), type_plat=2))
+                
+                db.session.commit()
+                flash(f"Menu '{nom_menu}' créé avec succès!", "success")
+                return redirect(url_for('admin_menus'))
+            
+        except Exception as e:
+            db.session.rollback()
+            flash(f"Erreur lors de la création du menu : {str(e)}", "error")
+    
+    # recupere les plats 
+    plats_list = db.session.query(PLAT).filter(PLAT.id_categorie.in_([1, 2, 3])).all()
+    entrees_list = db.session.query(PLAT).filter(PLAT.id_categorie.in_([1, 2, 3])).all()
+    desserts_list = db.session.query(PLAT).filter(PLAT.id_categorie == 4).all()
+    
+    return render_template('admin_menu_form.html', 
+                         plats=plats_list, 
+                         entrees=entrees_list, 
+                         desserts=desserts_list) 
+
+
+@app.route('/admin/menus/<int:id_menu>/editer/', methods=['GET', 'POST'])
+@admin_required
+def admin_edit_menu(id_menu):
+    menu = db.session.query(MENU).get(id_menu)
+    if not menu:
+        flash("Menu introuvable.", "error")
+        return redirect(url_for('admin_menus'))
+    
+    if request.method == 'POST':
+        try:
+            nom_menu = request.form.get('nom_menu', '').strip()
+            description = request.form.get('description', '').strip()
+            prix = request.form.get('prix', '').strip()
+            image_url = request.form.get('image_url', '').strip() or 'default_menu.jpg'
+            entrees = request.form.getlist('entrees')
+            plats = request.form.getlist('plats')
+            desserts = request.form.getlist('desserts')
+            
+            erreurs = []
+            
+            if not nom_menu:
+                erreurs.append("Le nom du menu est obligatoire.")
+            
+            if not prix:
+                erreurs.append("Le prix est obligatoire.")
+            else:
+                try:
+                    prix_float = float(prix.replace(',', '.'))
+                    if prix_float < 0:
+                        erreurs.append("Le prix ne peut pas être négatif.")
+                    elif prix_float == 0:
+                        erreurs.append("Le prix ne peut pas être zéro.")
+                except (ValueError):
+                    erreurs.append(f"Le prix '{prix}' n'est pas un nombre valide. Utilisez uniquement des chiffres (ex: 12.50).")
+            
+            if not entrees:
+                erreurs.append("Sélectionnez au moins une entrée.")
+            
+            if not plats:
+                erreurs.append("Sélectionnez au moins un plat principal.")
+            
+            if not desserts:
+                erreurs.append("Sélectionnez au moins un dessert.")
+
+            else:
+                menu.nom_menu = nom_menu
+                menu.description = description or None
+                menu.prix = prix_float
+                menu.image_url = image_url
+                
+                #surppime l'ancien
+                db.session.query(CONTENIR).filter_by(id_menu=id_menu).delete()
+                
+                # Ajouter nouvelles association
+                for e_id in entrees:
+                    db.session.add(CONTENIR(id_menu=id_menu, id_plat=int(e_id), type_plat=0))
+                
+                for p_id in plats:
+                    db.session.add(CONTENIR(id_menu=id_menu, id_plat=int(p_id), type_plat=1))
+                
+                for d_id in desserts:
+                    db.session.add(CONTENIR(id_menu=id_menu, id_plat=int(d_id), type_plat=2))
+                
+                db.session.commit()
+                flash(f"Menu '{nom_menu}' modifié avec succès!", "success")
+                return redirect(url_for('admin_menus'))
+                
+        except Exception as e:
+            db.session.rollback()
+            flash(f"Erreur lors de la modification du menu : {str(e)}", "error")
+    
+    plats_list = db.session.query(PLAT).filter(PLAT.id_categorie.in_([1, 2, 3])).all()
+    entrees_list = db.session.query(PLAT).filter(PLAT.id_categorie.in_([1, 2, 3])).all()
+    desserts_list = db.session.query(PLAT).filter(PLAT.id_categorie == 4).all()
+    
+    contenir_records = db.session.query(CONTENIR).filter_by(id_menu=id_menu).all()
+    selected_entrees = [c.id_plat for c in contenir_records if c.type_plat == 0]
+    selected_plats = [c.id_plat for c in contenir_records if c.type_plat == 1]
+    selected_desserts = [c.id_plat for c in contenir_records if c.type_plat == 2]
+    
+    return render_template('admin_menu_form.html',
+                         menu=menu,
+                         plats=plats_list,
+                         entrees=entrees_list,
+                         desserts=desserts_list,
+                         selected_entrees=selected_entrees,
+                         selected_plats=selected_plats,
+                         selected_desserts=selected_desserts,
+                         action='Éditer')
+
+
+@app.route('/admin/menus/<int:id_menu>/supprimer/', methods=['POST'])
+@admin_required
+def admin_delete_menu(id_menu):
+    menu = db.session.query(MENU).get(id_menu)
+    if not menu:
+        flash("Menu introuvable.", "error")
+        return redirect(url_for('admin_menus'))
+    try:
+        db.session.delete(menu)
+        db.session.commit()
+        flash("Menu supprimé.", "success")
+    except Exception:
+        db.session.rollback()
+        flash("Impossible de supprimer le menu.", "error")
+    return redirect(url_for('admin_menus'))
 @app.route('/reservation/', methods=['GET', 'POST'])
 @login_required
 def reservation():
