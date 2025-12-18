@@ -52,6 +52,15 @@ class PlatForm(FlaskForm):
     fruit_a_coque = BooleanField('Contient fruits à coque')
     crustaces = BooleanField('Contient crustacés')
     submit = SubmitField('Enregistrer')
+    
+    def validate_prix(self, field):
+        """Validation personnalisée pour vérifier que le prix est un nombre valide."""
+        try:
+            prix_float = float(field.data.replace(',', '.'))
+            if prix_float < 0:
+                raise ValueError("Le prix ne peut pas être négatif.")
+        except (ValueError, AttributeError):
+            raise ValueError('Le prix doit être un nombre valide (ex: 12.50 ou 12,50).')
 
 
 class MenuForm(FlaskForm):
@@ -64,3 +73,51 @@ class MenuForm(FlaskForm):
     plats = SelectMultipleField('Plats principaux', coerce=int, validators=[Optional()])
     desserts = SelectMultipleField('Desserts', coerce=int, validators=[Optional()])
     submit = SubmitField('Enregistrer')
+    
+    def validate_prix(self, field):
+        """Validation personnalisée pour vérifier que le prix est un nombre valide."""
+        try:
+            prix_float = float(field.data.replace(',', '.'))
+            if prix_float < 0:
+                raise ValueError("Le prix ne peut pas être négatif.")
+        except (ValueError, AttributeError):
+            raise ValueError('Le prix doit être un nombre valide (ex: 12.50 ou 12,50).')
+    
+    def validate(self):
+        """Validation personnalisée pour s'assurer qu'au moins un élément de chaque type est sélectionné."""
+        if not super(MenuForm, self).validate():
+            return False
+        
+        valid = True
+        
+        # Vérifier qu'au moins une entrée est sélectionnée
+        if not self.entrees.data or len(self.entrees.data) < 1:
+            self.entrees.errors.append('Au moins une entrée est requise pour créer un menu.')
+            valid = False
+        
+        # Vérifier qu'au moins un plat principal est sélectionné
+        if not self.plats.data or len(self.plats.data) < 1:
+            self.plats.errors.append('Au moins un plat principal est requis pour créer un menu.')
+            valid = False
+        
+        # Vérifier qu'au moins un dessert est sélectionné
+        if not self.desserts.data or len(self.desserts.data) < 1:
+            self.desserts.errors.append('Au moins un dessert est requis pour créer un menu.')
+            valid = False
+        
+        # Vérifier qu'un même plat n'est pas sélectionné dans plusieurs catégories
+        if self.entrees.data and self.plats.data and self.desserts.data:
+            all_selected = set(self.entrees.data) | set(self.plats.data) | set(self.desserts.data)
+            total_selections = len(self.entrees.data) + len(self.plats.data) + len(self.desserts.data)
+            
+            if len(all_selected) < total_selections:
+                error_msg = 'Un même plat ne peut pas être sélectionné dans plusieurs catégories (entrée, plat principal, dessert).'
+                if not any(error_msg in e for e in self.entrees.errors):
+                    self.entrees.errors.append(error_msg)
+                if not any(error_msg in e for e in self.plats.errors):
+                    self.plats.errors.append(error_msg)
+                if not any(error_msg in e for e in self.desserts.errors):
+                    self.desserts.errors.append(error_msg)
+                valid = False
+        
+        return valid

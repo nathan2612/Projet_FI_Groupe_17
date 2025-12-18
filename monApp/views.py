@@ -391,7 +391,7 @@ def valider_commande():
     commande = db.session.query(COMMANDE).filter_by(id_client=current_user.id_client, statut='En commande').first()
     try:
         commande.statut = 'En attente'
-        commande.date_commande = datetime.now().replace(hour=12, minute=0, second=0, microsecond=0)   #remplacer par datetime.now() pour l'heure actuelle plus tard
+        commande.date_commande = datetime.now().replace(hour=12, minute=0, second=0, microsecond=0)  
         db.session.commit()
         flash("Votre commande a été validée avec succès et est en attente de préparation !", "success")
         return redirect(url_for('index'))
@@ -831,35 +831,89 @@ def admin_menus():
 @app.route('/admin/menus/ajouter/', methods=['GET', 'POST'])
 @admin_required
 def admin_add_menu():
-    form = MenuForm()
-    plats = db.session.query(PLAT).all()
-    plats_choices = [(p.id_plat, p.nom_plat) for p in plats]
-    form.entrees.choices = plats_choices
-    form.plats.choices = plats_choices
-    form.desserts.choices = plats_choices
-    if form.validate_on_submit():
-        m = MENU(
-            nom_menu=form.nom_menu.data,
-            description=form.description.data,
-            prix=form.prix.data,
-            image_url=form.image_url.data
-        )
-        db.session.add(m)
-        db.session.commit()
-        # Ajouter les plats associés
-        for plat_id in form.entrees.data:
-            contenir = CONTENIR(id_menu=m.id_menu, id_plat=plat_id, type_plat=0)
-            db.session.add(contenir)
-        for plat_id in form.plats.data:
-            contenir = CONTENIR(id_menu=m.id_menu, id_plat=plat_id, type_plat=1)
-            db.session.add(contenir)
-        for plat_id in form.desserts.data:
-            contenir = CONTENIR(id_menu=m.id_menu, id_plat=plat_id, type_plat=2)
-            db.session.add(contenir)
-        db.session.commit()
-        flash("Menu ajouté.", "success")
-        return redirect(url_for('admin_menus'))
-    return render_template('admin_menu_form.html', form=form, action='Ajouter')
+    if request.method == 'POST':
+        try:
+            # recup les données
+            nom_menu = request.form.get('nom_menu', '').strip()
+            description = request.form.get('description', '').strip()
+            prix = request.form.get('prix', '').strip()
+            image_url = request.form.get('image_url', '').strip() or 'default_menu.jpg'
+            entrees = request.form.getlist('entrees')
+            plats = request.form.getlist('plats')
+            desserts = request.form.getlist('desserts')
+            
+            erreurs = []
+            
+            if not nom_menu:
+                erreurs.append("Le nom du menu est obligatoire.")
+            
+            if not prix:
+                erreurs.append("Le prix est obligatoire.")
+            else:
+                try:
+                    prix_float = float(prix.replace(',', '.'))
+                    if prix_float < 0:
+                        erreurs.append("Le prix ne peut pas être négatif.")
+                    elif prix_float == 0:
+                        erreurs.append("Le prix ne peut pas être zéro.")
+                except (ValueError, AttributeError):
+                    erreurs.append(f"Le prix '{prix}' n'est pas un nombre valide. Utilisez uniquement des chiffres (ex: 12.50).")
+            
+            if not entrees:
+                erreurs.append("Sélectionnez au moins une entrée.")
+            
+            if not plats:
+                erreurs.append("Sélectionnez au moins un plat principal.")
+            
+            if not desserts:
+                erreurs.append("Sélectionnez au moins un dessert.")
+            
+            # Vérifier qu'un plat n'est pas dans plusieurs catégories 
+            tous_plats = set(entrees) | set(plats) | set(desserts)
+            if len(tous_plats) < (len(entrees) + len(plats) + len(desserts)):
+                erreurs.append("Un même plat ne peut pas être sélectionné dans plusieurs catégories.")
+            # car sinon il y a un probleme dans la bd....  -_-
+
+            if erreurs:
+                for err in erreurs:
+                    flash(err, "error")
+            else:
+                # Création du menu
+                nouveau_menu = MENU(
+                    nom_menu=nom_menu,
+                    description=description or None,
+                    prix=prix_float,
+                    image_url=image_url
+                )
+                db.session.add(nouveau_menu)
+                db.session.flush()
+                
+                for e_id in entrees:
+                    db.session.add(CONTENIR(id_menu=nouveau_menu.id_menu, id_plat=int(e_id), type_plat=0))
+                
+                for p_id in plats:
+                    db.session.add(CONTENIR(id_menu=nouveau_menu.id_menu, id_plat=int(p_id), type_plat=1))
+                
+                for d_id in desserts:
+                    db.session.add(CONTENIR(id_menu=nouveau_menu.id_menu, id_plat=int(d_id), type_plat=2))
+                
+                db.session.commit()
+                flash(f"Menu '{nom_menu}' créé avec succès!", "success")
+                return redirect(url_for('admin_menus'))
+            
+        except Exception as e:
+            db.session.rollback()
+            flash(f"Erreur lors de la création du menu : {str(e)}", "error")
+    
+    # recupere les plats 
+    plats_list = db.session.query(PLAT).filter(PLAT.id_categorie.in_([1, 2, 3])).all()
+    entrees_list = db.session.query(PLAT).filter(PLAT.id_categorie.in_([1, 2, 3])).all()
+    desserts_list = db.session.query(PLAT).filter(PLAT.id_categorie == 4).all()
+    
+    return render_template('admin_menu_form.html', 
+                         plats=plats_list, 
+                         entrees=entrees_list, 
+                         desserts=desserts_list) 
 
 
 @app.route('/admin/menus/<int:id_menu>/editer/', methods=['GET', 'POST'])
@@ -869,57 +923,88 @@ def admin_edit_menu(id_menu):
     if not menu:
         flash("Menu introuvable.", "error")
         return redirect(url_for('admin_menus'))
-    form = MenuForm(obj=menu)
-    plats = db.session.query(PLAT).all()
-    plats_choices = [(p.id_plat, p.nom_plat) for p in plats]
-    form.entrees.choices = plats_choices
-    form.plats.choices = plats_choices
-    form.desserts.choices = plats_choices
-    # Pré-remplir les sélections
-    entrees_ids = [c.id_plat for c in menu.contenir if c.type_plat == 0]
-    plats_ids = [c.id_plat for c in menu.contenir if c.type_plat == 1]
-    desserts_ids = [c.id_plat for c in menu.contenir if c.type_plat == 2]
-    form.entrees.data = entrees_ids
-    form.plats.data = plats_ids
-    form.desserts.data = desserts_ids
-    if form.validate_on_submit():
-        menu.nom_menu = form.nom_menu.data
-        menu.description = form.description.data
-        menu.prix = form.prix.data
-        menu.image_url = form.image_url.data
-        # Supprimer les anciennes associations
-        db.session.query(CONTENIR).filter_by(id_menu=id_menu).delete()
-        # Ajouter les nouvelles
-        for plat_id in form.entrees.data:
-            contenir = CONTENIR(id_menu=id_menu, id_plat=plat_id, type_plat=0)
-            db.session.add(contenir)
-        for plat_id in form.plats.data:
-            contenir = CONTENIR(id_menu=id_menu, id_plat=plat_id, type_plat=1)
-            db.session.add(contenir)
-        for plat_id in form.desserts.data:
-            contenir = CONTENIR(id_menu=id_menu, id_plat=plat_id, type_plat=2)
-            db.session.add(contenir)
-    if form.validate_on_submit():
-        menu.nom_menu = form.nom_menu.data
-        menu.description = form.description.data
-        menu.prix = form.prix.data
-        menu.image_url = form.image_url.data
-        # Supprimer les anciennes associations
-        db.session.query(CONTENIR).filter_by(id_menu=id_menu).delete()
-        # Ajouter les nouvelles
-        for plat_id in form.entrees.data:
-            contenir = CONTENIR(id_menu=id_menu, id_plat=plat_id, type_plat=0)
-            db.session.add(contenir)
-        for plat_id in form.plats.data:
-            contenir = CONTENIR(id_menu=id_menu, id_plat=plat_id, type_plat=1)
-            db.session.add(contenir)
-        for plat_id in form.desserts.data:
-            contenir = CONTENIR(id_menu=id_menu, id_plat=plat_id, type_plat=2)
-            db.session.add(contenir)
-        db.session.commit()
-        flash(f"Menu modifié. Entrées: {len(form.entrees.data)}, Plats: {len(form.plats.data)}, Desserts: {len(form.desserts.data)}", "success")
-        return redirect(url_for('admin_menus'))
-    return render_template('admin_menu_form.html', form=form, action='Éditer', menu=menu)
+    
+    if request.method == 'POST':
+        try:
+            nom_menu = request.form.get('nom_menu', '').strip()
+            description = request.form.get('description', '').strip()
+            prix = request.form.get('prix', '').strip()
+            image_url = request.form.get('image_url', '').strip() or 'default_menu.jpg'
+            entrees = request.form.getlist('entrees')
+            plats = request.form.getlist('plats')
+            desserts = request.form.getlist('desserts')
+            
+            erreurs = []
+            
+            if not nom_menu:
+                erreurs.append("Le nom du menu est obligatoire.")
+            
+            if not prix:
+                erreurs.append("Le prix est obligatoire.")
+            else:
+                try:
+                    prix_float = float(prix.replace(',', '.'))
+                    if prix_float < 0:
+                        erreurs.append("Le prix ne peut pas être négatif.")
+                    elif prix_float == 0:
+                        erreurs.append("Le prix ne peut pas être zéro.")
+                except (ValueError):
+                    erreurs.append(f"Le prix '{prix}' n'est pas un nombre valide. Utilisez uniquement des chiffres (ex: 12.50).")
+            
+            if not entrees:
+                erreurs.append("Sélectionnez au moins une entrée.")
+            
+            if not plats:
+                erreurs.append("Sélectionnez au moins un plat principal.")
+            
+            if not desserts:
+                erreurs.append("Sélectionnez au moins un dessert.")
+
+            else:
+                menu.nom_menu = nom_menu
+                menu.description = description or None
+                menu.prix = prix_float
+                menu.image_url = image_url
+                
+                #surppime l'ancien
+                db.session.query(CONTENIR).filter_by(id_menu=id_menu).delete()
+                
+                # Ajouter nouvelles association
+                for e_id in entrees:
+                    db.session.add(CONTENIR(id_menu=id_menu, id_plat=int(e_id), type_plat=0))
+                
+                for p_id in plats:
+                    db.session.add(CONTENIR(id_menu=id_menu, id_plat=int(p_id), type_plat=1))
+                
+                for d_id in desserts:
+                    db.session.add(CONTENIR(id_menu=id_menu, id_plat=int(d_id), type_plat=2))
+                
+                db.session.commit()
+                flash(f"Menu '{nom_menu}' modifié avec succès!", "success")
+                return redirect(url_for('admin_menus'))
+                
+        except Exception as e:
+            db.session.rollback()
+            flash(f"Erreur lors de la modification du menu : {str(e)}", "error")
+    
+    plats_list = db.session.query(PLAT).filter(PLAT.id_categorie.in_([1, 2, 3])).all()
+    entrees_list = db.session.query(PLAT).filter(PLAT.id_categorie.in_([1, 2, 3])).all()
+    desserts_list = db.session.query(PLAT).filter(PLAT.id_categorie == 4).all()
+    
+    contenir_records = db.session.query(CONTENIR).filter_by(id_menu=id_menu).all()
+    selected_entrees = [c.id_plat for c in contenir_records if c.type_plat == 0]
+    selected_plats = [c.id_plat for c in contenir_records if c.type_plat == 1]
+    selected_desserts = [c.id_plat for c in contenir_records if c.type_plat == 2]
+    
+    return render_template('admin_menu_form.html',
+                         menu=menu,
+                         plats=plats_list,
+                         entrees=entrees_list,
+                         desserts=desserts_list,
+                         selected_entrees=selected_entrees,
+                         selected_plats=selected_plats,
+                         selected_desserts=selected_desserts,
+                         action='Éditer')
 
 
 @app.route('/admin/menus/<int:id_menu>/supprimer/', methods=['POST'])
@@ -935,10 +1020,8 @@ def admin_delete_menu(id_menu):
         flash("Menu supprimé.", "success")
     except Exception:
         db.session.rollback()
-        flash("Impossible de supprimer le menu (dépendances).", "error")
+        flash("Impossible de supprimer le menu.", "error")
     return redirect(url_for('admin_menus'))
-
-
 
 
 if __name__ == "__main__":
