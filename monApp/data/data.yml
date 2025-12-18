@@ -297,68 +297,6 @@ clients:
     telephone: "+33611223348"
     mot_de_passe: "hashed_password_3"
 
-commandes:
-  - id_commande: 1
-    id_client: 1
-    date_commande: "2025-10-21 13:00:00"
-    statut: "récupéré"
-    montant_total: 21.50
-    nombre_personnes: 1
-  - id_commande: 2
-    id_client: 2
-    date_commande: "2025-10-21 12:00:00"
-    statut: "non récupéré"
-    montant_total: 41.00
-    nombre_personnes: 2
-  - id_commande: 6
-    id_client: 1
-    date_commande: "2025-10-21 13:00:00"
-    statut: "non récupéré"
-    montant_total: 21.50
-    nombre_personnes: 1
-  - id_commande: 7
-    id_client: 5
-    date_commande: "2025-10-21 13:00:00"
-    statut: "non récupéré"
-    montant_total: 21.50
-    nombre_personnes: 1
-  - id_commande: 8
-    id_client: 5
-    date_commande: "2025-10-21 13:00:00"
-    statut: "non récupéré"
-    montant_total: 21.50
-    nombre_personnes: 1
-  - id_commande: 3
-    id_client: 3
-    date_commande: "2025-10-21 19:30:00"
-    statut: "Prêt"
-    montant_total: 15.50
-    nombre_personnes: 1
-  - id_commande: 4
-    id_client: 1
-    date_commande: "2025-10-21 13:30:00"
-    statut: "En préparation"
-    montant_total: 28.00
-    nombre_personnes: 2
-  - id_commande: 5
-    id_client: 2
-    date_commande: "2025-10-21 20:00:00"
-    statut: "En attente"
-    montant_total: 12.50
-    nombre_personnes: 1
-  - id_commande: 9
-    id_client: 6
-    date_commande: "2025-11-06 14:00:00"
-    statut: "récupéré"
-    montant_total: 12.50
-    nombre_personnes: 1
-  - id_commande: 10
-    id_client: 6
-    date_commande: "2025-11-05 20:00:00"
-    statut: "récupéré"
-    montant_total: 60.50
-    nombre_personnes: 1
-
 menus:
   - id_menu: 1
     nom_menu: "Formule vapeur"
@@ -371,64 +309,52 @@ menus:
 
 contenir:
   - id_menu: 1
-    id_plat: 2
+    id_plat: 1
     type_plat : 0
   - id_menu: 1
-    id_plat: 5
+    id_plat: 2
     type_plat : 1
   - id_menu: 1
     id_plat: 3
     type_plat : 2
   - id_menu: 1
-    id_plat: 1
+    id_plat: 4
     type_plat : 0
   - id_menu: 1
-    id_plat: 4
+    id_plat: 5
     type_plat : 1
   - id_menu: 1
     id_plat: 6
-    type_plat : 0
+    type_plat : 2
   - id_menu: 1
     id_plat: 7
     type_plat : 0
   - id_menu: 1
     id_plat: 8
+    type_plat : 1
+  - id_menu: 1
+    id_plat: 9
+    type_plat : 2
+
+
+  - id_menu: 2
+    id_plat: 10
     type_plat : 0
-
-appartenir_plats:
-  - id_commande: 1
-    id_plat: 5
-    quantite: 1
-  - id_commande: 1
-    id_plat: 7
-    quantite: 1
-  - id_commande: 2
-    id_plat: 3
-    quantite: 1
-  - id_commande: 2
-    id_plat: 5
-    quantite: 1
-  - id_commande: 2
-    id_plat: 8
-    quantite: 2
-  - id_commande: 3
-    id_plat: 1
-    quantite: 2
-  - id_commande: 3
-    id_plat: 6
-    quantite: 1
-  - id_commande: 4
-    id_plat: 2
-    quantite: 0
-
-appartenir_menus:
-  - id_commande: 1
-    id_menu: 1
-    quantite: 1
-    # champs ajoutés pour compatibilité avec le modèle (peuvent être null)
-    id_entree: 2
-    id_plat_choisi: 5
-    id_dessert: 3
+  - id_menu: 2
+    id_plat: 11
+    type_plat : 0
+  - id_menu: 2
+    id_plat: 12
+    type_plat : 1
+  - id_menu: 2
+    id_plat: 13
+    type_plat : 1
+  - id_menu: 2
+    id_plat: 14
+    type_plat : 2
+  - id_menu: 2
+    id_plat: 15
+    type_plat : 2
 
 
 avis:
