@@ -1,5 +1,5 @@
 from flask_wtf import FlaskForm
-from wtforms.fields import StringField, HiddenField, SelectField, PasswordField, BooleanField, DecimalField, TextAreaField, SubmitField, SelectMultipleField
+from wtforms.fields import StringField, HiddenField, SelectField, PasswordField, BooleanField, DecimalField, TextAreaField, SubmitField, SelectMultipleField, DateField, IntegerField
 
 from wtforms.validators import DataRequired, EqualTo, Optional
 from monApp import db
