@@ -16,7 +16,7 @@ from monApp.models import (
 from .app import app, db
 from flask import render_template, request, url_for, redirect, flash, abort
 from functools import wraps
-from .forms import InscriptionForm, ConnexionForm, EditProfileForm, ReservationForm, ServiceForm
+from .forms import InscriptionForm, ConnexionForm, EditProfileForm, ReservationForm, ServiceForm, PlatForm
 from flask_login import login_user, logout_user, login_required, current_user
 from sqlalchemy import func, desc
 from hashlib import sha256
@@ -1227,6 +1227,7 @@ def admin_delete_menu(id_menu):
         db.session.rollback()
         flash("Impossible de supprimer le menu.", "error")
     return redirect(url_for('admin_menus'))
+
 @app.route('/reservation/', methods=['GET', 'POST'])
 @login_required
 def reservation():
@@ -1288,7 +1289,8 @@ def reservation():
                          form=form, 
                          today=date.today(),
                          selected_date=selected_date,
-                         services_disponibles=services_avec_places)
+                         services_disponibles=services_avec_places,
+                         max_capacite=capacite_totale)
 
 @app.route('/annuler-reservation/<int:id_reservation>', methods=['POST'])
 @login_required
@@ -1315,6 +1317,31 @@ def annuler_reservation(id_reservation):
         flash(f"Erreur lors de l'annulation : {str(e)}", "error")
     
     return redirect(url_for('compte'))
+
+@app.route('/admin/capacite', methods=['GET','POST'])
+@admin_required
+def admin_capacite():
+    if request.method == 'POST':
+        nouvelle_capacite = request.form.get('capacite')
+        try:
+            nouvelle_capacite_int = int(nouvelle_capacite)
+            if nouvelle_capacite_int <= 0:
+                flash("La capacité doit être un entier positif.", "error")
+            else:
+                capacite_entry = db.session.query(SALLE).filter_by(cle='capacite').first()
+                if capacite_entry:
+                    capacite_entry.valeur = nouvelle_capacite_int
+                else:
+                    capacite_entry = SALLE(cle='capacite', valeur=nouvelle_capacite_int)
+                    db.session.add(capacite_entry)
+                db.session.commit()
+                flash("Capacité mise à jour avec succès.", "success")
+        except ValueError:
+            flash("Veuillez entrer un nombre entier valide pour la capacité.", "error")
+    capacite_entry = db.session.query(SALLE).filter_by(cle='capacite').first()
+    capacite = capacite_entry.valeur if capacite_entry else 1
+    return render_template('admin_capacite.html', capacite=capacite)
+
 
 if __name__ == "__main__":
     app.run()

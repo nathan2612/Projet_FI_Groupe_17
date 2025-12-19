@@ -47,7 +47,7 @@
 			
 			<div class="form-group">
 				<label for="nb_personne">{{ form.nb_personne.label }}</label>
-				{{ form.nb_personne(class="form-control", type="number", min="1", max="12") }}
+				{{ form.nb_personne(class="form-control", type="number", min="1", max="{{ max_capacite }}") }}
 				{% if form.nb_personne.errors %}
 					<div class="error-message">
 						{% for error in form.nb_personne.errors %}

@@ -37,6 +37,9 @@
                 <li {% if request.endpoint == 'admin_menus' %}class="active"{% endif %}>
                     <a href="{{ url_for('admin_menus') }}"><i class="fas fa-list"></i> Gestion des menus</a>
                 </li>
+                <li {% if request.endpoint == 'admin_capacite' %}class="active"{% endif %}>
+                    <a href="{{ url_for('admin_capacite') }}"><i class="fas fa-list"></i> Gestion de la capacité</a>
+                </li>
             </ul>
         </nav>
         <div class="logout-link">
