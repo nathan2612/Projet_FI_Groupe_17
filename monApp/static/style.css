@@ -9,6 +9,7 @@
     --btn-hover-text: #ffffff;
 }
 
+
 .dark-mode {
     --bg-color: #121212;
     --text-color: #e0e0e0;
@@ -27,6 +28,11 @@ body {
     color: var(--text-color);
     transition: background-color 0.3s, color 0.3s;
     min-height: 100vh;
+    overflow-x: hidden;
+}
+
+html {
+    overflow-x: hidden;
 }
 
 .navbar-complet {
@@ -321,4 +327,239 @@ footer {
 
 .dark-mode .alert {
     box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+}
+
+/* ===================================
+   RESPONSIVE DESIGN - NAVIGATION
+   =================================== */
+
+/* Burger menu - caché par défaut sur desktop */
+.burger-menu {
+    display: none;
+    flex-direction: column;
+    gap: 5px;
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    padding: 8px;
+    z-index: 1001;
+}
+
+.burger-menu span {
+    width: 25px;
+    height: 3px;
+    background-color: var(--navbar-text);
+    transition: all 0.3s ease;
+    border-radius: 2px;
+}
+
+/* Animation du burger menu quand actif */
+.burger-menu.active span:nth-child(1) {
+    transform: rotate(45deg) translate(8px, 8px);
+}
+
+.burger-menu.active span:nth-child(2) {
+    opacity: 0;
+}
+
+.burger-menu.active span:nth-child(3) {
+    transform: rotate(-45deg) translate(7px, -7px);
+}
+
+
+@media (max-width: 1100px) {
+    .burger-menu {
+        display: flex;
+    }
+
+    .navbar-complet {
+        flex-wrap: wrap;
+        padding: 0 15px;
+    }
+
+    .nav-logo {
+        order: 1;
+        flex: 0 0 auto;
+    }
+
+    .burger-menu {
+        order: 2;
+        margin-left: auto;
+    }
+
+    .nav-actions {
+        order: 3;
+        gap: 12px;
+    }
+
+     .navbar {
+        order: 4;
+        width: 100%;
+        max-height: 0;
+        overflow: hidden;
+        transition: max-height 0.4s ease-in-out;
+        flex-basis: 100%;
+    }
+
+    .navbar.active {
+        max-height: 500px;
+        padding: 15px 0;
+    }
+
+    .navbar ul {
+        flex-direction: column;
+        width: 100%;
+        gap: 0;
+        padding: 0;
+    }
+
+    .navbar ul li {
+        width: 100%;
+        text-align: center;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .navbar ul li:last-child {
+        border-bottom: none;
+    }
+
+    .navbar ul li a {
+        display: block;
+        width: 100%;
+        max-width: 100%;
+        padding: 15px 20px;
+        font-size: 1rem;
+    }
+
+    .navbar ul li.active a::after {
+        left: 50%;
+        right: auto;
+        transform: translateX(-50%);
+        width: 60px;
+    }
+}
+
+
+@media screen and (max-width: 768px) {
+     .logo {
+        height: 80px;
+    }
+    .burger-menu {
+        display: flex;
+    }
+
+    .navbar-complet {
+        flex-wrap: wrap;
+        padding: 0 15px;
+    }
+
+    .nav-logo {
+        order: 1;
+        flex: 0 0 auto;
+    }
+
+    .burger-menu {
+        order: 2;
+        margin-left: auto;
+    }
+
+    .nav-actions {
+        order: 3;
+        gap: 12px;
+    }
+
+    /* Menu navigation en mobile */
+    .navbar {
+        order: 4;
+        width: 100%;
+        max-height: 0;
+        overflow: hidden;
+        transition: max-height 0.4s ease-in-out;
+        flex-basis: 100%;
+    }
+
+    .navbar.active {
+        max-height: 500px;
+        padding: 15px 0;
+    }
+
+    .navbar ul {
+        flex-direction: column;
+        width: 100%;
+        gap: 0;
+        padding: 0;
+    }
+
+    .navbar ul li {
+        width: 100%;
+        text-align: center;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .navbar ul li:last-child {
+        border-bottom: none;
+    }
+
+    .navbar ul li a {
+        display: block;
+        width: 100%;
+        max-width: 100%;
+        padding: 15px 20px;
+        font-size: 1rem;
+    }
+
+    .navbar ul li.active a::after {
+        left: 50%;
+        right: auto;
+        transform: translateX(-50%);
+        width: 60px;
+    }
+
+    .logo {
+        height: 80px;
+    }
+
+    .site-header:has(.header-with-bg) {
+        min-height: 300px;
+    }
+
+    /* Navigation actions */
+    .btn-nav-label {
+        display: none;
+    }
+
+    .btn-nav-icon i,
+    .btn-theme i {
+        font-size: 1.2rem;
+    }
+}
+@media screen and (max-width: 320px) {
+    .navbar-complet {
+        padding: 0 6px;
+    }
+
+    .logo {
+        height: 45px;
+    }
+
+    .nav-actions {
+        gap: 5px;
+        max-width: 140px;
+    }
+
+    .btn-nav-icon,
+    .btn-theme {
+        padding: 5px;
+        min-width: 32px;
+    }
+
+    .btn-nav-icon i,
+    .btn-theme i {
+        font-size: 0.95rem;
+    }
+
+    .burger-menu {
+        padding: 4px;
+        margin-right: 6px;
+    }
 }

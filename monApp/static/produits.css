@@ -21,6 +21,7 @@
     width: 100%;
     margin: 0 auto;
     padding: 0px;
+    overflow-x: hidden;
 }
 
 .sidebar img {
@@ -35,6 +36,7 @@
     margin: 0 auto;
     padding: 20px;
     align-items: flex-start;
+    overflow-x: hidden;
 }
 
 .sidebar {
@@ -391,6 +393,12 @@ main h1 {
     .menu-card img {
         height: 200px;
     }
+    .panel.categoriesauto;
+        max-width: calc(100% - 20px);
+        box-sizing: border-bo
+        margin: 10px 10px 10px;
+    }
+    
 }
 
 @media (max-width: 768px) {

@@ -1,92 +1,92 @@
-{% extends 'base_admin.html' %}
+    {% extends 'base_admin.html' %}
 
-{% block title %}Gestion des Réservations - Administration{% endblock %}
+    {% block title %}Gestion des Réservations - Administration{% endblock %}
 
-{% block styles %}
-<link rel="stylesheet" href="{{ url_for('static', filename='admin_reservations.css') }}">
-{% endblock %}
+    {% block styles %}
+    <link rel="stylesheet" href="{{ url_for('static', filename='admin_reservations.css') }}">
+    {% endblock %}
 
-{% block main %}
-<div class="admin-container">
-    <div class="header">
-        <div class="header-content">
-            <div>
-                <h1><i class="fas fa-calendar-check"></i> Gestion des Réservations</h1>
-                <p class="subtitle">Consultez toutes les réservations par jour</p>
+    {% block main %}
+    <div class="admin-container">
+        <div class="header">
+            <div class="header-content">
+                <div>
+                    <h1><i class="fas fa-calendar-check"></i> Gestion des Réservations</h1>
+                    <p class="subtitle">Consultez toutes les réservations par jour</p>
+                </div>
+                <a href="{{ url_for('admin_services') }}" class="btn-manage-services">
+                    <i class="fas fa-cog"></i> Gérer les services
+                </a>
             </div>
-            <a href="{{ url_for('admin_services') }}" class="btn-manage-services">
-                <i class="fas fa-cog"></i> Gérer les services
-            </a>
         </div>
-    </div>
-    <div class="date-selector">
-        <form method="GET" action="{{ url_for('admin_reservations') }}">
-            <div class="date-input-group">
-                <label for="date"><i class="fas fa-calendar"></i> Sélectionner une date :</label>
-                <input type="date" 
-                       name="date" 
-                       id="date" 
-                       value="{{ selected_date.strftime('%Y-%m-%d') }}"
-                       onchange="this.form.submit()">
-            </div>
-        </form>
-    </div>
+        <div class="date-selector">
+            <form method="GET" action="{{ url_for('admin_reservations') }}">
+                <div class="date-input-group">
+                    <label for="date"><i class="fas fa-calendar"></i> Sélectionner une date :</label>
+                    <input type="date" 
+                        name="date" 
+                        id="date" 
+                        value="{{ selected_date.strftime('%Y-%m-%d') }}"
+                        onchange="this.form.submit()">
+                </div>
+            </form>
+        </div>
 
-    <div class="date-display">
-        <h2>Réservations du {{ selected_date.strftime('%d/%m/%Y') }}</h2>
-    </div>
-        {% for stat in stats_services %}
-        <div class="service-section">
-            <div class="service-header {% if not stat.service.actif %}service-header-inactive{% endif %}">
-                <div class="service-info">
-                    <h3>
-                        <i class="fas fa-clock"></i> Service {{ stat.service.heure_debut.strftime('%H:%M') }} - {{ stat.service.heure_fin.strftime('%H:%M') }}
-                        {% if not stat.service.actif %}
-                            <span class="badge-inactive-label"><i class="fas fa-exclamation-triangle"></i> INACTIF</span>
-                        {% endif %}
-                    </h3>
-                    <div class="service-stats">
-                        <span class="badge"><i class="fas fa-ticket-alt"></i> {{ stat.nb_reservations }} réservation(s)</span>
-                        <span class="badge"><i class="fas fa-user-friends"></i> {{ stat.nb_personnes }} personne(s)</span>
-                        <span class="badge {% if stat.places_restantes < 10 %}badge-warning{% endif %}">
-                            <i class="fas fa-chair"></i> {{ stat.places_restantes }} place(s) restante(s)
-                        </span>
+        <div class="date-display">
+            <h2>Réservations du {{ selected_date.strftime('%d/%m/%Y') }}</h2>
+        </div>
+            {% for stat in stats_services %}
+            <div class="service-section">
+                <div class="service-header {% if not stat.service.actif %}service-header-inactive{% endif %}">
+                    <div class="service-info">
+                        <h3>
+                            <i class="fas fa-clock"></i> Service {{ stat.service.heure_debut.strftime('%H:%M') }} - {{ stat.service.heure_fin.strftime('%H:%M') }}
+                            {% if not stat.service.actif %}
+                                <span class="badge-inactive-label"><i class="fas fa-exclamation-triangle"></i> INACTIF</span>
+                            {% endif %}
+                        </h3>
+                        <div class="service-stats">
+                            <span class="badge"><i class="fas fa-ticket-alt"></i> {{ stat.nb_reservations }} réservation(s)</span>
+                            <span class="badge"><i class="fas fa-user-friends"></i> {{ stat.nb_personnes }} personne(s)</span>
+                            <span class="badge {% if stat.places_restantes < 10 %}badge-warning{% endif %}">
+                                <i class="fas fa-chair"></i> {{ stat.places_restantes }} place(s) restante(s)
+                            </span>
+                        </div>
                     </div>
                 </div>
-            </div>
 
-            {% if stat.reservations %}
-            <div class="reservations-table">
-                <table>
-                    <thead>
-                        <tr>
-                            <th>ID</th>
-                            <th>Client</th>
-                            <th>Téléphone</th>
-                            <th>Nb de personnes</th>
-                            <th>Heure de réservation</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {% for reservation in stat.reservations %}
-                        <tr>
-                            <td>#{{ reservation.id_reservation }}</td>
-                            <td>{{ reservation.client.prenom }} {{ reservation.client.nom }}</td>
-                            <td>{{ reservation.client.telephone }}</td>
-                            <td class="text-center">{{ reservation.nb_personne }}</td>
-                            <td>{{ stat.service.heure_debut.strftime('%H:%M') }}</td>
-                        </tr>
-                        {% endfor %}
-                    </tbody>
-                </table>
+                {% if stat.reservations %}
+                <div class="reservations-table">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Client</th>
+                                <th>Téléphone</th>
+                                <th>Nb de personnes</th>
+                                <th>Heure de réservation</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for reservation in stat.reservations %}
+                            <tr>
+                                <td>#{{ reservation.id_reservation }}</td>
+                                <td>{{ reservation.client.prenom }} {{ reservation.client.nom }}</td>
+                                <td>{{ reservation.client.telephone }}</td>
+                                <td class="text-center">{{ reservation.nb_personne }}</td>
+                                <td>{{ stat.service.heure_debut.strftime('%H:%M') }}</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                {% else %}
+                <div class="no-reservations">
+                    <i class="fas fa-inbox"></i>
+                    <p>Aucune réservation pour ce service</p>
+                </div>
+                {% endif %}
             </div>
-            {% else %}
-            <div class="no-reservations">
-                <i class="fas fa-inbox"></i>
-                <p>Aucune réservation pour ce service</p>
-            </div>
-            {% endif %}
-        </div>
-        {% endfor %}
-</div>
-{% endblock %}
+            {% endfor %}
+    </div>
+    {% endblock %}
