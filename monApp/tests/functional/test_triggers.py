@@ -10,7 +10,7 @@ def test_trigger_stock_plats(testapp):
         stock = db.session.get(DEFINIR_STOCK, (1, today))
         stock_base = stock.stock
 
-        cmd = COMMANDE(id_commande=999, id_client=None, date_commande=datetime(today.year, today.month, today.day, 12, 0, 0), statut='En commande', sur_place=True, nombre_personnes=1)
+        cmd = COMMANDE(id_commande=999, id_client=None, date_commande=datetime(today.year, today.month, today.day, 12, 0, 0), statut='En commande', nombre_personnes=1)
         db.session.merge(cmd)
 
         ds = DEFINIR_STOCK(id_plat=1, jour=cmd.date_commande.date(), stock=0)
@@ -42,7 +42,7 @@ def test_trigger_stock_menus(testapp):
         db.session.add(menu_plat3)
         db.session.commit()
 
-        cmd = COMMANDE(id_commande=1000, id_client=None, date_commande=datetime(today.year, today.month, today.day, 13, 0, 0), statut='En commande', sur_place=True, nombre_personnes=1)
+        cmd = COMMANDE(id_commande=1000, id_client=None, date_commande=datetime(today.year, today.month, today.day, 13, 0, 0), statut='En commande', nombre_personnes=1)
         db.session.merge(cmd)
 
         stock1.stock = 0
@@ -63,9 +63,9 @@ def test_trigger_stock_menus(testapp):
 def test_trigger_commande_sur_place(testapp):
     with testapp.app_context():
         tomorrow = date(2025, 10, 21) + timedelta(days=1)
-        cmd1 = COMMANDE(id_commande=1001, id_client=None, date_commande=datetime(tomorrow.year, tomorrow.month, tomorrow.day, 12, 0, 0), statut='En commande', sur_place=True, nombre_personnes=8)
-        cmd2 = COMMANDE(id_commande=1002, id_client=None, date_commande=datetime(tomorrow.year, tomorrow.month, tomorrow.day, 13, 0, 0), statut='En commande', sur_place=True, nombre_personnes=8)
-        cmd3 = COMMANDE(id_commande=1003, id_client=None, date_commande=datetime(tomorrow.year, tomorrow.month, tomorrow.day, 13, 0, 0), statut='En commande', sur_place=True, nombre_personnes=5)
+        cmd1 = COMMANDE(id_commande=1001, id_client=None, date_commande=datetime(tomorrow.year, tomorrow.month, tomorrow.day, 12, 0, 0), statut='En commande', nombre_personnes=8)
+        cmd2 = COMMANDE(id_commande=1002, id_client=None, date_commande=datetime(tomorrow.year, tomorrow.month, tomorrow.day, 13, 0, 0), statut='En commande', nombre_personnes=8)
+        cmd3 = COMMANDE(id_commande=1003, id_client=None, date_commande=datetime(tomorrow.year, tomorrow.month, tomorrow.day, 13, 0, 0), statut='En commande', nombre_personnes=5)
         db.session.add(cmd1)
         db.session.add(cmd2)
         db.session.add(cmd3)
@@ -74,7 +74,7 @@ def test_trigger_commande_sur_place(testapp):
 def test_trigger_calcul_commandes_plats(testapp):
     with testapp.app_context():
         today = date(2025, 10, 21)
-        cmd = COMMANDE(id_commande=2000, id_client=None, date_commande=datetime(today.year, today.month, today.day, 12, 0, 0), statut='En commande', sur_place=False, nombre_personnes=1)
+        cmd = COMMANDE(id_commande=2000, id_client=None, date_commande=datetime(today.year, today.month, today.day, 12, 0, 0), statut='En commande', nombre_personnes=1)
         db.session.add(cmd)
         db.session.commit()
 
@@ -118,7 +118,7 @@ def test_trigger_calcul_commandes_menus_insert(testapp):
         db.session.add(menu_plat3)
         db.session.commit()
 
-        cmd = COMMANDE(id_commande=2001, id_client=None, date_commande=datetime(today.year, today.month, today.day, 13, 0, 0), statut='En commande', sur_place=False, nombre_personnes=1)
+        cmd = COMMANDE(id_commande=2001, id_client=None, date_commande=datetime(today.year, today.month, today.day, 13, 0, 0), statut='En commande', nombre_personnes=1)
         db.session.add(cmd)
         db.session.commit()
 
@@ -145,7 +145,7 @@ def test_trigger_client_banni(testapp):
         client.banni = True
         db.session.commit()
         today = date(2025, 10, 21)
-        cmd = COMMANDE(id_commande=3000, id_client=1, date_commande=datetime(today.year, today.month, today.day, 12, 0, 0), statut='En commande', sur_place=False, nombre_personnes=1)
+        cmd = COMMANDE(id_commande=3000, id_client=1, date_commande=datetime(today.year, today.month, today.day, 12, 0, 0), statut='En commande', nombre_personnes=1)
         db.session.add(cmd)
         with pytest.raises(OperationalError) as excinfo:
             db.session.commit()
@@ -158,7 +158,7 @@ def test_trigger_client_banni(testapp):
 def test_trigger_heure_reservation(testapp):
     with testapp.app_context():
         today = date(2025, 10, 21)
-        cmd = COMMANDE(id_commande=4000, id_client=None, date_commande=datetime(today.year, today.month, today.day, 19, 0, 0), statut='En commande', sur_place=True, nombre_personnes=2)
+        cmd = COMMANDE(id_commande=4000, id_client=None, date_commande=datetime(today.year, today.month, today.day, 19, 0, 0), statut='En commande', nombre_personnes=2)
         db.session.add(cmd)
         with pytest.raises(OperationalError) as excinfo:
             db.session.commit()
