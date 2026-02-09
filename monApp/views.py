@@ -335,7 +335,7 @@ def panier():
         if total_general > 100:
             flash("Montant supérieur à 100€. Veuillez commander directement en magasin.", "warning")
 
-    return render_template("panier.html", commande=commande, total_general=total_general, heures_retrait=heures_possible, panier_depasse=total_general > 100)
+    return render_template("panier.html", commande=commande, total_general=total_general, heures_retrait=heures_possible, panier_depasse=total_general > 50)
 
 
 @app.route('/ajouter-au-panier/', methods=['POST'])
