@@ -28,12 +28,6 @@ from datetime import datetime, date, timedelta
 import logging as lg
 from flask import flash
 
-
-
-
-
-
-
 def admin_required(f):
     @wraps(f)
     def decorated_function(*args, **kwargs):
@@ -81,7 +75,7 @@ def produits():
     page = request.args.get('page', 1, type=int)
     per_page = 9
 
-    query = db.session.query(PLAT)
+    query = db.session.query(PLAT).filter(PLAT.disponible.is_(True))
     if cat_id is not None:
         query = query.filter_by(id_categorie=cat_id)
 
@@ -678,18 +672,31 @@ def update_all_stock():
     today = date.today()
     try:
         updated_count = 0
-        for key, value in request.form.items():
+        plat_ids = set()
+        
+        # Récupérer tous les IDs de plats depuis les stocks
+        for key in request.form.keys():
             if key.startswith('stock_'):
                 plat_id = int(key.replace('stock_', ''))
-                new_stock = int(value)
-                
-                stock_entry = db.session.query(DEFINIR_STOCK).filter_by(id_plat=plat_id, jour=today).first()
-                if stock_entry:
-                    stock_entry.stock = new_stock
-                    updated_count += 1
+                plat_ids.add(plat_id)
+        
+        # Mettre à jour les stocks et disponibilités
+        for plat_id in plat_ids:
+            # Mettre à jour le stock
+            new_stock = int(request.form.get(f'stock_{plat_id}', 0))
+            stock_entry = db.session.query(DEFINIR_STOCK).filter_by(id_plat=plat_id, jour=today).first()
+            if stock_entry:
+                stock_entry.stock = new_stock
+            
+            # Mettre à jour la disponibilité
+            plat = db.session.query(PLAT).get(plat_id)
+            if plat:
+                plat.disponible = f'disponible_{plat_id}' in request.form
+            
+            updated_count += 1
         
         db.session.commit()
-        flash(f"{updated_count} stock(s) mis à jour avec succès.", "success")
+        flash(f"{updated_count} plat(s) mis à jour avec succès.", "success")
     except Exception as e:
         db.session.rollback()
         flash(f"Erreur lors de la mise à jour : {str(e)}", "error")
@@ -1071,8 +1078,6 @@ def admin_delete_plat(id_plat):
         db.session.rollback()
         flash("Impossible de supprimer le plat (dépendances).", "error")
     return redirect(url_for('admin_plats'))
-
-
 
 
 @app.route('/admin/menus/')
