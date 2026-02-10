@@ -1,0 +1,14 @@
+{% extends 'base_admin.html' %}
+
+{% block styles %}
+<link rel="stylesheet" href="{{ url_for('static', filename='admin_capacite.css') }}">
+{% endblock %}
+
+{% block main %}
+<h1>Gestion de la capacité du restaurant</h1>
+<form method="POST" action="{{ url_for('admin_capacite') }}">
+    <label for="capacite">Capacité maximale du restaurant :</label>
+    <input type="number" id="capacite" name="capacite" value="{{ capacite }}" min="1" required>
+    <button type="submit">Mettre à jour</button>
+</form>
+{% endblock %}

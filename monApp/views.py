@@ -119,9 +119,19 @@ def produits():
 
     categories = db.session.query(CATEGORIE).all()
 
+    if current_user.is_authenticated:
+        commande = db.session.query(COMMANDE).filter_by(id_client=current_user.id_client, statut='En commande').first()
+    else:
+        commande = None
+    
+    quantites_panier = {}
+    if commande:
+        for item in commande.plats:
+            quantites_panier[item.id_plat] = item.quantite
 
     return render_template(
         "produits.html",
+        commande=commande,
         produits=produits,
         cat_id=cat_id,
         categories=categories,
@@ -129,6 +139,7 @@ def produits():
         total_pages=total_pages,
         total_items=total,
         per_page=per_page,
+        quantites_panier=quantites_panier,
         filters={
             'vegetarien': vegetarien,
             'vegan': vegan,
@@ -333,7 +344,8 @@ def panier():
         if total_general > 100:
             flash("Montant supérieur à 100€. Veuillez commander directement en magasin.", "warning")
 
-    return render_template("panier.html", commande=commande, total_general=total_general, heures_retrait=heures_possible, panier_depasse=total_general > 100)
+    return render_template("panier.html", commande=commande, total_general=total_general, heures_retrait=heures_possible, panier_depasse=total_general > 50)
+
 
 @app.route('/ajouter-au-panier/', methods=['POST'])
 def ajouter_au_panier():
@@ -357,6 +369,7 @@ def ajouter_au_panier():
     try:
         if item_panier:
             item_panier.quantite += 1
+            db.session.commit()
         else:
             item_panier = APPARTENIR_PLATS(id_commande=commande.id_commande, id_plat=id_plat, quantite=1)
             db.session.add(item_panier)
@@ -1238,6 +1251,7 @@ def admin_delete_menu(id_menu):
         db.session.rollback()
         flash("Impossible de supprimer le menu.", "error")
     return redirect(url_for('admin_menus'))
+
 @app.route('/reservation/', methods=['GET', 'POST'])
 @login_required
 def reservation():
@@ -1299,7 +1313,8 @@ def reservation():
                          form=form, 
                          today=date.today(),
                          selected_date=selected_date,
-                         services_disponibles=services_avec_places)
+                         services_disponibles=services_avec_places,
+                         max_capacite=capacite_totale)
 
 @app.route('/annuler-reservation/<int:id_reservation>', methods=['POST'])
 @login_required
@@ -1351,6 +1366,30 @@ def upload_image():
     # URL accessible depuis le front
     url = url_for('static', filename=f'images/{filename}')
     return jsonify({'success': True, 'url': url})
+@app.route('/admin/capacite', methods=['GET','POST'])
+@admin_required
+def admin_capacite():
+    if request.method == 'POST':
+        nouvelle_capacite = request.form.get('capacite')
+        try:
+            nouvelle_capacite_int = int(nouvelle_capacite)
+            if nouvelle_capacite_int <= 0:
+                flash("La capacité doit être un entier positif.", "error")
+            else:
+                capacite_entry = db.session.query(SALLE).filter_by(cle='capacite').first()
+                if capacite_entry:
+                    capacite_entry.valeur = nouvelle_capacite_int
+                else:
+                    capacite_entry = SALLE(cle='capacite', valeur=nouvelle_capacite_int)
+                    db.session.add(capacite_entry)
+                db.session.commit()
+                flash("Capacité mise à jour avec succès.", "success")
+        except ValueError:
+            flash("Veuillez entrer un nombre entier valide pour la capacité.", "error")
+    capacite_entry = db.session.query(SALLE).filter_by(cle='capacite').first()
+    capacite = capacite_entry.valeur if capacite_entry else 1
+    return render_template('admin_capacite.html', capacite=capacite)
+
 
 if __name__ == "__main__":
     app.run()
