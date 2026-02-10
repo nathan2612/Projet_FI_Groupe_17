@@ -43,7 +43,7 @@ plats:
     id_categorie: 2
     nom_plat: "Porc aigre-doux"
     description: "Porc sauté sauce aigre-douce"
-    longue_description: "Morceaux de porc tendres, enrobés d'une légère panure et frits jusqu'à être dorés et croustillants. Ils sont ensuite nappés de notre sauce aigre-douce maison, préparée avec des poivrons, des oignons et des morceaux d'ananas pour un équilibre parfait entre douceur et acidité."
+    longue_description: " orceaux de porc tendres, enrobés d'une légère panure et frits jusqu'à être dorés et croustillants. Ils sont ensuite nappés de notre sauce aigre-douce maison, préparée avec des poivrons, des oignons et des morceaux d'ananas pour un équilibre parfait entre douceur et acidité."
     prix: 12.50
   - id_plat: 5
     id_categorie: 2

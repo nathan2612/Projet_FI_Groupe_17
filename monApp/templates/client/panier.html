@@ -1,0 +1,188 @@
+{% extends "client/base.html" %}
+
+{% block styles %}
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/client/panier.css') }}">
+{% endblock %}
+
+{% block main %}
+    <div class="container">
+        <main class="cart-layout">
+            <section class="cart-items">
+                <header>
+                    <h1>Votre Panier</h1>
+                </header>
+                {% if not commande or (not commande.plats and not commande.menus) %}
+                    <div class="cart-empty">
+                        <p>Votre panier est vide pour le moment.</p>
+                        <a href="{{ url_for('produits') }}" class="btn-primary">Voir nos produits</a>
+                    </div>
+                {% else %}
+                    {% for item_plat in commande.plats %}
+                    <div class="cart-item">
+                        <img src="{{ url_for('static', filename='images/' + (item_plat.plat.image_url or 'default.jpg')) }}" alt="{{ item_plat.plat.nom_plat }}" class="item-image">
+                        <div class="item-details">
+                            <h2>{{ item_plat.plat.nom_plat }}</h2>
+                            <p class="item-price-single">{{ "%.2f€"|format(item_plat.plat.prix) }} / unité</p>
+                        </div>
+                        <div class="item-controls">
+                            <form action="{{ url_for('modifier_quantite_panier') }}" method="post" class="quantity-form">
+                                <input type="hidden" name="id_plat" value="{{ item_plat.plat.id_plat }}">
+                                <input type="hidden" name="action" value="decrease">
+                                <button type="submit" class="quantity-btn" title="Réduire la quantité">-</button>
+                            </form>
+                            <span class="quantity">{{ item_plat.quantite }}</span>
+                            <form action="{{ url_for('modifier_quantite_panier') }}" method="post" class="quantity-form">
+                                <input type="hidden" name="id_plat" value="{{ item_plat.plat.id_plat }}">
+                                <input type="hidden" name="action" value="increase">
+                                <button type="submit" class="quantity-btn" title="Augmenter la quantité">+</button>
+                            </form>
+                        </div>
+                        <span class="item-price-total">{{ "%.2f€"|format(item_plat.plat.prix * item_plat.quantite) }}</span>
+                        <form action="{{ url_for('supprimer_du_panier') }}" method="post" class="remove-form">
+                            <input type="hidden" name="id_plat" value="{{ item_plat.plat.id_plat }}">
+                            <button type="submit" class="remove-item" title="Supprimer l'article">
+                                <i class="fas fa-times"></i>
+                            </button>
+                        </form>
+                    </div>
+                    {% endfor %}
+
+                    {% for item_menu in commande.menus %}
+                    <div class="cart-item">
+                        <img src="{{ url_for('static', filename='images/' + (item_menu.menu.image_url or 'default.jpg')) }}" alt="{{ item_menu.menu.nom_menu }}" class="item-image">
+                        <div class="item-details">
+                            <h2>{{ item_menu.menu.nom_menu }}</h2>
+                            <p class="item-price-single">{{ "%.2f€"|format(item_menu.menu.prix) }} / unité</p>
+                            {% if item_menu.entree or item_menu.plat_choisi or item_menu.dessert %}
+                            <div class="menu-choices">
+                                <strong>Choix :</strong>
+                                <ul class="choices-list">
+                                    {% if item_menu.entree %}
+                                        <li class="choice-entry">Entrée: {{ item_menu.entree.nom_plat }}</li>
+                                    {% endif %}
+                                    {% if item_menu.plat_choisi %}
+                                        <li class="choice-main">Plat: {{ item_menu.plat_choisi.nom_plat }}</li>
+                                    {% endif %}
+                                    {% if item_menu.dessert %}
+                                        <li class="choice-dessert">Dessert: {{ item_menu.dessert.nom_plat }}</li>
+                                    {% endif %}
+                                </ul>
+                            </div>
+                            {% endif %}
+                        </div>
+                        <div class="item-controls">
+                            <form action="{{ url_for('modifier_quantite_panier') }}" method="post" class="quantity-form">
+                                <input type="hidden" name="id_menu" value="{{ item_menu.menu.id_menu }}">
+                                <input type="hidden" name="id_entree" value="{{ item_menu.entree.id_plat }}">
+                                <input type="hidden" name="id_plat_choisi" value="{{ item_menu.plat_choisi.id_plat }}">
+                                <input type="hidden" name="id_dessert" value="{{ item_menu.dessert.id_plat }}">
+                                <input type="hidden" name="action" value="decrease">
+                                <button type="submit" class="quantity-btn" title="Réduire la quantité">-</button>
+                            </form>
+                            <span class="quantity">{{ item_menu.quantite }}</span>
+                            <form action="{{ url_for('modifier_quantite_panier') }}" method="post" class="quantity-form">
+                                <input type="hidden" name="id_menu" value="{{ item_menu.menu.id_menu }}">
+                                <input type="hidden" name="id_entree" value="{{ item_menu.entree.id_plat }}">
+                                <input type="hidden" name="id_plat_choisi" value="{{ item_menu.plat_choisi.id_plat }}">
+                                <input type="hidden" name="id_dessert" value="{{ item_menu.dessert.id_plat }}">
+                                <input type="hidden" name="action" value="increase">
+                                <button type="submit" class="quantity-btn" title="Augmenter la quantité">+</button>
+                            </form>
+                        </div>
+                        <span class="item-price-total">{{ "%.2f€"|format(item_menu.menu.prix * item_menu.quantite) }}</span>
+                        <form action="{{ url_for('supprimer_du_panier') }}" method="post" class="remove-form">
+                            <input type="hidden" name="id_menu" value="{{ item_menu.menu.id_menu }}">
+                            <input type="hidden" name="id_entree" value="{{ item_menu.entree.id_plat }}">
+                            <input type="hidden" name="id_plat_choisi" value="{{ item_menu.plat_choisi.id_plat }}">
+                            <input type="hidden" name="id_dessert" value="{{ item_menu.dessert.id_plat }}">
+                            <button type="submit" class="remove-item" title="Supprimer l'article">
+                                <i class="fas fa-times"></i>
+                            </button>
+                        </form>
+                    </div>
+                    {% endfor %}
+                {% endif %}
+            </section>
+
+            {% if commande and (commande.plats or commande.menus) %}
+            <aside class="cart-summary">
+                <div class="pickup-time-section">
+                    <h3>Heure de retrait</h3>
+                    <select name="heure_retrait" id="heure_retrait" class="time-select">
+                        <option value="">Sélectionner une heure</option>
+                        {% for heure in heures_retrait %}
+                            <option value="{{ heure }}">{{ heure }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                
+                <h3>Récapitulatif</h3>
+                <div class="summary-line">
+                    <span>Sous-total</span>
+                    <span class="summary-price">{{ "%.2f€"|format(total_general) }}</span>
+                </div>
+                <div class="summary-line total-line">
+                    <span>Total</span>
+                    <span class="summary-price">{{ "%.2f€"|format(total_general) }}</span>
+                </div>
+                <form id="checkout-form" action="{{ url_for('valider_commande') }}" method="post">
+                    <input type="hidden" name="heure_retrait" id="heure_retrait_hidden">
+                    {% if panier_depasse %}
+                        <div class="warning-message">
+                            Montant supérieur à 50€. Veuillez commander directement en magasin.
+                        </div>
+                        <button id="checkout-btn" class="checkout-button" disabled style="background-color: gray;">Passer la commande</button>
+                    {% else %}
+                        <button type="button" id="checkout-btn" class="checkout-button">Passer la commande</button>
+                    {% endif %}
+                </form>
+            </aside>
+            {% endif %}
+        </main>
+    </div>
+
+    <div id="confirmation-popup" class="popup-overlay">
+        <div class="popup-content">
+            <h3>Confirmer la commande</h3>
+            <p>Êtes-vous sûr de vouloir passer cette commande ? Le stock sera déduit et la commande passera en attente de préparation.</p>
+            <div class="popup-actions">
+                <button id="cancel-checkout-btn" class="btn-popup btn-annuler">Annuler</button>
+                <button id="confirm-checkout-btn" class="btn-popup btn-confirmer">Confirmer</button>
+            </div>
+        </div>
+    </div>
+
+<script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const checkoutBtn = document.getElementById('checkout-btn');
+            if (checkoutBtn) {
+                const popup = document.getElementById('confirmation-popup');
+                const confirmBtn = document.getElementById('confirm-checkout-btn');
+                const cancelBtn = document.getElementById('cancel-checkout-btn');
+                const checkoutForm = document.getElementById('checkout-form');
+                const heureSelect = document.getElementById('heure_retrait');
+                const heureHidden = document.getElementById('heure_retrait_hidden');
+
+                checkoutBtn.addEventListener('click', function() {
+                    // Vérifier que l'heure est sélectionnée
+                    if (!heureSelect.value) {
+                        alert('Veuillez sélectionner une heure de retrait');
+                        heureSelect.focus();
+                        return;
+                    }
+                    popup.classList.add('is-visible');
+                });
+
+                cancelBtn.addEventListener('click', function() {
+                    popup.classList.remove('is-visible');
+                });
+
+                confirmBtn.addEventListener('click', function() {
+                    // Copier l'heure sélectionnée dans le champ caché
+                    heureHidden.value = heureSelect.value;
+                    checkoutForm.submit();
+                });
+            }
+        });
+</script>
+{% endblock %}

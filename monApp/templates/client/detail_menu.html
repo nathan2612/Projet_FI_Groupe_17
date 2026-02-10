@@ -1,0 +1,161 @@
+{% extends "client/base.html" %}
+
+{% block styles %}
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/client/detail_menu.css') }}">
+{% endblock %}
+
+{% block main %}
+    <div class="page-content-wrapper">
+        <main class="plat-container">
+            <div class="plat-image-wrapper">
+                <img src="{{ url_for('static', filename='images/plats/' + menu.image_url) }}" alt="Photo de {{ menu.nom_menu }}" class="plat-image">
+            </div>
+
+            <div class="plat-details">
+                <h1 class="plat-nom">{{ menu.nom_menu }}</h1>
+                <p class="plat-prix">{{ "%.2f€"|format(menu.prix) }}</p>
+                
+                <p class="plat-description">
+                    {{ menu.longue_description or menu.description }}
+                </p>
+                
+            </div>
+        </main>
+    </div>
+    <div class="menu-sections">
+
+        <form method="post" action="{{ url_for('ajouter_menu_selection') }}">
+        <input type="hidden" name="id_menu" value="{{ menu.id_menu }}">
+
+        <section class="menu-course">
+            <h2>Entrées</h2>
+            {% if entres %}
+                <ul class="menu-plats">
+                {% for c in entres %}
+                    <li class="menu-item{% if c.plat.stock_disponible <= 0 %} disabled{% endif %}">
+                        {% if c.plat.stock_disponible > 0 %}
+                        <label class="menu-choice">
+                            <input type="radio" name="entree" value="{{ c.plat.id_plat }}">
+                            <span class="menu-choice-content">
+                                <div class="plat-name">{{ c.plat.nom_plat }}</div>
+                                <p class="description-small">{{ c.plat.description }}</p>
+                            </span>
+                        </label>
+                        <a class="voir-icon" href="{{ url_for('detail_plat', id_plat=c.plat.id_plat) }}" aria-label="Voir {{ c.plat.nom_plat }}" data-label="Voir {{ c.plat.nom_plat }}">
+                            <!-- magnifying glass icon (more recognizable than arrow) -->
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                                <circle cx="11" cy="11" r="6" stroke="currentColor" stroke-width="2"/>
+                                <path d="M21 21l-4.35-4.35" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                            </svg>
+                        </a>
+                        {% else %}
+                        <label class="menu-choice disabled">
+                            <input type="radio" name="entree" value="{{ c.plat.id_plat }}" disabled>
+                            <span class="menu-choice-content">
+                                <div class="plat-name">{{ c.plat.nom_plat }}</div>
+                                <p class="description-small">{{ c.plat.description }}</p>
+                            </span>
+                        </label>
+                        <span class="voir-icon disabled" aria-hidden="true" data-label="Indisponible" style="pointer-events:none; opacity:0.5;">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                                <circle cx="11" cy="11" r="6" stroke="currentColor" stroke-width="2"/>
+                                <path d="M21 21l-4.35-4.35" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                            </svg>
+                        </span>
+                        {% endif %}
+                    </li>
+                {% endfor %}
+                </ul>
+            {% else %}
+                <p class="empty-note">Aucune entrée dans ce menu.</p>
+            {% endif %}
+        </section>
+
+        <section class="menu-course">
+            <h2>Plats</h2>
+            {% if plats %}
+                <ul class="menu-plats">
+                {% for c in plats %}
+                    <li class="menu-item{% if c.plat.stock_disponible <= 0 %} disabled{% endif %}">
+                        {% if c.plat.stock_disponible > 0 %}
+                        <label class="menu-choice">
+                            <input type="radio" name="plat" value="{{ c.plat.id_plat }}">
+                            <span class="menu-choice-content">
+                                <div class="plat-name">{{ c.plat.nom_plat }}</div>
+                                <p class="description-small">{{ c.plat.description }}</p>
+                            </span>
+                        </label>
+                        <a class="voir-icon" href="{{ url_for('detail_plat', id_plat=c.plat.id_plat) }}" aria-label="Voir {{ c.plat.nom_plat }}" title="Voir {{ c.plat.nom_plat }}" data-label="Voir {{ c.plat.nom_plat }}">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                                <circle cx="11" cy="11" r="6" stroke="currentColor" stroke-width="2"/>
+                                <path d="M21 21l-4.35-4.35" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                            </svg>
+                        </a>
+                        {% else %}
+                        <label class="menu-choice disabled">
+                            <input type="radio" name="plat" value="{{ c.plat.id_plat }}" disabled>
+                            <span class="menu-choice-content">
+                                <div class="plat-name">{{ c.plat.nom_plat }}</div>
+                                <p class="description-small">{{ c.plat.description }}</p>
+                            </span>
+                        </label>
+                        <span class="out-of-stock-note" style="opacity:0.6;">Indisponible</span>
+                        {% endif %}
+                    </li>
+                {% endfor %}
+                </ul>
+            {% else %}
+                <p class="empty-note">Aucun plat principal dans ce menu.</p>
+            {% endif %}
+        </section>
+
+        <section class="menu-course">
+            <h2>Desserts</h2>
+            {% if desserts %}
+                <ul class="menu-plats">
+                {% for c in desserts %}
+                    <li class="menu-item{% if c.plat.stock_disponible <= 0 %} disabled{% endif %}">
+                        {% if c.plat.stock_disponible > 0 %}
+                        <label class="menu-choice">
+                            <input type="radio" name="dessert" value="{{ c.plat.id_plat }}">
+                            <span class="menu-choice-content">
+                                <div class="plat-name">{{ c.plat.nom_plat }}</div>
+                                <p class="description-small">{{ c.plat.description }}</p>
+                            </span>
+                        </label>
+                        <a class="voir-icon" href="{{ url_for('detail_plat', id_plat=c.plat.id_plat) }}" aria-label="Voir {{ c.plat.nom_plat }}" title="Voir {{ c.plat.nom_plat }}" data-label="Voir {{ c.plat.nom_plat }}">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                                <circle cx="11" cy="11" r="6" stroke="currentColor" stroke-width="2"/>
+                                <path d="M21 21l-4.35-4.35" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                            </svg>
+                        </a>
+                        {% else %}
+                        <label class="menu-choice disabled">
+                            <input type="radio" name="dessert" value="{{ c.plat.id_plat }}" disabled>
+                            <span class="menu-choice-content">
+                                <div class="plat-name">{{ c.plat.nom_plat }}</div>
+                                <p class="description-small">{{ c.plat.description }}</p>
+                            </span>
+                        </label>
+                        <span class="voir-icon disabled" aria-hidden="true" data-label="Indisponible" title="Indisponible" style="pointer-events:none; opacity:0.5;">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                                <circle cx="11" cy="11" r="6" stroke="currentColor" stroke-width="2"/>
+                                <path d="M21 21l-4.35-4.35" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                            </svg>
+                        </span>
+                        {% endif %}
+                    </li>
+                {% endfor %}
+                </ul>
+            {% else %}
+                <p class="empty-note">Aucun dessert dans ce menu.</p>
+            {% endif %}
+        </section>
+        <div class="menu-actions" style="grid-column: 1 / -1; text-align: center; margin-top: 16px;">
+            <button type="submit" class="bouton-commander">Ajouter au panier</button>
+        </div>
+
+        </form>
+
+    </div>
+{% endblock %}

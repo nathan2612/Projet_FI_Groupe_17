@@ -25,7 +25,7 @@ class PLAT(db.Model):
 	longue_description = db.Column(db.Text, nullable=True)
 	prix = db.Column(db.Numeric(10, 2))
 	disponible = db.Column(db.Boolean, default=True)
-	image_url = db.Column(db.String(255), default='default_plat.png')
+	image_url = db.Column(db.String(255), default='assets/default_plat.png')
 	vegetarien = db.Column(db.Boolean, default=False)
 	vegan = db.Column(db.Boolean, default=False)
 	gluten = db.Column(db.Boolean, default=False)
@@ -98,7 +98,7 @@ class MENU(db.Model):
 	id_menu = db.Column(db.Integer, primary_key=True)
 	nom_menu = db.Column(db.String(150))
 	description = db.Column(db.Text)
-	image_url = db.Column(db.String(255), default='default_menu.jpg')
+	image_url = db.Column(db.String(255), default='assets/default_menu.jpg')
 	prix = db.Column(db.Numeric(10, 2))
 
 	contenir = db.relationship('CONTENIR', back_populates='menu')

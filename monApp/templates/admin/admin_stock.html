@@ -1,0 +1,87 @@
+{% extends "admin/base_admin.html" %}
+
+{% block styles %}
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/admin/admin_stock.css') }}">
+{% endblock %}
+
+{% block main %}
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+
+    <main class="admin-container">
+        <h1>Gestion du stock</h1>
+
+        <form method="GET" class="search-form" id="search-form">
+            <div class="search-bar">
+                <input type="text" name="search" id="search-input" placeholder="Rechercher un produit..." value="{{ search_term }}" autocomplete="off">
+                <button type="submit" class="btn btn-secondary"><i class="ph-magnifying-glass"></i> Rechercher</button>
+            </div>
+        </form>
+
+        <form method="POST" action="{{ url_for('update_all_stock', search=search_term) }}" id="stock-form">
+            <div class="submit-bar">
+                <button type="submit" class="btn btn-primary btn-submit">
+                    <i class="ph-floppy-disk"></i> Valider tout
+                </button>
+            </div>
+        <div class="stock-list">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Nom du plat</th>
+                        <th class="stock-col">Stock</th>
+                        <th class="disponibilite-col">Disponibilité</th>
+                        <th class="action-col">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for item_data in items %}
+                    <tr>
+                        <td>{{ item_data.item.nom_plat }}</td>
+                        <td>
+                            <div class="stock-form">
+                                <input type="number" name="stock_{{ item_data.item.id_plat }}" value="{{ item_data.stock }}" required min="0">
+                            </div>
+                        </td>
+                        <td>
+                            <input type="checkbox" 
+                                   name="disponible_{{ item_data.item.id_plat }}" 
+                                   {% if item_data.item.disponible %}checked{% endif %}>
+                        </td>
+                        <td>
+                            <button type="button" onclick="document.getElementsByName('stock_{{ item_data.item.id_plat }}')[0].value = 0" class="btn btn-secondary btn-small btn-reset" title="Réinitialiser"><img src="{{ url_for('static', filename='images/assets/reset.png') }}" alt="Reset"></button>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                    {% if not items %}
+                    <tr>
+                        <td colspan="4">Aucun item en stock</td>
+                    </tr>
+                    {% endif %}
+                </tbody>
+            </table>
+        </div>
+        </form>
+    </main>
+
+    <script>
+        // Recherche instantanée
+        const searchInput = document.getElementById('search-input');
+        const tableRows = document.querySelectorAll('.stock-list tbody tr:not(.no-items)');
+        
+        searchInput.addEventListener('input', function() {
+            const searchTerm = this.value.toLowerCase().trim();
+            
+            tableRows.forEach(row => {
+                const platName = row.querySelector('td:first-child');
+                if (platName) {
+                    const text = platName.textContent.toLowerCase();
+                    if (text.includes(searchTerm)) {
+                        row.style.display = '';
+                    } else {
+                        row.style.display = 'none';
+                    }
+                }
+            });
+        });
+    </script>
+{% endblock %}

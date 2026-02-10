@@ -1,0 +1,227 @@
+{% extends "client/base.html" %}
+
+{% block styles %}
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/client/compte.css') }}">
+{% endblock %}
+
+{% block main %}
+<div class="account-container">
+    <div class="account-header">
+        <h1>Mon Compte</h1>
+        <p>Gérez vos informations personnelles et votre sécurité.</p>
+    </div>
+
+    <div id="info-view">
+        <div class="account-card">
+            <div class="card-header">
+                <h2>Informations Personnelles</h2>
+                <button id="edit-profile-btn" class="btn btn-secondary">
+                    <i class="fas fa-pencil-alt"></i> Modifier
+                </button>
+            </div>
+            <div class="card-body">
+                <div class="info-grid">
+                    <div class="info-group">
+                        <span class="info-label"><i class="fas fa-user"></i> Prénom</span>
+                        <span class="info-value">{{ current_user.prenom }}</span>
+                    </div>
+                    <div class="info-group">
+                        <span class="info-label"><i class="fas fa-user"></i> Nom</span>
+                        <span class="info-value">{{ current_user.nom }}</span>
+                    </div>
+                    <div class="info-group full-width">
+                        <span class="info-label"><i class="fas fa-phone"></i> Téléphone</span>
+                        <span class="info-value">{{ current_user.telephone }}</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="account-card">
+            <div class="card-header">
+                <h2>Sécurité</h2>
+            </div>
+            <div class="card-body">
+                <div class="info-group">
+                    <span class="info-label"><i class="fas fa-lock"></i> Mot de passe</span>
+                    <span class="info-value">**********</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="edit-view" style="display: none;">
+        <form method="POST" action="{{ url_for('compte') }}" class="account-form">
+            {{ form.hidden_tag() }}
+
+            <div class="account-card">
+                <div class="card-header">
+                    <h2>Modifier les Informations</h2>
+                </div>
+                <div class="card-body">
+                    <div class="form-grid">
+                        <div class="form-group">
+                            {{ form.prenom.label(class="form-label") }}
+                            {{ form.prenom(class="form-control") }}
+                        </div>
+                        <div class="form-group">
+                            {{ form.nom.label(class="form-label") }}
+                            {{ form.nom(class="form-control") }}
+                        </div>
+                        <div class="form-group full-width">
+                            {{ form.telephone.label(class="form-label") }}
+                            {{ form.telephone(class="form-control") }}
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="account-card">
+                <div class="card-header">
+                    <h2>Changer de mot de passe</h2>
+                </div>
+                <div class="card-body">
+                    <p class="subtitle">Laissez ces champs vides si vous ne souhaitez pas le changer.</p>
+                    <div class="form-grid">
+                        <div class="form-group">
+                            {{ form.current_mot_de_passe.label(class="form-label") }}
+                            {{ form.current_mot_de_passe(class="form-control", placeholder="Requis pour changer le mot de passe") }}
+                        </div>
+                        <div class="form-group">
+                            {{ form.new_mot_de_passe.label(class="form-label") }}
+                            {{ form.new_mot_de_passe(class="form-control") }}
+                        </div>
+                        <div class="form-group">
+                            {{ form.confirm_new_mot_de_passe.label(class="form-label") }}
+                            {{ form.confirm_new_mot_de_passe(class="form-control") }}
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-actions">
+                <button type="button" id="cancel-edit-btn" class="btn btn-secondary">Annuler</button>
+                <button type="submit" class="btn btn-primary">
+                    <i class="fas fa-save"></i> Enregistrer
+                </button>
+            </div>
+        </form>
+    </div>
+
+    <div class="logout-section">
+        <a href="{{ url_for('logout') }}" class="btn btn-danger">
+            <i class="fas fa-sign-out-alt"></i> Se déconnecter
+        </a>
+    </div>
+
+    <div class="orders-section">
+        <h2>Mes Réservations</h2>
+        <p class="info-note"><i class="fas fa-info-circle"></i> Pour annuler une réservation le jour même, merci de nous appeler au 02.54.79.05.48</p>
+        {% if reservations %}
+            <div class="orders-list">
+                {% for reservation in reservations %}
+                    <div class="order-card">
+                        <div class="reservation-info">
+                            <p><strong>Réservation #{{ reservation.id_reservation }}</strong></p>
+                            <p>
+                                <strong>Date :</strong> 
+                                {% if reservation.date_reservation %}
+                                    {{ reservation.date_reservation.strftime('%d/%m/%Y') }}
+                                {% else %}
+                                    Non définie
+                                {% endif %}
+                            </p>
+                            <p>
+                                <strong>Service :</strong> 
+                                {% if reservation.service %}
+                                    {{ reservation.service.heure_debut.strftime('%H:%M') }} - {{ reservation.service.heure_fin.strftime('%H:%M') }}
+                                {% else %}
+                                    Non défini
+                                {% endif %}
+                            </p>
+                            <p><strong>Nombre de personnes :</strong> {{ reservation.nb_personne }}</p>
+                        </div>
+                        {% if reservation.date_reservation and reservation.date_reservation > today %}
+                        <div class="reservation-actions">
+                            <form method="POST" action="{{ url_for('annuler_reservation', id_reservation=reservation.id_reservation) }}" style="display: inline;">
+                                <button type="submit" class="btn-cancel-reservation" onclick="return confirm('Êtes-vous sûr de vouloir annuler cette réservation ?');">
+                                    <i class="fas fa-times"></i> Annuler
+                                </button>
+                            </form>
+                        </div>
+                        {% endif %}
+                    </div>
+                {% endfor %}
+            </div>
+        {% else %}
+            <div class="no-orders">
+                <p>Vous n'avez encore fait aucune réservation.</p>
+                <a href="{{ url_for('reservation') }}" class="btn-primary">Réserver une table</a>
+            </div>
+        {% endif %}
+    </div>
+
+    <div class="orders-section">
+        <h2>Mes Commandes</h2>
+        {% if commandes %}
+            <div class="orders-list">
+                {% for cmd in commandes %}
+                    <div class="order-card">
+                        <p><strong>Commande #{{ cmd.id_commande }}</strong></p>
+                        <p>
+                            <strong>Date :</strong> 
+                            {{ cmd.date_commande.strftime('%d/%m/%Y %H:%M') if cmd.date_commande else 'Panier non validé' }}
+                        </p>
+                        <p><strong>Total :</strong> {{ "%.2f€"|format(cmd.montant_total) }}</p>
+                        <p>
+                            <strong>Statut :</strong> 
+                            <span class="status-badge status-{{ cmd.statut | lower | replace(' ', '-') }}">{{ cmd.statut }}</span>
+                       </p>
+                            {% if cmd.statut == 'En attente' %}
+                            <div class="order-actions">
+                                <form method="POST" action="{{ url_for('annuler_commande', id_commande=cmd.id_commande) }}" onsubmit="return confirm('Êtes-vous sûr de vouloir annuler cette commande ?');">
+                                    <button type="submit" class="btn btn-cancel">
+                                        <i class="fas fa-times"></i> Annuler
+                                    </button>
+                                </form>
+                            </div>
+                            {% endif %}
+                            {% if cmd.statut == "En préparation" %}
+                            <div class="order-actions">
+                                <p>
+                                    Veuillez appeler le <strong>+33 1 23 45 67 89</strong> pour savoir si il est possible de modifier ou annuler votre commande.
+                                </p>
+                            </div>
+                            {% endif %}
+                    </div>
+                {% endfor %}
+            </div>
+        {% else %}
+            <div class="no-orders">
+                <p>Vous n'avez encore passé aucune commande.</p>
+                <a href="{{ url_for('produits') }}" class="btn-primary">Voir nos produits</a>
+            </div>
+        {% endif %}
+    </div>
+
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const infoView = document.getElementById('info-view');
+    const editView = document.getElementById('edit-view');
+    const editBtn = document.getElementById('edit-profile-btn');
+    const cancelBtn = document.getElementById('cancel-edit-btn');
+
+    editBtn.addEventListener('click', () => {
+        infoView.style.display = 'none';
+        editView.style.display = 'block';
+    });
+
+    cancelBtn.addEventListener('click', () => {
+        editView.style.display = 'none';
+        infoView.style.display = 'block';
+    });
+});
+</script>
+{% endblock %}

@@ -1,0 +1,80 @@
+{% extends 'admin/base_admin.html' %}
+
+{% block styles %}
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/admin/admin.css') }}">
+{% endblock %}
+
+{% block main %}
+<div class="dashboard-container">
+    <header class="dashboard-header">
+        <h1>Tableau de Bord</h1>
+        <p>Aperçu rapide de l'activité du restaurant.</p>
+    </header>
+
+    <div class="stats-grid">
+        <div class="stat-card">
+            <div class="stat-icon"><i class="fas fa-calendar-day"></i></div>
+            <div class="stat-info">
+                <div class="stat-label">Commandes Aujourd'hui</div>
+                <div class="stat-value">{{ lst_recup_auj or 0 }}</div>
+                <div class="stat-sub">CA: <strong>{{ "%.2f"|format(ca_auj or 0) }} €</strong></div>
+            </div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-icon"><i class="fas fa-calendar-week"></i></div>
+            <div class="stat-info">
+                <div class="stat-label">Commandes ce Mois</div>
+                <div class="stat-value">{{ lst_recup_mois or 0 }}</div>
+                <div class="stat-sub">CA: <strong>{{ "%.2f"|format(ca_mois or 0) }} €</strong></div>
+            </div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-icon"><i class="fas fa-calendar-alt"></i></div>
+            <div class="stat-info">
+                <div class="stat-label">Commandes cette Année</div>
+                <div class="stat-value">{{ lst_recup_annee or 0 }}</div>
+                <div class="stat-sub">CA: <strong>{{ "%.2f"|format(ca_annee or 0) }} €</strong></div>
+            </div>
+        </div>
+    </div>
+
+    <div class="dashboard-grid">
+        <div class="dashboard-card">
+            <h2 class="card-title">Top 5 des Ventes</h2>
+            <ul class="item-list">
+                {% for plat, count in top_5_ventes %}
+                    <li>
+                        <span class="item-name">{{ plat.nom_plat }}</span>
+                        <span class="item-count">{{ count }}</span>
+                    </li>
+                {% else %}
+                    <li class="empty-state">Aucun plat vendu récemment.</li>
+                {% endfor %}
+            </ul>
+        </div>
+
+        <div class="dashboard-card">
+            <h2 class="card-title">Ruptures de Stock</h2>
+            <ul class="item-list">
+                {% for plat in tout_plats_rupture %}
+                    <li>
+                        <span class="item-name">{{ plat[0] }}</span>
+                        <span class="item-status out-of-stock">Rupture</span>
+                    </li>
+                {% else %}
+                    <li class="empty-state">Aucun plat en rupture de stock.</li>
+                {% endfor %}
+            </ul>
+        </div>
+
+        <div class="dashboard-card full-width">
+            <h2 class="card-title">Statistiques Comparatives</h2>
+            <ul class="comparison-list">
+                <li>Chiffre d'affaires d'hier : <strong>{{ "%.2f"|format(ca_hier or 0) }} €</strong> <span class="comparison-badge {% if (ca_pourcentage_hier_auj or 0) >= 0 %}positive{% else %}negative{% endif %}">{{ ca_pourcentage_hier_auj or 0 }} %</span></li>
+                <li>Chiffre d'affaires du mois dernier : <strong>{{ "%.2f"|format(ca_mois_dernier or 0) }} €</strong> <span class="comparison-badge {% if (ca_pourcentage_mois or 0) >= 0 %}positive{% else %}negative{% endif %}">{{ ca_pourcentage_mois or 0 }} %</span></li>
+                <li>Chiffre d'affaires de l'année dernière : <strong>{{ "%.2f"|format(ca_annee_derniere or 0) }} €</strong> <span class="comparison-badge {% if (ca_pourcentage_annee_derniere or 0) >= 0 %}positive{% else %}negative{% endif %}">{{ ca_pourcentage_annee_derniere or 0 }} %</span></li>
+            </ul>
+        </div>
+    </div>
+</div>
+{% endblock %}
