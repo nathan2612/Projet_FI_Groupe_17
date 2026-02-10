@@ -1,3 +1,6 @@
+import os
+from flask import jsonify
+
 from monApp.models import (
     PLAT,
     CATEGORIE,
@@ -72,7 +75,7 @@ def produits():
     page = request.args.get('page', 1, type=int)
     per_page = 9
 
-    query = db.session.query(PLAT)
+    query = db.session.query(PLAT).filter(PLAT.disponible.is_(True))
     if cat_id is not None:
         query = query.filter_by(id_categorie=cat_id)
 
@@ -110,9 +113,19 @@ def produits():
 
     categories = db.session.query(CATEGORIE).all()
 
+    if current_user.is_authenticated:
+        commande = db.session.query(COMMANDE).filter_by(id_client=current_user.id_client, statut='En commande').first()
+    else:
+        commande = None
+    
+    quantites_panier = {}
+    if commande:
+        for item in commande.plats:
+            quantites_panier[item.id_plat] = item.quantite
 
     return render_template(
         "produits.html",
+        commande=commande,
         produits=produits,
         cat_id=cat_id,
         categories=categories,
@@ -120,6 +133,7 @@ def produits():
         total_pages=total_pages,
         total_items=total,
         per_page=per_page,
+        quantites_panier=quantites_panier,
         filters={
             'vegetarien': vegetarien,
             'vegan': vegan,
@@ -324,7 +338,8 @@ def panier():
         if total_general > 100:
             flash("Montant supérieur à 100€. Veuillez commander directement en magasin.", "warning")
 
-    return render_template("panier.html", commande=commande, total_general=total_general, heures_retrait=heures_possible, panier_depasse=total_general > 100)
+    return render_template("panier.html", commande=commande, total_general=total_general, heures_retrait=heures_possible, panier_depasse=total_general > 50)
+
 
 @app.route('/ajouter-au-panier/', methods=['POST'])
 def ajouter_au_panier():
@@ -348,6 +363,7 @@ def ajouter_au_panier():
     try:
         if item_panier:
             item_panier.quantite += 1
+            db.session.commit()
         else:
             item_panier = APPARTENIR_PLATS(id_commande=commande.id_commande, id_plat=id_plat, quantite=1)
             db.session.add(item_panier)
@@ -645,7 +661,47 @@ def edit_stock_item(item_id):
             return redirect(url_for('admin_stock', search=request.args.get('search', '')))
         except ValueError:
             flash("Veuillez entrer une quantité valide.", "error")
-    return redirect(url_for('admin_stock'))
+        return render_template('admin_stock.html', items=[{'item': item, 'stock': stock_entry.stock if stock_entry else 0}], search_term=request.args.get('search', ''))
+
+    return render_template('admin_stock.html', items=[{'item': item, 'stock': stock_entry.stock if stock_entry else 0}], search_term=request.args.get('search', ''))
+
+
+@app.route('/admin/stock/update-all', methods=['POST'])
+@admin_required
+def update_all_stock():
+    today = date.today()
+    try:
+        updated_count = 0
+        plat_ids = set()
+        
+        # Récupérer tous les IDs de plats depuis les stocks
+        for key in request.form.keys():
+            if key.startswith('stock_'):
+                plat_id = int(key.replace('stock_', ''))
+                plat_ids.add(plat_id)
+        
+        # Mettre à jour les stocks et disponibilités
+        for plat_id in plat_ids:
+            # Mettre à jour le stock
+            new_stock = int(request.form.get(f'stock_{plat_id}', 0))
+            stock_entry = db.session.query(DEFINIR_STOCK).filter_by(id_plat=plat_id, jour=today).first()
+            if stock_entry:
+                stock_entry.stock = new_stock
+            
+            # Mettre à jour la disponibilité
+            plat = db.session.query(PLAT).get(plat_id)
+            if plat:
+                plat.disponible = f'disponible_{plat_id}' in request.form
+            
+            updated_count += 1
+        
+        db.session.commit()
+        flash(f"{updated_count} plat(s) mis à jour avec succès.", "success")
+    except Exception as e:
+        db.session.rollback()
+        flash(f"Erreur lors de la mise à jour : {str(e)}", "error")
+    
+    return redirect(url_for('admin_stock', search=request.args.get('search', '')))
 
 @app.route('/creer-avis/', methods=['GET', 'POST'])
 @login_required
@@ -1024,8 +1080,6 @@ def admin_delete_plat(id_plat):
     return redirect(url_for('admin_plats'))
 
 
-
-
 @app.route('/admin/menus/')
 @admin_required
 def admin_menus():
@@ -1318,6 +1372,30 @@ def annuler_reservation(id_reservation):
     
     return redirect(url_for('compte'))
 
+
+# Upload d'image pour drag-and-drop (admin plat)
+@app.route('/upload-image/', methods=['POST'])
+@admin_required
+def upload_image():
+    if 'image' not in request.files:
+        return jsonify({'success': False, 'error': 'Aucun fichier reçu.'}), 400
+    file = request.files['image']
+    if file.filename == '':
+        return jsonify({'success': False, 'error': 'Nom de fichier vide.'}), 400
+    if not file.filename.lower().endswith(('.png', '.jpg', '.jpeg', '.gif', '.webp')):
+        return jsonify({'success': False, 'error': 'Type de fichier non supporté.'}), 400
+    # Dossier de destination (dans static/images/)
+    upload_folder = os.path.join(app.root_path, 'static', 'images')
+    os.makedirs(upload_folder, exist_ok=True)
+    # Nom de fichier unique
+    import uuid
+    ext = os.path.splitext(file.filename)[1]
+    filename = f"plat_{uuid.uuid4().hex}{ext}"
+    file_path = os.path.join(upload_folder, filename)
+    file.save(file_path)
+    # URL accessible depuis le front
+    url = url_for('static', filename=f'images/{filename}')
+    return jsonify({'success': True, 'url': url})
 @app.route('/admin/capacite', methods=['GET','POST'])
 @admin_required
 def admin_capacite():

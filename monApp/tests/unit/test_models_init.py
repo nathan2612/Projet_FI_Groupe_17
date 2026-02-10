@@ -4,6 +4,7 @@ from monApp.models import (
         CONTENIR, APPARTENIR_PLATS, APPARTENIR_MENUS, AVIS, DEFINIR_STOCK
     )
 from monApp import db
+import pytest
 
 def test_categorie_init():
     cat = CATEGORIE(id_categorie=1, nom_categorie='Entrées')
@@ -16,7 +17,7 @@ def test_plat_init():
     assert plat.id_categorie == 1
     assert plat.nom_plat == 'Salade César'
     assert plat.description == 'Salade avec poulet, croûtons et parmesan'
-    assert plat.prix == 9.99
+    assert plat.prix == pytest.approx(9.99)
     assert plat.disponible is True
 
 def test_client_init():
@@ -33,7 +34,7 @@ def test_menu_init():
     assert menu.id_menu == 1
     assert menu.nom_menu == 'Menu Déjeuner'
     assert menu.description == 'Entrée + Plat + Dessert'
-    assert menu.prix == 19.99
+    assert menu.prix == pytest.approx(19.99)
 
 def test_avis_init():
     avis = AVIS(id_avis=1, id_client=1, note=5, commentaire='Excellent plat!')
@@ -43,13 +44,12 @@ def test_avis_init():
     assert avis.commentaire == 'Excellent plat!'
 
 def test_commande_init():
-    commande = COMMANDE(id_commande=1, id_client=1, date_commande='2024-01-01', statut='En cours', montant_total=29.99, sur_place=True, nombre_personnes=2)
+    commande = COMMANDE(id_commande=1, id_client=1, date_commande='2024-01-01', statut='En cours', montant_total=29.99, nombre_personnes=2)
     assert commande.id_commande == 1
     assert commande.id_client == 1
     assert commande.date_commande == '2024-01-01'
     assert commande.statut == 'En cours'
-    assert commande.montant_total == 29.99
-    assert commande.sur_place is True
+    assert commande.montant_total == pytest.approx(29.99)
     assert commande.nombre_personnes == 2
 
 def test_contenir_init():

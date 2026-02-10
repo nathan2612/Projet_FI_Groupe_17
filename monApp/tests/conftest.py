@@ -118,10 +118,10 @@ def testapp():
         db.session.commit()
 
         commandes = [
-            COMMANDE(id_commande=1, id_client=1, date_commande=datetime(today.year, today.month, today.day, 12, 0, 0), statut='En commande', montant_total=Decimal('0.00'), sur_place=False, nombre_personnes=1),
-            COMMANDE(id_commande=2, id_client=2, date_commande=datetime(today.year, today.month, today.day, 12, 0, 0), statut='En commande', montant_total=Decimal('0.00'), sur_place=True, nombre_personnes=4),
-            COMMANDE(id_commande=3, id_client=3, date_commande=datetime(today.year, today.month, today.day, 13, 0, 0), statut='En commande', montant_total=Decimal('0.00'), sur_place=False, nombre_personnes=2),
-            COMMANDE(id_commande=4, id_client=4, date_commande=datetime(today.year, today.month, today.day, 13, 0, 0), statut='En commande', montant_total=Decimal('0.00'), sur_place=True, nombre_personnes=2),
+            COMMANDE(id_commande=1, id_client=1, date_commande=datetime(today.year, today.month, today.day, 12, 0, 0), statut='En commande', montant_total=Decimal('0.00'), nombre_personnes=1),
+            COMMANDE(id_commande=2, id_client=2, date_commande=datetime(today.year, today.month, today.day, 12, 0, 0), statut='En commande', montant_total=Decimal('0.00'), nombre_personnes=4),
+            COMMANDE(id_commande=3, id_client=3, date_commande=datetime(today.year, today.month, today.day, 13, 0, 0), statut='En commande', montant_total=Decimal('0.00'), nombre_personnes=2),
+            COMMANDE(id_commande=4, id_client=4, date_commande=datetime(today.year, today.month, today.day, 13, 0, 0), statut='En commande', montant_total=Decimal('0.00'), nombre_personnes=2),
         ]
         db.session.add_all(commandes)
         db.session.commit()
