@@ -37,23 +37,23 @@
                     {% for item_data in items %}
                     <tr>
                         <td>{{ item_data.item.nom_plat }}</td>
-                        <td>
+                        <td data-label="Stock">
                             <div class="stock-form">
                                 <input type="number" name="stock_{{ item_data.item.id_plat }}" value="{{ item_data.stock }}" required min="0">
                             </div>
                         </td>
-                        <td>
+                        <td data-label="Disponibilité">
                             <input type="checkbox" 
                                    name="disponible_{{ item_data.item.id_plat }}" 
                                    {% if item_data.item.disponible %}checked{% endif %}>
                         </td>
-                        <td>
+                        <td data-label="Actions">
                             <button type="button" onclick="document.getElementsByName('stock_{{ item_data.item.id_plat }}')[0].value = 0" class="btn btn-secondary btn-small btn-reset" title="Réinitialiser"><img src="{{ url_for('static', filename='images/assets/reset.png') }}" alt="Reset"></button>
                         </td>
                     </tr>
                     {% endfor %}
                     {% if not items %}
-                    <tr>
+                    <tr class="no-items">
                         <td colspan="4">Aucun item en stock</td>
                     </tr>
                     {% endif %}

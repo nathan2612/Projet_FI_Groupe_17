@@ -430,9 +430,15 @@ main h1 {
     max-width: 600px;
 }
 
+.search-form {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+}
+
 .search-bar {
-    width: 100%;
-    padding: 14px 45px 14px 20px;
+    flex: 1;
+    padding: 14px 20px;
     border: 2px solid rgba(0,0,0,0.1);
     border-radius: 30px;
     font-size: 1rem;
@@ -451,6 +457,26 @@ main h1 {
 
 .search-bar::placeholder {
     color: #999;
+}
+
+.btn-search {
+    padding: 14px 28px;
+    background: var(--primary-color);
+    color: white;
+    border: none;
+    border-radius: 30px;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 15px rgba(255, 122, 0, 0.3);
+    white-space: nowrap;
+}
+
+.btn-search:hover {
+    background: #e66d00;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(255, 122, 0, 0.4);
 }
 
 .search-clear {

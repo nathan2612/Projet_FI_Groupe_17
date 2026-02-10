@@ -49,6 +49,12 @@ html, body {
     align-items: center;
 }
 
+.submit-bar {
+    margin-bottom: 1.5rem;
+    display: flex;
+    justify-content: flex-end;
+}
+
 .search-bar input {
     flex: 1;
     min-width: 200px;
@@ -89,10 +95,30 @@ html, body {
     font-size: 0.95rem;
 }
 
+.stock-col {
+    width: 150px;
+}
+
+.disponibilite-col {
+    width: 120px;
+    text-align: center;
+}
+
+.action-col {
+    width: 100px;
+    text-align: center;
+}
+
 .stock-list td {
     padding: 1rem;
     border-bottom: 1px solid var(--admin-btn-secondary-border);
     color: var(--admin-text-body);
+    vertical-align: middle;
+}
+
+.stock-list td:nth-child(3),
+.stock-list td:nth-child(4) {
+    text-align: center;
 }
 
 .stock-list tbody tr:hover {
@@ -107,15 +133,18 @@ html, body {
     display: flex;
     gap: 0.5rem;
     align-items: center;
+    justify-content: center;
 }
 
 .stock-form input {
     flex: 1;
     min-width: 60px;
+    max-width: 120px;
     padding: 0.5rem;
     border: 1px solid var(--admin-btn-secondary-border);
     border-radius: 4px;
     font-size: 0.9rem;
+    text-align: center;
 }
 
 .stock-form input:focus {
@@ -164,6 +193,36 @@ html, body {
     font-size: 0.85rem;
 }
 
+.btn-submit {
+    font-size: 1rem;
+    padding: 0.75rem 1.5rem;
+}
+
+.btn-reset {
+    padding: 0.35rem 0.5rem;
+    min-width: auto;
+}
+
+.btn-reset img {
+    width: 18px;
+    height: 18px;
+    display: block;
+}
+
+input[type="checkbox"] {
+    width: 20px;
+    height: 20px;
+    cursor: pointer;
+    accent-color: var(--admin-btn-primary-text);
+}
+
+.no-items {
+    text-align: center;
+    padding: 2rem !important;
+    color: var(--admin-text-body);
+    font-style: italic;
+}
+
 @media (max-width: 768px) {
     .admin-container {
         padding: 0 1rem;
@@ -184,6 +243,15 @@ html, body {
         width: 100%;
     }
 
+    .submit-bar {
+        margin-bottom: 1rem;
+    }
+
+    .btn-submit {
+        width: 100%;
+        justify-content: center;
+    }
+
     .stock-list thead {
         display: none;
     }
@@ -200,42 +268,71 @@ html, body {
         border: 1px solid var(--admin-btn-secondary-border);
         border-radius: 8px;
         margin-bottom: 1rem;
+        padding: 0.75rem;
     }
 
     .stock-list td {
-        display: block;
-        padding: 0.75rem 0.75rem 0.75rem 120px;
+        display: flex;
+        align-items: center;
+        padding: 0.5rem 0;
         border: none;
-        border-top: 1px solid var(--admin-btn-secondary-border);
+        border-bottom: 1px solid #f0f0f0;
         position: relative;
+        text-align: left !important;
     }
 
     .stock-list td:first-child {
-        border-top: none;
-        padding-left: 0.75rem;
+        border-bottom: 2px solid var(--admin-btn-secondary-border);
+        padding-bottom: 0.75rem;
+        margin-bottom: 0.5rem;
         background: #f7fafc;
+        padding: 0.75rem;
+        margin: -0.75rem -0.75rem 0.5rem -0.75rem;
         font-weight: 600;
         color: var(--admin-text-title);
+        border-radius: 6px 6px 0 0;
+    }
+
+    .stock-list td:last-child {
+        border-bottom: none;
     }
 
     .stock-list td::before {
         content: attr(data-label);
-        position: absolute;
-        left: 0.75rem;
         font-weight: 600;
         color: var(--admin-text-title);
         font-size: 0.9rem;
-        min-width: 110px;
+        min-width: 120px;
+        margin-right: 1rem;
+    }
+
+    .stock-list td:first-child::before {
+        display: none;
     }
 
     .stock-form {
-        flex-wrap: wrap;
+        flex: 1;
+        display: flex;
+        gap: 0.5rem;
+        justify-content: flex-start;
     }
 
-    .stock-form input,
-    .stock-form button,
+    .stock-form input {
+        flex: 1;
+        max-width: 100px;
+        text-align: left;
+    }
+
     .btn {
-        width: 100%;
+        width: auto;
+    }
+
+    input[type="checkbox"] {
+        margin-left: 0;
+    }
+
+    .btn-reset {
+        margin-left: 0;
     }
 }
 
@@ -245,21 +342,26 @@ html, body {
     }
 
     .stock-list td {
-        padding-left: 100px;
         font-size: 0.9rem;
     }
 
     .stock-list td::before {
-        font-size: 0.8rem;
-        min-width: 90px;
+        font-size: 0.85rem;
+        min-width: 100px;
+        margin-right: 0.75rem;
     }
 
     .btn {
         padding: 0.5rem 0.75rem;
-        font-size: 0.8rem;
+        font-size: 0.85rem;
     }
 
     .btn-small {
         padding: 0.3rem 0.6rem;
+    }
+
+    .btn-submit {
+        font-size: 0.9rem;
+        padding: 0.6rem 1rem;
     }
 }

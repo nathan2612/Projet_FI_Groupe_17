@@ -74,10 +74,14 @@ def produits():
     cat_id = request.args.get('cat_id', type=int)
     page = request.args.get('page', 1, type=int)
     per_page = 9
+    search_query = request.args.get('search', '').strip()
 
     query = db.session.query(PLAT).filter(PLAT.disponible.is_(True))
     if cat_id is not None:
         query = query.filter_by(id_categorie=cat_id)
+
+    if search_query:
+        query = query.filter(PLAT.nom_plat.ilike(f'%{search_query}%'))
 
     vegetarien = request.values.get('vegetarien', '0') == '1'
     vegan = request.values.get('vegan', '0') == '1'
@@ -134,6 +138,7 @@ def produits():
         total_items=total,
         per_page=per_page,
         quantites_panier=quantites_panier,
+        search_query=search_query,
         filters={
             'vegetarien': vegetarien,
             'vegan': vegan,
@@ -1070,13 +1075,46 @@ def admin_delete_plat(id_plat):
     if not plat:
         flash("Plat introuvable.", "error")
         return redirect(url_for('admin_plats'))
+    
+    # Vérifier si le plat est dans des commandes existantes
+    commandes_avec_plat = db.session.query(APPARTENIR_PLATS).filter_by(id_plat=id_plat).first()
+    if commandes_avec_plat:
+        flash("Impossible de supprimer ce plat : il est présent dans des commandes existantes. Vous pouvez le désactiver à la place.", "error")
+        return redirect(url_for('admin_plats'))
+    
     try:
+        # Supprimer les stocks associés
+        db.session.query(DEFINIR_STOCK).filter_by(id_plat=id_plat).delete()
+        
+        # Supprimer les associations avec les menus
+        db.session.query(CONTENIR).filter_by(id_plat=id_plat).delete()
+        
+        # Supprimer le plat
         db.session.delete(plat)
         db.session.commit()
-        flash("Plat supprimé.", "success")
-    except Exception:
+        flash("Plat supprimé avec succès.", "success")
+    except Exception as e:
         db.session.rollback()
-        flash("Impossible de supprimer le plat (dépendances).", "error")
+        flash(f"Impossible de supprimer le plat : {str(e)}", "error")
+    return redirect(url_for('admin_plats'))
+
+
+@app.route('/admin/plats/<int:id_plat>/toggle/', methods=['POST'])
+@admin_required
+def admin_toggle_plat_disponibilite(id_plat):
+    plat = db.session.query(PLAT).get(id_plat)
+    if not plat:
+        flash("Plat introuvable.", "error")
+        return redirect(url_for('admin_plats'))
+    
+    try:
+        plat.disponible = not plat.disponible
+        db.session.commit()
+        status = "activé" if plat.disponible else "désactivé"
+        flash(f"Plat {status} avec succès.", "success")
+    except Exception as e:
+        db.session.rollback()
+        flash(f"Erreur lors de la modification : {str(e)}", "error")
     return redirect(url_for('admin_plats'))
 
 
@@ -1396,8 +1434,9 @@ def upload_image():
     # URL accessible depuis le front (pour prévisualisation)
     url = url_for('static', filename=f'images/plats/{filename}')
     # Chemin relatif à stocker dans la BD (sans le préfixe images/)
-    relative_path = f'plats/{filename}'
+    relative_path = f'{filename}'
     return jsonify({'success': True, 'url': url, 'relative_path': relative_path})
+
 @app.route('/admin/capacite', methods=['GET','POST'])
 @admin_required
 def admin_capacite():
