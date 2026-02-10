@@ -1,0 +1,177 @@
+{% block base %}
+<!doctype html>
+<html lang="fr">
+	<head>
+		<meta charset="UTF-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+		<title>{% block title %}{% endblock %}</title>
+
+		<link rel="stylesheet" href="{{ url_for('static', filename='css/client/style.css') }}">
+		<link rel="icon" type="image/png" href="{{ url_for('static', filename='images/assets/logo.png') }}">
+		<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+		{% block styles %}{% endblock %}
+		{% block styles2 %}{% endblock %}
+	</head>
+	<body>
+		<header class="site-header">
+			<div class="navbar-complet">
+				<div class="nav-logo">
+					<a href="/">
+						<img src="{{ url_for('static', filename='images/assets/logo.png') }}" alt="Logo Oumami" class="logo">
+					</a>
+				</div>
+
+				<button class="burger-menu" id="burger-menu" aria-label="Menu">
+					<span></span>
+					<span></span>
+					<span></span>
+				</button>
+
+				<nav class="navbar" id="navbar">
+					<ul class="nav-links">
+						<li {% if request.endpoint == 'index' %}class="active"{% endif %}><a href="{{ url_for('index') }}">Accueil</a></li>
+						<li {% if request.endpoint == 'produits' %}class="active"{% endif %}><a href="{{ url_for('produits') }}">Nos produits</a></li>
+						<li {% if request.endpoint == 'nouveaute' %}class="active"{% endif %}><a href="{{ url_for('nouveaute') }}">Nouveautés</a></li>
+						<li {% if request.endpoint == 'contact' %}class="active"{% endif %}><a href="{{ url_for('contact') }}">Contact</a></li>
+						<li {% if request.endpoint == 'apropos' %}class="active"{% endif %}><a href="{{ url_for('apropos') }}">A propos</a></li>
+					</ul>
+				</nav>
+				<div class="nav-actions">
+					<button id="theme-toggle" class="btn-theme" title="Changer de thème">
+						<i class="fas fa-sun"></i>
+					</button>
+					{% if current_user.is_authenticated %}
+					<a href="{{ url_for('compte') }}" class="btn-nav-icon" title="Mon compte">
+						<i class="fas fa-user"></i>
+						<span class="btn-nav-label">{{ current_user.prenom }}</span>
+					</a>
+					{% else %}
+					<a href="{{ url_for('connexion') }}" class="btn-nav-icon" title="Connexion">
+						<i class="fas fa-user"></i>
+						<span class="btn-nav-label">Connexion</span>
+					</a>
+					{% endif %}
+					<a href="{{ url_for('panier') }}" class="btn-nav-icon" title="Panier">
+						<i class="fas fa-shopping-basket"></i>
+						<span class="btn-nav-label">Panier</span>
+					</a>
+					{% if current_user.is_authenticated and current_user.is_admin() %}
+					<a href="{{ url_for('admin_index') }}" class="btn-nav-icon" title="Admin">
+						<i class="fas fa-cog"></i>
+						<span class="btn-nav-label">Admin</span>
+					</a>
+					{% endif %}
+				</div>
+			</div>
+
+			{% block header %}{% endblock %}
+		</header>
+
+		{# Bloc pour afficher les messages flash #}
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            <div class="flash-messages-container">
+                {% for category, message in messages %}
+                    <div class="alert alert-{{ category }}">
+                        {{ message }}
+                    </div>
+                {% endfor %}
+            </div>
+        {% endif %}
+    {% endwith %}
+
+		<main id="main" role="main" class="container">
+			{% block main %}{% endblock %}
+		</main>
+
+		<footer>
+			<div class="footer-main">
+				<div class="footer-column">
+					<h4 class="footer-title">Oumami</h4>
+					<ul class="footer-list">
+						<li><i class="fas fa-map-marker-alt"></i> 4 place de la Halle, 41250 Bracieux</li>
+						<li><i class="fas fa-phone"></i> Télephone 02.54.79.05.48</li>
+					</ul>
+				</div>
+				<div class="footer-column">
+					<h4 class="footer-title">Horaires</h4>
+					<ul class="footer-list">
+						<li>Du mardi au samedi</li>
+						<li>11h30 - 14h <span class="horaire-detail">(sur place & à emporter)</span></li>
+						<li>17h - 20h <span class="horaire-detail">(à emporter uniquement)</span></li>
+					</ul>
+				</div>
+			</div>
+			<div class="footer-bottom">
+				<p>© 2024 Oumami - Tous droits réservés.</p>
+				<p>Crédit site : <a href="https://github.com/nathan2612/Projet_FI_Groupe_17.git">Github</a></p>
+			</div>
+		</footer>
+
+		<script>
+			document.addEventListener('DOMContentLoaded', function() {
+				// Script pour faire disparaître les messages flash automatiquement
+				const flashMessagesContainer = document.querySelector('.flash-messages-container');
+				if (flashMessagesContainer) {
+					const alerts = flashMessagesContainer.querySelectorAll('.alert');
+					alerts.forEach(alert => {
+						setTimeout(() => {
+							alert.style.opacity = '0'; // Déclenche la transition de fondu
+							alert.addEventListener('transitionend', () => {
+								alert.remove(); // Supprime l'élément du DOM après la transition
+							}, { once: true }); // S'assure que l'écouteur n'est exécuté qu'une seule fois
+						}, 5000); // Le message disparaît après 5 secondes (5000 millisecondes)
+					});
+				}
+
+				const themeToggle = document.getElementById('theme-toggle');
+				const body = document.body;
+				const themeIcon = themeToggle.querySelector('i');
+				const applyTheme = () => {
+					const savedTheme = localStorage.getItem('theme');
+					if (savedTheme === 'dark') {
+						body.classList.add('dark-mode');
+						themeIcon.classList.remove('fa-sun');
+						themeIcon.classList.add('fa-moon');
+					} else {
+						body.classList.remove('dark-mode');
+						themeIcon.classList.remove('fa-moon');
+						themeIcon.classList.add('fa-sun');
+					}
+				};
+				themeToggle.addEventListener('click', () => {
+					body.classList.toggle('dark-mode');
+					
+					let newTheme = body.classList.contains('dark-mode') ? 'dark' : 'light';
+					localStorage.setItem('theme', newTheme);
+					applyTheme(); 
+				});
+				applyTheme(); 
+			});
+
+
+			// louis
+
+			document.addEventListener('DOMContentLoaded', function() {
+			    const burgerMenu = document.getElementById('burger-menu');
+			    const navbar = document.getElementById('navbar');
+			
+			    burgerMenu.addEventListener('click', function() {
+			        this.classList.toggle('active');
+			        navbar.classList.toggle('active');
+			    });
+			
+			    // Fermer le menu si on clique sur un lien
+			    const navLinks = navbar.querySelectorAll('a');
+			    navLinks.forEach(link => {
+			        link.addEventListener('click', function() {
+			            burgerMenu.classList.remove('active');
+			            navbar.classList.remove('active');
+			        });
+			    });
+			});
+		</script>
+	</body>
+</html>
+{% endblock %}

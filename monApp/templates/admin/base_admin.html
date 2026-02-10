@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Administration{% endblock %}</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/admin/base_admin.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    
+    {% block styles %}{% endblock %}
+</head> <body class="admin-body">
+    <button class="burger-menu" id="burger-menu" aria-label="Menu">
+        <span></span>
+        <span></span>
+        <span></span>
+    </button>
+    
+    <div class="sidebar" id="sidebar">
+        <h2><a href="{{ url_for('admin_index') }}">Administration</a></h2>
+        <nav class="nav-links">
+            <ul>
+                <li {% if request.endpoint == 'admin_index' %}class="active"{% endif %}>
+                    <a href="{{ url_for('admin_index') }}"><i class="fas fa-tachometer-alt"></i> Tableau de bord</a>
+                </li>
+                <li {% if request.endpoint == 'admin_stock' %}class="active"{% endif %}>
+                    <a href="{{ url_for('admin_stock') }}"><i class="fas fa-boxes"></i> Gestion du stock</a>
+                </li>
+                <li {% if request.endpoint == 'commandes' %}class="active"{% endif %}>
+                    <a href="{{ url_for('commandes') }}"><i class="fas fa-receipt"></i> Commandes</a>
+                </li>
+                <li {% if request.endpoint == 'admin_reservations' %}class="active"{% endif %}>
+                    <a href="{{ url_for('admin_reservations') }}"><i class="fas fa-calendar-check"></i> Réservations</a>
+                </li>                <li {% if request.endpoint == 'admin_menu_du_jour' %}class="active"{% endif %}>
+                    <a href="{{ url_for('admin_menu_du_jour') }}"><i class="fas fa-star"></i> Menu du jour</a>
+                </li>                <li {% if request.endpoint == 'admin_banni' %}class="active"{% endif %}>
+                    <a href="{{ url_for('admin_banni') }}"><i class="fas fa-user-slash"></i> Clients à bannir</a>
+                </li>
+                <li {% if request.endpoint == 'admin_bannis' %}class="active"{% endif %}>
+                    <a href="{{ url_for('admin_bannis') }}"><i class="fas fa-gavel"></i> Clients bannis</a>
+                </li>
+                <li {% if request.endpoint == 'admin_plats' %}class="active"{% endif %}>
+                    <a href="{{ url_for('admin_plats') }}"><i class="fas fa-utensils"></i> Gestion des plats</a>
+                </li>
+                <li {% if request.endpoint == 'admin_menus' %}class="active"{% endif %}>
+                    <a href="{{ url_for('admin_menus') }}"><i class="fas fa-list"></i> Gestion des menus</a>
+                </li>
+                <li {% if request.endpoint == 'admin_capacite' %}class="active"{% endif %}>
+                    <a href="{{ url_for('admin_capacite') }}"><i class="fas fa-list"></i> Gestion de la capacité</a>
+                </li>
+            </ul>
+        </nav>
+        <div class="logout-link">
+             <a href="{{ url_for('index') }}"><i class="fas fa-sign-out-alt"></i> Retour au site</a>
+        </div>
+    </div>
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            <div class="flash-messages-container">
+                {% for category, message in messages %}
+                    <div class="alert alert-{{ category }}">
+                        {{ message }}
+                    </div>
+                {% endfor %}
+            </div>
+        {% endif %}
+    {% endwith %}
+    <div class="content">
+        {% block main %}{% endblock %}
+    </div>
+
+    <script>
+        const burgerMenu = document.getElementById('burger-menu');
+        const sidebar = document.getElementById('sidebar');
+
+        if (burgerMenu) {
+            burgerMenu.addEventListener('click', () => {
+                burgerMenu.classList.toggle('active');
+                sidebar.classList.toggle('active');
+            });
+
+            const navLinks = sidebar.querySelectorAll('a');
+            navLinks.forEach(link => {
+                link.addEventListener('click', () => {
+                    if (window.innerWidth <= 768) {
+                        burgerMenu.classList.remove('active');
+                        sidebar.classList.remove('active');
+                    }
+                });
+            });
+        }
+
+        // Flash messages script
+        document.addEventListener('DOMContentLoaded', function() {
+            const flashMessagesContainer = document.querySelector('.flash-messages-container');
+            if (flashMessagesContainer) {
+                const alerts = flashMessagesContainer.querySelectorAll('.alert');
+                alerts.forEach(alert => {
+                    setTimeout(() => {
+                        alert.style.opacity = '0';
+                        alert.addEventListener('transitionend', () => {
+                            alert.remove();
+                        }, { once: true });
+                    }, 5000);
+                });
+            }
+        });
+    </script>
+</body>
+
+</html>

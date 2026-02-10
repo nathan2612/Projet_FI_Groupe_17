@@ -1,0 +1,166 @@
+{% extends 'admin/base_admin.html' %}
+
+{% block styles %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/admin/admin.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/admin/admin_plat.css') }}">
+{% endblock %}
+
+{% block main %}
+<div class="admin-page">
+    <h1>{% if action %}{{ action }}{% else %}Créer{% endif %} un menu</h1>
+
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            {% for category, message in messages %}
+                <div class="alert alert-{{ category }}">
+                    {{ message }}
+                </div>
+            {% endfor %}
+        {% endif %}
+    {% endwith %}
+
+    <form method="post">
+        <div class="form-field">
+            <label><strong>Nom du menu :</strong> *</label><br>
+            <input type="text" name="nom_menu" size="50" value="{% if menu %}{{ menu.nom_menu }}{% endif %}" required>
+        </div>
+        
+        <div class="form-field">
+            <label><strong>Description :</strong></label><br>
+            <textarea name="description" rows="3" cols="50">{% if menu %}{{ menu.description }}{% endif %}</textarea>
+        </div>
+        
+        <div class="form-field">
+            <label><strong>Prix :</strong> *</label><br>
+            <input type="text" name="prix" placeholder="Ex: 15.90" value="{% if menu %}{{ menu.prix }}{% endif %}" required>
+        </div>
+        
+        <div style="margin-bottom: 1.5rem;">
+            <label><strong>Image du menu :</strong></label><br>
+            <div id="drop-area-menu" style="border:2px dashed #ccc; padding:20px; text-align:center; margin-bottom:10px;">
+                <p>Glissez-déposez une image ici ou cliquez pour sélectionner un fichier</p>
+                <input type="file" id="fileElemMenu" accept="image/*" style="display:none">
+                <button type="button" id="fileSelectMenu" class="btn btn-secondary">Choisir une image</button>
+                <div id="previewMenu" style="margin-top:10px;"></div>
+            </div>
+            <input type="text" name="image_url" id="imageUrlMenu" size="50" placeholder="default_menu.jpg" value="{% if menu %}{{ menu.image_url }}{% endif %}" style="display:none;">
+        </div>
+        
+        <h3>Entrées * (cochez au moins 1) :</h3>
+        <div class="checkbox-container">
+            {% if entrees %}
+                {% for e in entrees %}
+                <label class="checkbox-label">
+                    <input type="checkbox" name="entrees" value="{{ e.id_plat }}"
+                        {% if selected_entrees and e.id_plat in selected_entrees %}checked{% endif %}>
+                    {{ e.nom_plat }}
+                </label>
+                {% endfor %}
+            {% else %}
+                <p>Aucune entrée disponible</p>
+            {% endif %}
+        </div>
+
+
+        
+        <h3>Plats principaux * (cochez au moins 1) :</h3>
+        <div class="checkbox-container">
+            {% if plats %}
+                {% for p in plats %}
+                <label class="checkbox-label">
+                    <input type="checkbox" name="plats" value="{{ p.id_plat }}" {% if selected_plats and p.id_plat in selected_plats %}checked{% endif %}>
+                    {{ p.nom_plat }}
+                </label>
+                {% endfor %}
+            {% else %}
+                <p>Aucun plat disponible</p>
+            {% endif %}
+        </div>
+        
+        <h3>Desserts * (cochez au moins 1) :</h3>
+        <div class="checkbox-container">
+            {% if desserts %}
+                {% for d in desserts %}
+                <label class="checkbox-label">
+                    <input type="checkbox" name="desserts" value="{{ d.id_plat }}" {% if selected_desserts and d.id_plat in selected_desserts %}checked{% endif %}>
+                    {{ d.nom_plat }}
+                </label>
+                {% endfor %}
+            {% else %}
+                <p>Aucun dessert disponible</p>
+            {% endif %}
+        </div>
+        
+        <div class="form-actions">
+            <button type="submit" class="btn-submit">{% if action %}{{ action }}{% else %}Créer{% endif %} le menu</button>
+            <a href="{{ url_for('admin_menus') }}" class="btn-cancel">Annuler</a>
+        </div>
+    </form>
+    <script>
+    // Drag and drop image upload pour menu
+    const dropAreaMenu = document.getElementById('drop-area-menu');
+    const fileElemMenu = document.getElementById('fileElemMenu');
+    const fileSelectMenu = document.getElementById('fileSelectMenu');
+    const previewMenu = document.getElementById('previewMenu');
+    const imageUrlMenuInput = document.getElementById('imageUrlMenu');
+
+    fileSelectMenu.addEventListener('click', () => fileElemMenu.click());
+
+    ;['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+        dropAreaMenu.addEventListener(eventName, preventDefaultsMenu, false)
+    });
+    function preventDefaultsMenu(e) {
+        e.preventDefault();
+        e.stopPropagation();
+    }
+
+    dropAreaMenu.addEventListener('drop', handleDropMenu, false);
+    fileElemMenu.addEventListener('change', handleFilesMenu, false);
+
+    function handleDropMenu(e) {
+        let dt = e.dataTransfer;
+        let files = dt.files;
+        handleFilesMenu({target: {files: files}});
+    }
+
+    function handleFilesMenu(e) {
+        const files = e.target.files;
+        if (files.length > 0) {
+            const file = files[0];
+            if (!file.type.startsWith('image/')) {
+                alert('Veuillez sélectionner un fichier image.');
+                return;
+            }
+            // Afficher l'aperçu
+            const reader = new FileReader();
+            reader.onload = function(ev) {
+                previewMenu.innerHTML = `<img src="${ev.target.result}" alt="Aperçu" style="max-width:200px; max-height:200px;"/>`;
+            };
+            reader.readAsDataURL(file);
+
+            // Upload de l'image (nécessite une route Flask pour gérer l'upload)
+            uploadImageMenu(file);
+        }
+    }
+
+    function uploadImageMenu(file) {
+        const formData = new FormData();
+        formData.append('image', file);
+        fetch('/upload-image/', {
+            method: 'POST',
+            body: formData
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                // Utiliser le chemin relatif retourné par l'API
+                imageUrlMenuInput.value = data.relative_path;
+            } else {
+                alert('Erreur lors de l\'upload de l\'image.');
+            }
+        })
+        .catch(() => alert('Erreur lors de l\'upload de l\'image.'));
+    }
+    </script>
+</div>
+{% endblock %}

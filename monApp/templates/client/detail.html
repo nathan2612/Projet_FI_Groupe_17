@@ -1,0 +1,88 @@
+{% extends "client/base.html" %}
+
+{% block styles %}
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/client/detail.css') }}">
+{% endblock %}
+
+{% block main %}
+    <div class="page-content-wrapper">
+        <main class="plat-container">
+            <div class="plat-image-wrapper">
+                <img src="{{ url_for('static', filename='images/plats/' + plat.image_url) }}" alt="Photo de {{ plat.nom_plat }}" class="plat-image">
+            </div>
+
+            <div class="plat-details">
+                <h1 class="plat-nom">{{ plat.nom_plat }}</h1>
+                <p class="plat-prix">{{ "%.2f€"|format(plat.prix) }}</p>
+                
+                <p class="plat-description">
+                    {{ plat.longue_description or plat.description }}
+                </p>
+                
+                {% if stock_disponible > 0 %}
+                    <form action="{{ url_for('ajouter_au_panier') }}" method="POST">
+                        <input type="hidden" name="id_plat" value="{{ plat.id_plat }}">
+                        <button type="submit" class="bouton-commander">Ajouter au panier</button>
+                    </form>
+                {% else %}
+                    <button class="bouton-commander" disabled>Rupture de stock</button>
+                {% endif %}
+            </div>
+        </main>
+        
+        <div class="allergen-container">
+            <header class="allergen-header">
+                <h2 class="allergen-title">Allergènes</h2>
+                <div class="arrow-wrapper">
+                    <span class="dropdown-arrow"></span>
+                </div>
+            </header>
+            {% set allergenes = [
+                {'nom': 'vegetarien', 'icone': 'Vegetarien.png'},
+                {'nom': 'vegan', 'icone': 'Vegan.png'},
+                {'nom': 'gluten', 'icone': 'Gluten.png'},
+                {'nom': 'lactose', 'icone': 'Lactose.png'},
+                {'nom': 'fruit_a_coque','icone': 'Fruits à coque.png'},
+                {'nom': 'crustaces', 'icone': 'Crustacés.png'}
+            ] %}
+
+            {% set cpt = namespace(count=0) %}
+            <ul class="allergen-list">
+                {% for allergene in allergenes %}
+                    {% if plat[allergene.nom] %}
+                        <li class="allergen-item">
+                            <img src="{{ url_for('static', filename='images/preference/' + allergene.icone) }}" alt="Icône {{ allergene.nom }}" class="icon">
+                            {{ allergene.nom }}
+                        </li>
+                        {% set cpt.count = cpt.count + 1 %}
+                    {% endif %}
+                {% endfor %}
+                {% if cpt.count == 0 %}
+                    <li class="allergen-item">Ce plat ne contient pas d'allergènes connus.</li>
+                {% endif %}
+            </ul>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const allergenHeader = document.querySelector('.allergen-header');
+            const allergenList = document.querySelector('.allergen-list');
+            const dropdownArrow = document.querySelector('.dropdown-arrow');
+
+            // Cache la liste par défaut
+            allergenList.style.display = 'none';
+            dropdownArrow.classList.add('collapsed');
+
+            allergenHeader.addEventListener('click', function() {
+                if (allergenList.style.display === 'none') {
+                    allergenList.style.display = 'block';
+                    dropdownArrow.classList.remove('collapsed');
+                } else {
+                    allergenList.style.display = 'none';
+                    dropdownArrow.classList.add('collapsed');
+                }
+            });
+        });
+    </script>
+{% endblock %}

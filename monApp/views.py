@@ -58,7 +58,7 @@ def index():
             menu_du_jour.plats = plats
             menu_du_jour.desserts = desserts
 
-    return render_template("index.html", AVIS=avis_list, menu_du_jour=menu_du_jour)
+    return render_template("client/index.html", AVIS=avis_list, menu_du_jour=menu_du_jour)
 
 @app.route('/avis/', endpoint='avis_page')
 def avis():
@@ -67,7 +67,7 @@ def avis():
     except Exception:
         avis = []
 
-    return render_template("avis.html", avis=avis)
+    return render_template("client/avis.html", avis=avis)
 
 @app.route('/produits/', methods=['POST', 'GET'])
 def produits():
@@ -124,7 +124,7 @@ def produits():
             quantites_panier[item.id_plat] = item.quantite
 
     return render_template(
-        "produits.html",
+        "client/produits.html",
         commande=commande,
         produits=produits,
         cat_id=cat_id,
@@ -153,7 +153,7 @@ def detail_plat(id_plat):
     
     stock_disponible = stock_entry.stock if stock_entry else 0
 
-    return render_template("detail.html", plat=plat, stock_disponible=stock_disponible)
+    return render_template("client/detail.html", plat=plat, stock_disponible=stock_disponible)
 
 
 @app.route('/menus/', methods=['POST', 'GET'])
@@ -172,7 +172,7 @@ def menus():
     menu = query.offset((page - 1) * per_page).limit(per_page).all()
 
     return render_template(
-        "menus.html",
+        "client/menus.html",
         menus=menu,
         page=page,
         total_pages=total_pages,
@@ -200,7 +200,7 @@ def detail_menu(id_menu):
     for c in (entres or []) + (plats or []) + (desserts or []):
         c.plat.stock_disponible = stocks_map.get(c.id_plat, 0)
 
-    return render_template("detail_menu.html", menu=menu, entres=entres, desserts=desserts, plats=plats)
+    return render_template("client/detail_menu.html", menu=menu, entres=entres, desserts=desserts, plats=plats)
    
 @app.route('/ajouter-menu-selection/', methods=['POST'])
 def ajouter_menu_selection():
@@ -254,11 +254,11 @@ def ajouter_menu_selection():
 
 @app.route('/contact/')
 def contact():
-    return render_template("contact.html")
+    return render_template("client/contact.html")
 
 @app.route('/apropos/')
 def apropos():
-    return render_template("apropos.html")
+    return render_template("client/apropos.html")
 
 @app.route('/commandes/')
 def commandes():
@@ -272,7 +272,7 @@ def commandes():
     except Exception:
         commandes_list = []
 
-    return render_template('commandes.html', commandes=commandes_list)
+    return render_template('client/commandes.html', commandes=commandes_list)
 
 
 @app.route('/commandes/<int:cmd_id>/set_statut', methods=['POST'])
@@ -301,7 +301,7 @@ def set_statut(cmd_id):
 
 @app.route('/nouveautes/')
 def nouveaute():
-    return render_template("nouveaute.html")
+    return render_template("client/nouveaute.html")
 
 @app.route('/panier/')
 @login_required
@@ -338,7 +338,7 @@ def panier():
         if total_general > 100:
             flash("Montant supérieur à 100€. Veuillez commander directement en magasin.", "warning")
 
-    return render_template("panier.html", commande=commande, total_general=total_general, heures_retrait=heures_possible, panier_depasse=total_general > 50)
+    return render_template("client/panier.html", commande=commande, total_general=total_general, heures_retrait=heures_possible, panier_depasse=total_general > 50)
 
 
 @app.route('/ajouter-au-panier/', methods=['POST'])
@@ -490,7 +490,7 @@ def connexion():
             login_user(client)
             next = form.next.data or url_for("index")
             return redirect(next)
-    return render_template("connexion.html", form=form)
+    return render_template("client/connexion.html", form=form)
 
 
 @app.route('/inscription/', methods=['GET', 'POST'])
@@ -500,11 +500,11 @@ def inscription():
         existing_client = db.session.query(CLIENT).filter_by(telephone=form.telephone.data).first()
         if existing_client:
             flash("Ce numéro de téléphone est déjà utilisé.", "error")
-            return render_template("inscription.html", form=form)
+            return render_template("client/inscription.html", form=form)
         
         if form.mot_de_passe.data != form.confirmation_mot_de_passe.data:
             flash("Les mots de passe ne correspondent pas.", "error")
-            return render_template("inscription.html", form=form)
+            return render_template("client/inscription.html", form=form)
         
         try:
             from hashlib import sha256
@@ -525,9 +525,9 @@ def inscription():
         except Exception as e:
             db.session.rollback()
             flash("Une erreur est survenue lors de l'inscription. Veuillez réessayer.", "error")
-            return render_template("inscription.html", form=form)
+            return render_template("client/inscription.html", form=form)
     
-    return render_template("inscription.html", form=form)
+    return render_template("client/inscription.html", form=form)
 
 @app.route('/logout')
 @login_required
@@ -575,13 +575,13 @@ def compte():
                 flash("Votre mot de passe a été mis à jour.", "success")
             else:
                 flash("Le mot de passe actuel est incorrect.", "error")
-                return render_template("compte.html", form=form, commandes=commandes_client, reservations=reservations_client)
+                return render_template("client/compte.html", form=form, commandes=commandes_client, reservations=reservations_client)
 
         db.session.commit()
         flash("Vos informations ont été mises à jour avec succès !", "success")
         return redirect(url_for('compte'))
 
-    return render_template("compte.html", form=form, commandes=commandes_client, reservations=reservations_client, today=date.today())
+    return render_template("client/compte.html", form=form, commandes=commandes_client, reservations=reservations_client, today=date.today())
 
 @app.route('/annuler-commande/<int:id_commande>/', methods=['POST'])
 @login_required
@@ -633,7 +633,7 @@ def admin_stock():
     if search_term:
         items_with_stock = [item for item in items_with_stock if search_term.lower() in item['item'].nom_plat.lower()]
 
-    return render_template("admin_stock.html", items=items_with_stock, search_term=search_term)
+    return render_template("admin/admin_stock.html", items=items_with_stock, search_term=search_term)
 
 
 @app.route('/admin/stock/edit/<int:item_id>', methods=['GET', 'POST'])
@@ -661,9 +661,9 @@ def edit_stock_item(item_id):
             return redirect(url_for('admin_stock', search=request.args.get('search', '')))
         except ValueError:
             flash("Veuillez entrer une quantité valide.", "error")
-        return render_template('admin_stock.html', items=[{'item': item, 'stock': stock_entry.stock if stock_entry else 0}], search_term=request.args.get('search', ''))
+        return render_template('admin/admin_stock.html', items=[{'item': item, 'stock': stock_entry.stock if stock_entry else 0}], search_term=request.args.get('search', ''))
 
-    return render_template('admin_stock.html', items=[{'item': item, 'stock': stock_entry.stock if stock_entry else 0}], search_term=request.args.get('search', ''))
+    return render_template('admin/admin_stock.html', items=[{'item': item, 'stock': stock_entry.stock if stock_entry else 0}], search_term=request.args.get('search', ''))
 
 
 @app.route('/admin/stock/update-all', methods=['POST'])
@@ -724,7 +724,7 @@ def creer_avis():
         flash("Merci ! Votre avis a été publié avec succès.", "success")
         return redirect(url_for('avis_page'))
 
-    return render_template("creation_avis.html")
+    return render_template("client/creation_avis.html")
 
 @app.route('/admin/banni/')
 @admin_required
@@ -738,7 +738,7 @@ def admin_banni():
         .all()
     )
     clients = [{'client': r[0], 'nb_non_recup': int(r[1])} for r in results]
-    return render_template("admin_banni.html", clients=clients)
+    return render_template("admin/admin_banni.html", clients=clients)
 
 
 @app.route('/admin/ban/<int:client_id>', methods=['POST'])
@@ -759,7 +759,7 @@ def ban_client(client_id):
 @admin_required
 def admin_bannis():
     clients = db.session.query(CLIENT).filter_by(banni=True).all()
-    return render_template('admin_bannis.html', clients=clients)
+    return render_template('admin/admin_bannis.html', clients=clients)
 
 
 @app.route('/admin/services/', methods=['GET', 'POST'])
@@ -787,7 +787,7 @@ def admin_services():
             flash(f"Erreur lors de l'ajout : {str(e)}", "error")
     
     services = db.session.query(SERVICE).order_by(SERVICE.heure_debut).all()
-    return render_template('admin_services.html', services=services, form=form)
+    return render_template('admin/admin_services.html', services=services, form=form)
 
 
 @app.route('/admin/services/toggle/<int:id_service>', methods=['POST'])
@@ -846,7 +846,7 @@ def admin_reservations():
                 'reservations': reservations_service
             })
     
-    return render_template('admin_reservations.html', 
+    return render_template('admin/admin_reservations.html', 
                          selected_date=selected_date,
                          stats_services=stats_services)
 
@@ -902,7 +902,7 @@ def admin_menu_du_jour():
     menu_entry = db.session.query(SALLE).filter_by(cle='menu_du_jour').first()
     menu_actuel_id = int(menu_entry.valeur) if menu_entry and menu_entry.valeur else None
     
-    return render_template('admin_menu_du_jour.html', menus=menus, menu_actuel_id=menu_actuel_id)
+    return render_template('admin/admin_menu_du_jour.html', menus=menus, menu_actuel_id=menu_actuel_id)
 
 
 @app.route('/admin-index/')
@@ -977,7 +977,7 @@ def admin_index():
     print(tout_plats_rupture)
 
     return render_template(
-        "admin_index.html",
+        "admin/admin_index.html",
         top_5_ventes=top_5_ventes,
         ca_pourcentage_annee_derniere=ca_pourcentage_annee_derniere,
         ca_pourcentage_mois=ca_pourcentage_mois,
@@ -999,7 +999,7 @@ def admin_index():
 @admin_required
 def admin_plats():
     plats = db.session.query(PLAT).all()
-    return render_template('admin_plats.html', plats=plats)
+    return render_template('admin/admin_plats.html', plats=plats)
 
 
 @app.route('/admin/plats/ajouter/', methods=['GET', 'POST'])
@@ -1028,7 +1028,7 @@ def admin_add_plat():
         db.session.commit()
         flash("Plat ajouté.", "success")
         return redirect(url_for('admin_plats'))
-    return render_template('admin_plat_form.html', form=form, action='Ajouter')
+    return render_template('admin/admin_plat_form.html', form=form, action='Ajouter')
 
 
 @app.route('/admin/plats/<int:id_plat>/editer/', methods=['GET', 'POST'])
@@ -1060,7 +1060,7 @@ def admin_edit_plat(id_plat):
         flash("Plat modifié.", "success")
         return redirect(url_for('admin_plats'))
     form.disponible.data = '1' if plat.disponible else '0'
-    return render_template('admin_plat_form.html', form=form, action='Éditer', plat=plat)
+    return render_template('admin/admin_plat_form.html', form=form, action='Éditer', plat=plat)
 
 
 @app.route('/admin/plats/<int:id_plat>/supprimer/', methods=['POST'])
@@ -1084,7 +1084,7 @@ def admin_delete_plat(id_plat):
 @admin_required
 def admin_menus():
     menus = db.session.query(MENU).all()
-    return render_template('admin_menus.html', menus=menus)
+    return render_template('admin/admin_menus.html', menus=menus)
 
 
 @app.route('/admin/menus/ajouter/', methods=['GET', 'POST'])
@@ -1096,7 +1096,7 @@ def admin_add_menu():
             nom_menu = request.form.get('nom_menu', '').strip()
             description = request.form.get('description', '').strip()
             prix = request.form.get('prix', '').strip()
-            image_url = request.form.get('image_url', '').strip() or 'default_menu.jpg'
+            image_url = request.form.get('image_url', '').strip() or 'assets/default_menu.jpg'
             entrees = request.form.getlist('entrees')
             plats = request.form.getlist('plats')
             desserts = request.form.getlist('desserts')
@@ -1169,7 +1169,7 @@ def admin_add_menu():
     entrees_list = db.session.query(PLAT).filter(PLAT.id_categorie.in_([1, 2, 3])).all()
     desserts_list = db.session.query(PLAT).filter(PLAT.id_categorie == 4).all()
     
-    return render_template('admin_menu_form.html', 
+    return render_template('admin/admin_menu_form.html', 
                          plats=plats_list, 
                          entrees=entrees_list, 
                          desserts=desserts_list) 
@@ -1188,7 +1188,7 @@ def admin_edit_menu(id_menu):
             nom_menu = request.form.get('nom_menu', '').strip()
             description = request.form.get('description', '').strip()
             prix = request.form.get('prix', '').strip()
-            image_url = request.form.get('image_url', '').strip() or 'default_menu.jpg'
+            image_url = request.form.get('image_url', '').strip() or 'assets/default_menu.jpg'
             entrees = request.form.getlist('entrees')
             plats = request.form.getlist('plats')
             desserts = request.form.getlist('desserts')
@@ -1255,7 +1255,7 @@ def admin_edit_menu(id_menu):
     selected_plats = [c.id_plat for c in contenir_records if c.type_plat == 1]
     selected_desserts = [c.id_plat for c in contenir_records if c.type_plat == 2]
     
-    return render_template('admin_menu_form.html',
+    return render_template('admin/admin_menu_form.html',
                          menu=menu,
                          plats=plats_list,
                          entrees=entrees_list,
@@ -1339,7 +1339,7 @@ def reservation():
             flash(f"Il n'y a plus de place pour ce service ce jour-ci.", "error")
             return redirect(url_for('reservation', date_reservation=selected_date.strftime('%Y-%m-%d')))
     
-    return render_template('reservation.html', 
+    return render_template('client/reservation.html', 
                          form=form, 
                          today=date.today(),
                          selected_date=selected_date,
@@ -1384,8 +1384,8 @@ def upload_image():
         return jsonify({'success': False, 'error': 'Nom de fichier vide.'}), 400
     if not file.filename.lower().endswith(('.png', '.jpg', '.jpeg', '.gif', '.webp')):
         return jsonify({'success': False, 'error': 'Type de fichier non supporté.'}), 400
-    # Dossier de destination (dans static/images/)
-    upload_folder = os.path.join(app.root_path, 'static', 'images')
+    # Dossier de destination (dans static/images/plats/)
+    upload_folder = os.path.join(app.root_path, 'static', 'images', 'plats')
     os.makedirs(upload_folder, exist_ok=True)
     # Nom de fichier unique
     import uuid
@@ -1393,9 +1393,11 @@ def upload_image():
     filename = f"plat_{uuid.uuid4().hex}{ext}"
     file_path = os.path.join(upload_folder, filename)
     file.save(file_path)
-    # URL accessible depuis le front
-    url = url_for('static', filename=f'images/{filename}')
-    return jsonify({'success': True, 'url': url})
+    # URL accessible depuis le front (pour prévisualisation)
+    url = url_for('static', filename=f'images/plats/{filename}')
+    # Chemin relatif à stocker dans la BD (sans le préfixe images/)
+    relative_path = f'plats/{filename}'
+    return jsonify({'success': True, 'url': url, 'relative_path': relative_path})
 @app.route('/admin/capacite', methods=['GET','POST'])
 @admin_required
 def admin_capacite():
@@ -1418,7 +1420,7 @@ def admin_capacite():
             flash("Veuillez entrer un nombre entier valide pour la capacité.", "error")
     capacite_entry = db.session.query(SALLE).filter_by(cle='capacite').first()
     capacite = capacite_entry.valeur if capacite_entry else 1
-    return render_template('admin_capacite.html', capacite=capacite)
+    return render_template('admin/admin_capacite.html', capacite=capacite)
 
 
 if __name__ == "__main__":

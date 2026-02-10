@@ -1,0 +1,35 @@
+{% extends 'client/base.html' %}
+
+{% block styles %}
+	<link rel="stylesheet" href="{{ url_for('static', filename='css/client/avis.css') }}">
+{% endblock %}
+{% block main %}
+	<section class="avis">
+		<div class="avis-header">
+			<h2>Ce que nos clients disent de nous</h2>
+		</div>
+		<div class="avis-list simple">
+			{% for av in avis %}
+				<div class="avis-row">
+					<p class="auteur">— {{ av.client.prenom if av.client and av.client.prenom else av.id_client }}</p>
+					{% if av.note == 5 %}
+					<img class="notes-img" src="{{ url_for('static', filename='images/note_etoiles/5etoiles.png') }}" alt="5 étoiles">
+					{% endif %}
+					{% if av.note == 4 %}
+					<img class="notes-img" src="{{ url_for('static', filename='images/note_etoiles/4etoiles.png') }}" alt="4 étoiles">
+					{% endif %}
+					{% if av.note == 3 %}
+					<img class="notes-img" src="{{ url_for('static', filename='images/note_etoiles/3etoiles.png') }}" alt="3 étoiles">
+					{% endif %}
+					{% if av.note == 2 %}
+					<img class="notes-img" src="{{ url_for('static', filename='images/note_etoiles/2etoiles.png') }}" alt="2 étoiles">
+					{% endif %}
+					{% if av.note == 1 %}
+					<img class="notes-img" src="{{ url_for('static', filename='images/note_etoiles/1etoile.png') }}" alt="1 étoile">
+					{% endif %}
+					<p class="avis-text">"{{ av.commentaire }}"</p>
+				</div>
+			{% endfor %}
+		</div>
+	</section>
+{% endblock %}
