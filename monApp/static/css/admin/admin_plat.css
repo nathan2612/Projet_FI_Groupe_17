@@ -164,3 +164,57 @@
     margin: 0;
     width: auto;
 }
+
+.btn-action {
+    display: inline-block;
+    padding: 0.5rem 0.85rem;
+    margin-right: 0.5rem;
+    border-radius: 6px;
+    text-decoration: none;
+    font-weight: 500;
+    border: 1px solid;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    font-size: 0.9rem;
+}
+
+.btn-action:first-child {
+    background: var(--accent-bg);
+    color: var(--accent);
+    border-color: rgba(94,71,194,0.15);
+}
+
+.btn-action:first-child:hover {
+    background: #e8e4f5;
+    box-shadow: 0 2px 6px rgba(94,71,194,0.1);
+}
+
+.btn-toggle {
+    background: #f0fdf4;
+    color: #16a34a;
+    border-color: rgba(22, 163, 74, 0.15);
+}
+
+.btn-toggle:hover {
+    background: #dcfce7;
+    box-shadow: 0 2px 6px rgba(22, 163, 74, 0.1);
+}
+
+.btn-delete {
+    background: #fef2f2;
+    color: #dc2626;
+    border-color: rgba(220, 38, 38, 0.15);
+}
+
+.btn-delete:hover {
+    background: #fee2e2;
+    box-shadow: 0 2px 6px rgba(220, 38, 38, 0.1);
+}
+
+.admin-table td {
+    white-space: nowrap;
+}
+
+.admin-table td:last-child {
+    padding-right: 1.25rem;
+}
