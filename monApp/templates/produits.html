@@ -53,6 +53,12 @@
         </aside>
 
         <main class="container content">
+        <div class="search-wrapper">
+            <div class="search-container">
+                <input type="text" id="searchInput" class="search-bar" placeholder="Rechercher un plat...">
+            </div>
+        </div>
+        
         <h1>Nos Plats</h1>
 
         <div class="menu-grid">
@@ -161,5 +167,29 @@
         </nav>
         </main>
     </div>
+
+    <script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const searchInput = document.getElementById('searchInput');
+        
+        function performSearch() {
+            const searchTerm = searchInput.value.toLowerCase().trim();
+            
+            const cards = document.querySelectorAll('.menu-card');
+            
+            cards.forEach(card => {
+                const title = card.querySelector('.card-title')?.textContent.toLowerCase() || '';
+                
+                if (title.includes(searchTerm)) {
+                    card.style.display = '';
+                } else {
+                    card.style.display = 'none';
+                }
+            });
+        }
+        
+        searchInput.addEventListener('input', performSearch);
+    });
+    </script>
 
 {% endblock %}
