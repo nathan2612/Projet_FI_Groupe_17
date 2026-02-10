@@ -8,6 +8,12 @@
     <div class="layout">
 
         <main class="container content">
+        <div class="search-wrapper">
+            <div class="search-container">
+                <input type="text" id="searchInput" class="search-bar" placeholder="Rechercher un menu...">
+            </div>
+        </div>
+        
         <h1>Nos Menus</h1>
 
         <section class="menu-grid">
@@ -80,4 +86,28 @@
         </nav>
         </main>
     </div>
+
+    <script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const searchInput = document.getElementById('searchInput');
+        
+        function performSearch() {
+            const searchTerm = searchInput.value.toLowerCase().trim();
+            
+            const cards = document.querySelectorAll('.menu-card');
+            
+            cards.forEach(card => {
+                const title = card.querySelector('h2')?.textContent.toLowerCase() || '';
+                
+                if (title.includes(searchTerm)) {
+                    card.style.display = '';
+                } else {
+                    card.style.display = 'none';
+                }
+            });
+        }
+        
+        searchInput.addEventListener('input', performSearch);
+    });
+    </script>
 {% endblock %}

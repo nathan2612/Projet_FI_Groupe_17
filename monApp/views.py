@@ -660,6 +660,31 @@ def edit_stock_item(item_id):
             flash("Veuillez entrer une quantité valide.", "error")
     return redirect(url_for('admin_stock'))
 
+
+@app.route('/admin/stock/update-all', methods=['POST'])
+@admin_required
+def update_all_stock():
+    today = date.today()
+    try:
+        updated_count = 0
+        for key, value in request.form.items():
+            if key.startswith('stock_'):
+                plat_id = int(key.replace('stock_', ''))
+                new_stock = int(value)
+                
+                stock_entry = db.session.query(DEFINIR_STOCK).filter_by(id_plat=plat_id, jour=today).first()
+                if stock_entry:
+                    stock_entry.stock = new_stock
+                    updated_count += 1
+        
+        db.session.commit()
+        flash(f"{updated_count} stock(s) mis à jour avec succès.", "success")
+    except Exception as e:
+        db.session.rollback()
+        flash(f"Erreur lors de la mise à jour : {str(e)}", "error")
+    
+    return redirect(url_for('admin_stock', search=request.args.get('search', '')))
+
 @app.route('/creer-avis/', methods=['GET', 'POST'])
 @login_required
 def creer_avis():
