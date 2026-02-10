@@ -148,10 +148,108 @@
 .admin-table td:nth-child(4) { color: #475569; font-weight: 600; }
 
 @media (max-width: 760px) {
-  .admin-banni-page { padding: 1rem; margin: 1rem; }
-  .admin-table thead th { font-size: 0.9rem; padding: 10px 12px; }
-  .admin-table tbody td { padding: 10px 12px; }
-  .admin-table { min-width: 0; }
-}
+  .admin-banni-page { 
+    padding: 1rem; 
+    margin: 1rem 0.5rem;
+    border-radius: 8px;
+  }
+  
+  .admin-banni-page h1 {
+    font-size: 1.25rem;
+    margin-bottom: 0.75rem;
+  }
+  
+  .table-wrapper {
+    margin: 0;
+    padding: 0;
+    border-radius: 8px;
+    overflow: visible;
+  }
+  
+  .admin-table {
+    display: block;
+    min-width: 0;
+  }
+  
+  .admin-table thead {
+    display: none;
+  }
+  
+  .admin-table tbody {
+    display: block;
+  }
+  
+  .admin-table tbody tr {
+    display: block;
+    margin-bottom: 1rem;
+    padding: 1rem;
+    background: white;
+    border: 1px solid rgba(15,23,42,0.08);
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+  }
+  
+  .admin-table tbody tr:hover {
+    background: white;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+  }
+  
+  .admin-table tbody td {
+    display: block;
+    padding: 0.5rem 0;
+    border: none;
+    text-align: left;
+  }
+  
+  .admin-table tbody td::before {
+    content: attr(data-label);
+    font-weight: 700;
+    color: #374151;
+    display: block;
+    margin-bottom: 0.25rem;
+    font-size: 0.85rem;
+  }
+  
+  .admin-table tbody td:first-child {
+    padding-top: 0;
+  }
+  
+  .admin-table tbody td:last-child {
+    padding-bottom: 0;
+    margin-top: 0.75rem;
+  }
+  
+  .ban-btn,
+  .unban-btn {
+    padding: 8px 16px;
+    font-size: 0.9rem;
+    border-radius: 6px;
+    width: 100%;
+    display: block;
+  }
+  
+  .toggle-btn {
+    padding: 8px 16px;
+    font-size: 0.9rem;
+    border-radius: 6px;
+    width: 100%;
+    display: block;
+    text-align: center;
+  }
+  
+  .badge-count {
+    min-width: auto;
+    height: auto;
+    padding: 6px 12px;
+    font-size: 0.9rem;
+    display: inline-flex;
+  }
+  .toggle-btn {
+    width: 100%;
+    display: block;
+    text-align: center;
+    box-sizing: border-box;
+  }
 
+}
 .admin-banni-page p { color: #6b7280; font-size: 1rem; margin-top: 0.5rem; }

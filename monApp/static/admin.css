@@ -383,4 +383,8 @@
     }
 
     .stock-list th, .stock-list td { padding: 0.75rem; }
+
+    .dashboard-container .dashboard-grid {
+        grid-template-columns: 1fr;
+    }
 }

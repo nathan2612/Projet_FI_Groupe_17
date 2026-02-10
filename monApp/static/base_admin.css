@@ -147,3 +147,116 @@ body {
 .dark-mode .alert {
     box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
 }
+
+/* Menu burger */
+.burger-menu {
+    display: none; /* Caché par défaut sur grand écran */
+    position: fixed;
+    top: 15px;
+    left: 15px;
+    z-index: 1050;
+    flex-direction: column;
+    background: var(--admin-sidebar-bg);
+    border: 2px solid rgba(255, 255, 255, 0.1);
+    cursor: pointer;
+    padding: 12px;
+    border-radius: 8px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+    transition: all 0.3s ease;
+}
+
+.burger-menu:hover {
+    background: var(--admin-sidebar-hover-bg);
+    transform: scale(1.05);
+}
+
+.burger-menu span {
+    width: 25px;
+    height: 3px;
+    background-color: var(--admin-sidebar-text);
+    margin: 3px 0;
+    transition: 0.3s;
+    border-radius: 2px;
+}
+
+.burger-menu.active span:nth-child(1) {
+    transform: rotate(-45deg) translate(-5px, 6px);
+}
+
+.burger-menu.active span:nth-child(2) {
+    opacity: 0;
+}
+
+.burger-menu.active span:nth-child(3) {
+    transform: rotate(45deg) translate(-5px, -6px);
+}
+
+/* Responsive */
+@media (min-width: 1025px) {
+    .burger-menu {
+        display: none !important;
+    }
+    
+    .sidebar {
+        position: relative !important;
+        left: 0 !important;
+        width: 250px;
+    }
+}
+
+@media (max-width: 1024px) {
+    .burger-menu {
+        display: flex !important; /* Afficher le burger sur mobile */
+    }
+
+    .sidebar {
+        position: fixed;
+        top: 0;
+        left: -100%;
+        width: 280px;
+        height: 100vh;
+        z-index: 1000;
+        transition: left 0.3s ease;
+        overflow-y: auto;
+    }
+
+    .sidebar.active {
+        left: 0;
+        box-shadow: 4px 0 15px rgba(0, 0, 0, 0.3);
+    }
+
+    .content {
+        width: 100%;
+        margin-left: 0;
+        padding-top: 70px;
+        padding-left: 10px;
+        padding-right: 10px;
+    }
+
+    .dashboard-container {
+        padding: 1rem;
+    }
+
+    .flash-messages-container {
+        top: 80px;
+        right: 10px;
+        left: 10px;
+        width: auto;
+    }
+}
+
+@media (max-width: 480px) {
+    .sidebar {
+        width: 250px;
+    }
+
+    .sidebar h2 {
+        font-size: 1.3rem;
+        margin-bottom: 30px;
+    }
+
+    .sidebar .nav-links a {
+        padding: 10px 15px;
+        font-size: 0.95rem;
+    }
+}

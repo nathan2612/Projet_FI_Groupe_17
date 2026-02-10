@@ -22,7 +22,13 @@
 					</a>
 				</div>
 
-				<nav class="navbar">
+				<button class="burger-menu" id="burger-menu" aria-label="Menu">
+					<span></span>
+					<span></span>
+					<span></span>
+				</button>
+
+				<nav class="navbar" id="navbar">
 					<ul class="nav-links">
 						<li {% if request.endpoint == 'index' %}class="active"{% endif %}><a href="{{ url_for('index') }}">Accueil</a></li>
 						<li {% if request.endpoint == 'produits' %}class="active"{% endif %}><a href="{{ url_for('produits') }}">Nos produits</a></li>
@@ -142,6 +148,28 @@
 					applyTheme(); 
 				});
 				applyTheme(); 
+			});
+
+
+			// louis
+
+			document.addEventListener('DOMContentLoaded', function() {
+			    const burgerMenu = document.getElementById('burger-menu');
+			    const navbar = document.getElementById('navbar');
+			
+			    burgerMenu.addEventListener('click', function() {
+			        this.classList.toggle('active');
+			        navbar.classList.toggle('active');
+			    });
+			
+			    // Fermer le menu si on clique sur un lien
+			    const navLinks = navbar.querySelectorAll('a');
+			    navLinks.forEach(link => {
+			        link.addEventListener('click', function() {
+			            burgerMenu.classList.remove('active');
+			            navbar.classList.remove('active');
+			        });
+			    });
 			});
 		</script>
 	</body>

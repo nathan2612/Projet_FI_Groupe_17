@@ -45,7 +45,7 @@
     transform: translateY(-2px);
 }
 
-.menu.container {
+.menu-container {
     max-width: 1500px;
     margin: auto;
     padding: 100px;
@@ -238,12 +238,6 @@
         text-align: center;
         color: #6c757d;
     }
-
-    @media (max-width: 900px) {
-        .grid-panels { grid-template-columns: repeat(2, 1fr); }
-        .grid-main { grid-column: 1 / -1; }
-        .grid-aside { grid-column: 1 / -1; }
-    }
 /* Menu du jour */
 .menu-du-jour.container {
     max-width: 1000px;
@@ -348,13 +342,14 @@
     background: #ff5722;
 }
 
-.reservation.container {
+.reservation-container {
     text-align: center;
     padding: 40px;
     border: 1px solid rgba(0, 0, 0, 0.08);
     border-radius: 12px;
     margin: 60px auto;
     max-width: 800px;
+    margin: 20px auto;
 }
 
 .reservation .btn-commander {
@@ -364,4 +359,34 @@
 
 .reservation .btn-commander:hover {
     background: #ff5722;
+}
+
+@media (max-width: 768px) {
+    .site-header {
+        padding-bottom: 0.4rem;
+    }
+    .header-content {
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+        padding: 1.5rem 1rem 2.5rem;
+    }
+    .menu-container {
+        flex-direction: column;
+        padding: 20px;
+    }
+    .menu-card img {
+        width: 100%;
+    }
+    .avis {
+        padding: 20px;
+    }
+    .notes-img {
+        width: 50px;
+    }
+    .reservation-container {
+        padding: 20px;
+        margin: 20px;
+    }
+
 }

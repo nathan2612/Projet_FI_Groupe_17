@@ -1,175 +1,202 @@
 .commandes-page {
-    padding: 2rem 1rem;
-    max-width: 1200px;
-    margin: 0 auto;
+     padding: 2rem 1rem;
+     max-width: 1200px;
+     margin: 0 auto;
 }
-
-.commandes-header {
-    text-align: center;
-    margin-bottom: 2.5rem;
+ .commandes-header {
+     text-align: center;
+     margin-bottom: 2.5rem;
 }
-
-.commandes-header h1 {
-    font-size: 2.8rem;
-    margin-bottom: 0.5rem;
-    color: var(--text-color);
+ .commandes-header h1 {
+     font-size: 2.8rem;
+     margin-bottom: 0.5rem;
+     color: var(--text-color);
 }
-
-.commandes-header p {
-    font-size: 1.2rem;
-    color: var(--text-secondary-color, #6c757d);
+ .commandes-header p {
+     font-size: 1.2rem;
+     color: var(--text-secondary-color, #6c757d);
 }
-
-.commandes-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
-    gap: 1.5rem;
+ .commandes-grid {
+     display: grid;
+     grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+     gap: 1.5rem;
 }
-
-.commande-card {
-    background-color: var(--bg-color);
-    border: 1px solid var(--border-color, #e0e0e0);
-    border-radius: 12px;
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
-    display: flex;
-    flex-direction: column;
-    transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+ .commande-card {
+     background-color: var(--bg-color);
+     border: 1px solid var(--border-color, #e0e0e0);
+     border-radius: 12px;
+     box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+     display: flex;
+     flex-direction: column;
+     transition: transform 0.2s, box-shadow 0.2s;
 }
-
-.commande-card:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+ .commande-card:hover {
+     transform: translateY(-5px);
+     box-shadow: 0 8px 25px rgba(0,0,0,0.1);
 }
-
-.card-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 1rem 1.5rem;
-    border-bottom: 1px solid var(--border-color, #e0e0e0);
+ .card-header {
+     display: flex;
+     justify-content: space-between;
+     align-items: center;
+     padding: 1rem 1.5rem;
+     border-bottom: 1px solid var(--border-color, #e0e0e0);
 }
-
-.header-info .commande-id {
-    font-weight: bold;
-    font-size: 1.1rem;
-    color: var(--text-color);
-    display: block;
-    margin-bottom: 0.25rem;
+ .header-info .commande-id {
+     font-weight: bold;
+     font-size: 1.1rem;
+     color: var(--text-color);
+     margin-bottom: 0.25rem;
 }
-
-.header-info .client-name {
-    font-size: 0.9rem;
-    color: var(--text-secondary-color, #6c757d);
+ .header-info .client-name {
+     font-size: 0.9rem;
+     color: var(--text-secondary-color, #6c757d);
 }
-
-.status-badge {
-    padding: 0.4em 0.8em;
-    border-radius: 20px;
-    font-size: 0.85rem;
-    font-weight: 600;
-    color: #fff;
-    text-transform: capitalize;
+ .status-badge {
+     padding: 0.4em 0.8em;
+     border-radius: 20px;
+     font-size: 0.85rem;
+     font-weight: 600;
+     color: #fff;
+     text-transform: capitalize;
 }
-
-.status-en-attente { background-color: #ffc107; color: #333; }
-.status-en-préparation { background-color: #17a2b8; }
-.status-prêt { background-color: #28a745; }
-.status-récupéré { background-color: #6c757d; }
-.status-non-récupéré { background-color: #dc3545; }
-
-.card-body {
-    padding: 1.5rem;
-    flex-grow: 1;
+ .status-en-attente {
+     background-color: #ffc107;
+     color: #333;
 }
-
-.commande-details h4 {
-    margin-top: 0;
-    margin-bottom: 0.75rem;
-    font-size: 1rem;
-    color: var(--text-color);
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
+ .status-en-préparation {
+     background-color: #17a2b8;
 }
-
-.item-list {
-    list-style: none;
-    padding: 0;
-    margin: 0 0 1.5rem 0;
+ .status-prêt {
+     background-color: #28a745;
 }
-
-.item-list li {
-    display: flex;
-    justify-content: space-between;
-    padding: 0.5rem 0;
-    border-bottom: 1px dashed var(--border-color, #eee);
+ .status-récupéré {
+     background-color: #6c757d;
 }
-
-/* When a menu has chosen items, stack the name/quantity and choices */
-.item-list li .item-main{ display:flex; justify-content:space-between; width:100%; }
-.menu-choices{ display:block; margin-top:6px; color: var(--text-secondary-color, #6c757d); font-size:0.92rem; }
-.menu-choices .choice{ display:block; margin-top:2px; }
-
-.item-list li:last-child {
-    border-bottom: none;
+ .status-non-récupéré {
+     background-color: #dc3545;
 }
-
-.item-name {
-    color: var(--text-color);
+ .card-body {
+     padding: 1.5rem;
+     flex-grow: 1;
 }
-
-.item-quantity {
-    font-weight: bold;
-    color: var(--primary-color, #007bff);
+ .commande-details h4 {
+     margin: 0 0 0.75rem;
+     font-size: 1rem;
+     color: var(--text-color);
+     text-transform: uppercase;
+     letter-spacing: 0.5px;
 }
-
-.commande-meta p {
-    margin: 0.5rem 0;
-    font-size: 0.9rem;
+ .item-list {
+     list-style: none;
+     padding: 0;
+     margin: 0 0 1.5rem 0;
 }
-
-.card-footer {
-    padding: 1rem 1.5rem;
-    background-color: var(--bg-secondary-color, #f8f9fa);
-    border-top: 1px solid var(--border-color, #e0e0e0);
-    border-bottom-left-radius: 12px;
-    border-bottom-right-radius: 12px;
+ .item-list li {
+     padding: 0.5rem 0;
+     border-bottom: 1px dashed var(--border-color, #eee);
 }
-
-.status-form {
-    display: flex;
-    align-items: center;
-    gap: 10px;
+ .item-list li:last-child {
+     border-bottom: none;
 }
-
-.status-form label {
-    font-size: 0.9rem;
-    font-weight: 500;
+ .item-list li .item-main {
+     display: flex;
+     justify-content: space-between;
+     width: 100%;
 }
-
-.status-form select {
-    padding: 8px 12px;
-    border-radius: 6px;
-    border: 1px solid var(--border-color, #ccc);
-    flex-grow: 1;
+ .menu-choices {
+     display: block;
+     margin-top: 6px;
+     font-size: 0.92rem;
+     color: var(--text-secondary-color, #6c757d);
 }
-
-.btn-update {
-    padding: 8px 16px;
-    border: none;
-    background-color: var(--primary-color, #007bff);
-    color: white;
-    border-radius: 6px;
-    cursor: pointer;
-    transition: background-color 0.2s;
+ .menu-choices .choice {
+     margin-top: 2px;
 }
-
-.btn-update:hover {
-    background-color: var(--primary-hover-color, #0056b3);
+ .item-name {
+     color: var(--text-color);
 }
-
-.no-commandes {
-    text-align: center;
-    padding: 3rem;
-    background-color: var(--bg-secondary-color, #f8f9fa);
-    border-radius: 8px;
+ .item-quantity {
+     font-weight: bold;
+     color: var(--primary-color, #007bff);
+}
+ .commande-meta p {
+     margin: 0.5rem 0;
+     font-size: 0.9rem;
+}
+ .card-footer {
+     padding: 1rem 1.5rem;
+     background-color: var(--bg-secondary-color, #f8f9fa);
+     border-top: 1px solid var(--border-color, #e0e0e0);
+     border-radius: 0 0 12px 12px;
+}
+ .status-form {
+     display: flex;
+     align-items: center;
+     gap: 10px;
+}
+ .status-form label {
+     font-size: 0.9rem;
+     font-weight: 500;
+}
+ .status-form select {
+     padding: 8px 12px;
+     border-radius: 6px;
+     border: 1px solid var(--border-color, #ccc);
+     flex-grow: 1;
+}
+ .btn-update {
+     padding: 8px 16px;
+     border: none;
+     background-color: var(--primary-color, #007bff);
+     color: #fff;
+     border-radius: 6px;
+     cursor: pointer;
+     transition: background-color 0.2s;
+}
+ .btn-update:hover {
+     background-color: var(--primary-hover-color, #0056b3);
+}
+ .no-commandes {
+     text-align: center;
+     padding: 3rem;
+     background-color: var(--bg-secondary-color, #f8f9fa);
+     border-radius: 8px;
+}
+ @media (max-width: 425px) {
+     .commandes-page {
+         padding: 1rem 0.5rem;
+    }
+     .commandes-header h1 {
+         font-size: 1.8rem;
+    }
+     .commandes-header p {
+         font-size: 1rem;
+    }
+     .commandes-grid {
+         grid-template-columns: 1fr;
+         gap: 1rem;
+    }
+     .card-header {
+         flex-direction: column;
+         align-items: flex-start;
+         gap: 0.5rem;
+    }
+     .status-form {
+         flex-direction: column;
+         align-items: stretch;
+    }
+     .status-form select, .btn-update {
+         width: 100%;
+    }
+     .card-footer {
+         padding: 0.75rem 1rem;
+    }
+     .item-list li .item-main {
+         flex-direction: column;
+         align-items: flex-start;
+         gap: 0.25rem;
+    }
+     .item-list li {
+         padding: 0.25rem 0;
+    }
 }

@@ -123,4 +123,11 @@
     .login-image-side {
         display: block;
     }
+    
+}
+@media (max-width: 768px) {
+    .login-form-container h2 {
+        font-size: 1.5rem;
+    }
+    
 }

@@ -51,7 +51,6 @@
   .carte-tabs {
     display: flex;
     gap: 8px;
-    width: 100%;
     justify-content: space-between;
   }
   .carte-tab a {

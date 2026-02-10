@@ -8,7 +8,14 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     
     {% block styles %}{% endblock %}
-</head> <body class="admin-body"> <div class="sidebar">
+</head> <body class="admin-body">
+    <button class="burger-menu" id="burger-menu" aria-label="Menu">
+        <span></span>
+        <span></span>
+        <span></span>
+    </button>
+    
+    <div class="sidebar" id="sidebar">
         <h2><a href="{{ url_for('admin_index') }}">Administration</a></h2>
         <nav class="nav-links">
             <ul>
@@ -60,5 +67,44 @@
     <div class="content">
         {% block main %}{% endblock %}
     </div>
+
+    <script>
+        const burgerMenu = document.getElementById('burger-menu');
+        const sidebar = document.getElementById('sidebar');
+
+        if (burgerMenu) {
+            burgerMenu.addEventListener('click', () => {
+                burgerMenu.classList.toggle('active');
+                sidebar.classList.toggle('active');
+            });
+
+            const navLinks = sidebar.querySelectorAll('a');
+            navLinks.forEach(link => {
+                link.addEventListener('click', () => {
+                    if (window.innerWidth <= 768) {
+                        burgerMenu.classList.remove('active');
+                        sidebar.classList.remove('active');
+                    }
+                });
+            });
+        }
+
+        // Flash messages script
+        document.addEventListener('DOMContentLoaded', function() {
+            const flashMessagesContainer = document.querySelector('.flash-messages-container');
+            if (flashMessagesContainer) {
+                const alerts = flashMessagesContainer.querySelectorAll('.alert');
+                alerts.forEach(alert => {
+                    setTimeout(() => {
+                        alert.style.opacity = '0';
+                        alert.addEventListener('transitionend', () => {
+                            alert.remove();
+                        }, { once: true });
+                    }, 5000);
+                });
+            }
+        });
+    </script>
 </body>
+
 </html>
