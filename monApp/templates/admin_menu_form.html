@@ -1,13 +1,11 @@
-<!DOCTYPE html>
 {% extends 'base_admin.html' %}
 
 {% block styles %}
 <link rel="stylesheet" href="{{ url_for('static', filename='admin.css') }}">
-<link rel="stylesheet" href="{{ url_for('static', filename='admin_plat.css')
-    }}">
-    {% endblock %}
-    
-    {% block main %}
+<link rel="stylesheet" href="{{ url_for('static', filename='admin_plat.css') }}">
+{% endblock %}
+
+{% block main %}
 <div class="admin-page">
     <h1>{% if action %}{{ action }}{% else %}Créer{% endif %} un menu</h1>
 
@@ -38,8 +36,14 @@
         </div>
         
         <div style="margin-bottom: 1.5rem;">
-            <label><strong>URL image :</strong></label><br>
-            <input type="text" name="image_url" size="50" placeholder="default_menu.jpg" value="{% if menu %}{{ menu.image_url }}{% endif %}">
+            <label><strong>Image du menu :</strong></label><br>
+            <div id="drop-area-menu" style="border:2px dashed #ccc; padding:20px; text-align:center; margin-bottom:10px;">
+                <p>Glissez-déposez une image ici ou cliquez pour sélectionner un fichier</p>
+                <input type="file" id="fileElemMenu" accept="image/*" style="display:none">
+                <button type="button" id="fileSelectMenu" class="btn btn-secondary">Choisir une image</button>
+                <div id="previewMenu" style="margin-top:10px;"></div>
+            </div>
+            <input type="text" name="image_url" id="imageUrlMenu" size="50" placeholder="default_menu.jpg" value="{% if menu %}{{ menu.image_url }}{% endif %}" style="display:none;">
         </div>
         
         <h3>Entrées * (cochez au moins 1) :</h3>
@@ -89,5 +93,73 @@
             <a href="{{ url_for('admin_menus') }}" style="padding: 0.5rem 1rem; text-decoration: none; background: #ccc; color: black; border-radius: 3px;">Annuler</a>
         </div>
     </form>
+    <script>
+    // Drag and drop image upload pour menu
+    const dropAreaMenu = document.getElementById('drop-area-menu');
+    const fileElemMenu = document.getElementById('fileElemMenu');
+    const fileSelectMenu = document.getElementById('fileSelectMenu');
+    const previewMenu = document.getElementById('previewMenu');
+    const imageUrlMenuInput = document.getElementById('imageUrlMenu');
+
+    fileSelectMenu.addEventListener('click', () => fileElemMenu.click());
+
+    ;['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+        dropAreaMenu.addEventListener(eventName, preventDefaultsMenu, false)
+    });
+    function preventDefaultsMenu(e) {
+        e.preventDefault();
+        e.stopPropagation();
+    }
+
+    dropAreaMenu.addEventListener('drop', handleDropMenu, false);
+    fileElemMenu.addEventListener('change', handleFilesMenu, false);
+
+    function handleDropMenu(e) {
+        let dt = e.dataTransfer;
+        let files = dt.files;
+        handleFilesMenu({target: {files: files}});
+    }
+
+    function handleFilesMenu(e) {
+        const files = e.target.files;
+        if (files.length > 0) {
+            const file = files[0];
+            if (!file.type.startsWith('image/')) {
+                alert('Veuillez sélectionner un fichier image.');
+                return;
+            }
+            // Afficher l'aperçu
+            const reader = new FileReader();
+            reader.onload = function(ev) {
+                previewMenu.innerHTML = `<img src="${ev.target.result}" alt="Aperçu" style="max-width:200px; max-height:200px;"/>`;
+            };
+            reader.readAsDataURL(file);
+
+            // Upload de l'image (nécessite une route Flask pour gérer l'upload)
+            uploadImageMenu(file);
+        }
+    }
+
+    function uploadImageMenu(file) {
+        const formData = new FormData();
+        formData.append('image', file);
+        fetch('/upload-image/', {
+            method: 'POST',
+            body: formData
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                // Extraire juste le nom du fichier depuis l'URL
+                const urlParts = data.url.split('/');
+                const filename = urlParts[urlParts.length - 1];
+                imageUrlMenuInput.value = filename;
+            } else {
+                alert('Erreur lors de l\'upload de l\'image.');
+            }
+        })
+        .catch(() => alert('Erreur lors de l\'upload de l\'image.'));
+    }
+    </script>
 </div>
 {% endblock %}

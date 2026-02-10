@@ -1,3 +1,6 @@
+import os
+from flask import jsonify
+
 from monApp.models import (
     PLAT,
     CATEGORIE,
@@ -16,7 +19,7 @@ from monApp.models import (
 from .app import app, db
 from flask import render_template, request, url_for, redirect, flash, abort
 from functools import wraps
-from .forms import InscriptionForm, ConnexionForm, EditProfileForm, ReservationForm, ServiceForm
+from .forms import InscriptionForm, ConnexionForm, EditProfileForm, ReservationForm, ServiceForm, PlatForm
 from flask_login import login_user, logout_user, login_required, current_user
 from sqlalchemy import func, desc
 from hashlib import sha256
@@ -24,6 +27,12 @@ from math import ceil
 from datetime import datetime, date, timedelta
 import logging as lg
 from flask import flash
+
+
+
+
+
+
 
 def admin_required(f):
     @wraps(f)
@@ -645,7 +654,9 @@ def edit_stock_item(item_id):
             return redirect(url_for('admin_stock', search=request.args.get('search', '')))
         except ValueError:
             flash("Veuillez entrer une quantité valide.", "error")
-    return redirect(url_for('admin_stock'))
+        return render_template('admin_stock.html', items=[{'item': item, 'stock': stock_entry.stock if stock_entry else 0}], search_term=request.args.get('search', ''))
+
+    return render_template('admin_stock.html', items=[{'item': item, 'stock': stock_entry.stock if stock_entry else 0}], search_term=request.args.get('search', ''))
 
 @app.route('/creer-avis/', methods=['GET', 'POST'])
 @login_required
@@ -1315,6 +1326,31 @@ def annuler_reservation(id_reservation):
         flash(f"Erreur lors de l'annulation : {str(e)}", "error")
     
     return redirect(url_for('compte'))
+
+
+# Upload d'image pour drag-and-drop (admin plat)
+@app.route('/upload-image/', methods=['POST'])
+@admin_required
+def upload_image():
+    if 'image' not in request.files:
+        return jsonify({'success': False, 'error': 'Aucun fichier reçu.'}), 400
+    file = request.files['image']
+    if file.filename == '':
+        return jsonify({'success': False, 'error': 'Nom de fichier vide.'}), 400
+    if not file.filename.lower().endswith(('.png', '.jpg', '.jpeg', '.gif', '.webp')):
+        return jsonify({'success': False, 'error': 'Type de fichier non supporté.'}), 400
+    # Dossier de destination (dans static/images/)
+    upload_folder = os.path.join(app.root_path, 'static', 'images')
+    os.makedirs(upload_folder, exist_ok=True)
+    # Nom de fichier unique
+    import uuid
+    ext = os.path.splitext(file.filename)[1]
+    filename = f"plat_{uuid.uuid4().hex}{ext}"
+    file_path = os.path.join(upload_folder, filename)
+    file.save(file_path)
+    # URL accessible depuis le front
+    url = url_for('static', filename=f'images/{filename}')
+    return jsonify({'success': True, 'url': url})
 
 if __name__ == "__main__":
     app.run()
