@@ -393,9 +393,9 @@ main h1 {
     .menu-card img {
         height: 200px;
     }
-    .panel.categoriesauto;
+    .panel.categoriesauto {
         max-width: calc(100% - 20px);
-        box-sizing: border-bo
+        box-sizing: border-box;
         margin: 10px 10px 10px;
     }
     

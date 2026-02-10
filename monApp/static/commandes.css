@@ -92,8 +92,6 @@
      margin: 0 0 1.5rem 0;
 }
  .item-list li {
-     display: flex;
-     justify-content: space-between;
      padding: 0.5rem 0;
      border-bottom: 1px dashed var(--border-color, #eee);
 }
@@ -164,8 +162,7 @@
      background-color: var(--bg-secondary-color, #f8f9fa);
      border-radius: 8px;
 }
-/* Responsive pour petits écrans */
- @media (max-width: 400px) {
+ @media (max-width: 425px) {
      .commandes-page {
          padding: 1rem 0.5rem;
     }
@@ -203,4 +200,3 @@
          padding: 0.25rem 0;
     }
 }
- 

@@ -21,6 +21,7 @@
 .nouveaute-image-container {
     flex: 1 1 45%;
     min-width: 300px;
+    aspect-ratio: 16 / 12;
 }
 
 .nouveaute-image-container img {
@@ -94,11 +95,50 @@
         flex-direction: column;
     }
 
+    .nouveaute-image-container {
+        aspect-ratio: 16 / 9;
+        min-width: unset;
+    }
+
     .nouveaute-text-container {
         padding: 2rem;
     }
 
-    .nouveaute-image-container img {
-        max-height: 300px;
+    .nouveaute-text-container h1 {
+        font-size: 2rem;
+    }
+
+    .nouveaute-text-container p {
+        font-size: 1rem;
+    }
+}
+
+@media (max-width: 600px) {
+    .page-content-wrapper {
+        padding: 1.5rem 1rem;
+    }
+
+    .nouveaute-image-container {
+        aspect-ratio: 4 / 3;
+    }
+
+    .nouveaute-text-container {
+        padding: 1.5rem;
+    }
+
+    .nouveaute-text-container h1 {
+        font-size: 1.5rem;
+    }
+
+    .nouveaute-text-container .date-event {
+        font-size: 1rem;
+    }
+
+    .nouveaute-text-container p {
+        font-size: 0.95rem;
+    }
+
+    .menu-list li {
+        font-size: 0.95rem;
     }
 }

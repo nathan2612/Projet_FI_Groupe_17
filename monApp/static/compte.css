@@ -138,12 +138,19 @@
 }
 
 .btn-primary {
-    background-color: var(--btn-hover-bg);
-    color: white;
-}
-.btn-primary:hover {
-    opacity: 0.9;
-    transform: translateY(-1px);
+    color: rgb(255, 255, 255);
+     display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.6rem 1.2rem;
+    border: 1px solid transparent;
+    border-radius: 8px;
+    font-size: 0.9rem;
+    font-weight: 600;
+    cursor: pointer;
+    text-decoration: none;
+    transition: all 0.2s;
+    background-color: #ff6d00;
 }
 
 .btn-secondary {
@@ -325,5 +332,21 @@
     
     .orders-section {
         padding: 1.5rem;
+    }
+}
+@media (max-width: 768px) {
+    .card-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 1rem;
+    }
+    
+    .card-header h2 {
+        font-size: 1.1rem;
+    }
+    
+    .card-header .btn {
+        width: 100%;
+        justify-content: center;
     }
 }
