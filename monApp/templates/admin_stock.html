@@ -29,6 +29,7 @@
                     <tr>
                         <th>Nom du plat</th>
                         <th class="stock-col">Stock</th>
+                        <th class="disponibilite-col">Disponibilité</th>
                         <th class="action-col">Actions</th>
                     </tr>
                 </thead>
@@ -40,6 +41,11 @@
                             <div class="stock-form">
                                 <input type="number" name="stock_{{ item_data.item.id_plat }}" value="{{ item_data.stock }}" required min="0">
                             </div>
+                        </td>
+                        <td>
+                            <input type="checkbox" 
+                                   name="disponible_{{ item_data.item.id_plat }}" 
+                                   {% if item_data.item.disponible %}checked{% endif %}>
                         </td>
                         <td>
                             <button type="button" onclick="document.getElementsByName('stock_{{ item_data.item.id_plat }}')[0].value = 0" class="btn btn-secondary btn-small btn-reset" title="Réinitialiser"><img src="{{ url_for('static', filename='images/reset.png') }}" alt="Reset"></button>

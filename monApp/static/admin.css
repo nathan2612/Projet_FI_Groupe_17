@@ -254,6 +254,21 @@
     width: 120px;
 }
 
+.stock-list th.disponibilite-col {
+    width: 120px;
+    text-align: center;
+}
+
+.stock-list td:has(input[type="checkbox"]) {
+    text-align: center;
+}
+
+.stock-list td input[type="checkbox"] {
+    width: 20px;
+    height: 20px;
+    cursor: pointer;
+}
+
 .stock-list th.action-col {
     width: 100px;
 }
