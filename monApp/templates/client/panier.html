@@ -114,6 +114,11 @@
                             <option value="{{ heure }}">{{ heure }}</option>
                         {% endfor %}
                     </select>
+                    <div id="time-alert" class="time-alert" role="alert" aria-live="assertive" hidden>
+                        <span class="time-alert-icon">⚠️</span>
+                        <div class="time-alert-message">Veuillez sélectionner une heure de retrait</div>
+                        <button type="button" class="time-alert-close" aria-label="Fermer">✕</button>
+                    </div>
                 </div>
                 
                 <h3>Récapitulatif</h3>
@@ -166,8 +171,32 @@
                 checkoutBtn.addEventListener('click', function() {
                     // Vérifier que l'heure est sélectionnée
                     if (!heureSelect.value) {
-                        alert('Veuillez sélectionner une heure de retrait');
-                        heureSelect.focus();
+                        const timeAlert = document.getElementById('time-alert');
+                        function hideTimeAlert() {
+                            if (!timeAlert) return;
+                            timeAlert.classList.remove('show');
+                            setTimeout(() => timeAlert.hidden = true, 250);
+                        }
+
+                        if (timeAlert) {
+                            timeAlert.hidden = false;
+                            // Force reflow for transition
+                            void timeAlert.offsetWidth;
+                            timeAlert.classList.add('show');
+                            heureSelect.focus();
+                            // auto-hide after 4s
+                            clearTimeout(window._timeAlertTimeout);
+                            window._timeAlertTimeout = setTimeout(hideTimeAlert, 4000);
+
+                            const closeBtn = timeAlert.querySelector('.time-alert-close');
+                            if (closeBtn) {
+                                closeBtn.onclick = hideTimeAlert;
+                            }
+                        } else {
+                            // fallback ancien navigateur
+                            alert('Veuillez sélectionner une heure de retrait');
+                        }
+
                         return;
                     }
                     popup.classList.add('is-visible');
