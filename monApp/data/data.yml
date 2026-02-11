@@ -296,6 +296,11 @@ clients:
     prenom: "Sophie"
     telephone: "+33611223348"
     mot_de_passe: "hashed_password_3"
+  - id_client: 7
+    nom: "Martin"
+    prenom: "Sophie"
+    telephone: "+123"
+    mot_de_passe: "client"
 
 menus:
   - id_menu: 1
