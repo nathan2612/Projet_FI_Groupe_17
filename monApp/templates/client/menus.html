@@ -9,9 +9,11 @@
 
         <main class="container content">
         <div class="search-wrapper">
-            <div class="search-container">
-                <input type="text" id="searchInput" class="search-bar" placeholder="Rechercher un menu...">
-            </div>
+            <form method="get" action="{{ url_for('menus') }}" class="search-form">
+                <input type="hidden" name="page" value="1">
+                <input type="text" name="search" class="search-bar" placeholder="Rechercher un plat..." value="{{ search_query }}">
+                <button type="submit" class="btn-search">Rechercher</button>
+            </form>
         </div>
         
         <h1>Nos Menus</h1>
@@ -27,6 +29,9 @@
                         <h2>{{ menu.nom_menu }}</h2>
                         <p>{{ menu.description }}</p>
                         <p>{{ menu.prix }} €</p>
+                        {% if quantites_panier.get(menu.id_menu) %}
+                            <p class="quantite-panier">Quantité : {{ quantites_panier[menu.id_menu] }}</p>
+                        {% endif %}
                     </a>
                     <a href="{{ url_for('detail_menu', id_menu=menu.id_menu) }}" class="order-button">
                         <i class="fa-solid fa-circle-plus"></i>
@@ -86,28 +91,4 @@
         </nav>
         </main>
     </div>
-
-    <script>
-    document.addEventListener('DOMContentLoaded', function() {
-        const searchInput = document.getElementById('searchInput');
-        
-        function performSearch() {
-            const searchTerm = searchInput.value.toLowerCase().trim();
-            
-            const cards = document.querySelectorAll('.menu-card');
-            
-            cards.forEach(card => {
-                const title = card.querySelector('h2')?.textContent.toLowerCase() || '';
-                
-                if (title.includes(searchTerm)) {
-                    card.style.display = '';
-                } else {
-                    card.style.display = 'none';
-                }
-            });
-        }
-        
-        searchInput.addEventListener('input', performSearch);
-    });
-    </script>
 {% endblock %}

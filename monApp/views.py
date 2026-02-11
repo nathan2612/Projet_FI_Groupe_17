@@ -163,26 +163,39 @@ def detail_plat(id_plat):
 
 @app.route('/menus/', methods=['POST', 'GET'])
 def menus():
-    cat_id = request.args.get('cat_id', type=int)
     page = request.args.get('page', 1, type=int)
+    search_query = request.args.get('search', '').strip()
     per_page = 9
 
     query = db.session.query(MENU)
 
-
+    if search_query:
+        query = query.filter(MENU.nom_menu.ilike(f'%{search_query}%'))
 
     total = query.count()
     total_pages = max(1, ceil(total / per_page))
     page = max(1, min(page, total_pages))
-    menu = query.offset((page - 1) * per_page).limit(per_page).all()
+    menus = query.offset((page - 1) * per_page).limit(per_page).all()
+
+    if current_user.is_authenticated:
+        commande = db.session.query(COMMANDE).filter_by(id_client=current_user.id_client, statut='En commande').first()
+    else:
+        commande = None
+    
+    quantites_panier = {}
+    if commande:
+        for item in commande.menus:
+            quantites_panier[item.id_menu] = item.quantite
 
     return render_template(
         "client/menus.html",
-        menus=menu,
+        menus=menus,
         page=page,
         total_pages=total_pages,
         total_items=total,
         per_page=per_page,
+        quantites_panier=quantites_panier,
+        search_query=search_query
     )
 
 @app.route('/menu/<int:id_menu>')
