@@ -15,7 +15,7 @@
                     <ul>
                         <li class="{% if cat_id == None %}active{% endif %}">
                             <a href="{{ url_for('produits', search=search_query, vegetarien=(1 if filters.vegetarien else 0), vegan=(1 if filters.vegan else 0), sans_gluten=(1 if filters.sans_gluten else 0), sans_lactose=(1 if filters.sans_lactose else 0), sans_fruits_a_coque=(1 if filters.sans_fruits_a_coque else 0), sans_crustaces=(1 if filters.sans_crustaces else 0), page=1) }}">
-                                <img class="categorie-thumb" src="../static/images/plats/menu.png">
+                                <img class="categorie-thumb" src="../static/images/assets/menu.png">
                                 <span>Tous</span>
                             </a>
                         </li>
