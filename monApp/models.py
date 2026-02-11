@@ -122,7 +122,7 @@ class CONTENIR(db.Model):
 	plat = db.relationship('PLAT', back_populates='contenirs')
 
 	def __repr__(self):
-		# use the actual column name `type_plat` (0=entrée,1=plat,2=dessert)
+		# `type_plat` (0=entrée,1=plat,2=dessert)
 		course_name = {0: 'entrée', 1: 'plat', 2: 'dessert'}.get(self.type_plat, str(self.type_plat))
 		return f"<Contenir menu={self.id_menu} plat={self.id_plat} type_plat={course_name}>"
 

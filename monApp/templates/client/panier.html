@@ -19,7 +19,7 @@
                 {% else %}
                     {% for item_plat in commande.plats %}
                     <div class="cart-item">
-                        <img src="{{ url_for('static', filename='images/' + (item_plat.plat.image_url or 'default.jpg')) }}" alt="{{ item_plat.plat.nom_plat }}" class="item-image">
+                        <img src="{{ url_for('static', filename='images/plats/' + (item_plat.plat.image_url or 'default.jpg')) }}" alt="{{ item_plat.plat.nom_plat }}" class="item-image">
                         <div class="item-details">
                             <h2>{{ item_plat.plat.nom_plat }}</h2>
                             <p class="item-price-single">{{ "%.2f€"|format(item_plat.plat.prix) }} / unité</p>
@@ -49,7 +49,7 @@
 
                     {% for item_menu in commande.menus %}
                     <div class="cart-item">
-                        <img src="{{ url_for('static', filename='images/' + (item_menu.menu.image_url or 'default.jpg')) }}" alt="{{ item_menu.menu.nom_menu }}" class="item-image">
+                        <img src="{{ url_for('static', filename='images/plats/' + (item_menu.menu.image_url or 'default.jpg')) }}" alt="{{ item_menu.menu.nom_menu }}" class="item-image">
                         <div class="item-details">
                             <h2>{{ item_menu.menu.nom_menu }}</h2>
                             <p class="item-price-single">{{ "%.2f€"|format(item_menu.menu.prix) }} / unité</p>
