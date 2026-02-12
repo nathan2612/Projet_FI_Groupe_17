@@ -253,3 +253,17 @@
 
 }
 .admin-banni-page p { color: #6b7280; font-size: 1rem; margin-top: 0.5rem; }
+
+/* Modale de confirmation de bannissement */
+.ban-modal{position:fixed;inset:0;display:flex;align-items:center;justify-content:center;z-index:1200;visibility:hidden;opacity:0;transition:opacity .18s ease,visibility .18s ease}
+.ban-modal.show{visibility:visible;opacity:1}
+.ban-modal-backdrop{position:absolute;inset:0;background:rgba(2,6,23,0.5)}
+.ban-modal-panel{position:relative;background:#fff;color:#0f172a;border-radius:12px;max-width:520px;width:90%;padding:20px;box-shadow:0 20px 50px rgba(2,6,23,0.12);transform:translateY(6px);transition:transform .18s ease}
+.ban-modal.show .ban-modal-panel{transform:translateY(0)}
+.ban-modal-header h3{margin:0 0 8px 0;font-size:1.1rem}
+.ban-modal-body{color:#374151;margin-bottom:14px}
+.ban-modal-actions{display:flex;gap:10px;justify-content:flex-end}
+.btn-cancel{background:transparent;border:1px solid rgba(15,23,42,0.06);padding:8px 12px;border-radius:8px;cursor:pointer}
+.btn-confirm{background:linear-gradient(90deg,#ff6d41,#ff4800);color:#fff;border:none;padding:8px 12px;border-radius:8px;cursor:pointer;font-weight:700}
+.ban-modal [data-dismiss]{cursor:pointer}
+.dark-mode .ban-modal-panel{background:#111827;color:#e5e7eb}

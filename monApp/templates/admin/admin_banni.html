@@ -43,8 +43,11 @@
                             <td><span class="badge-count badge-count-red" title="{{ title }}" aria-label="{{ title }}">{{ entry.nb_non_recup }}</span></td>
                         {% endif %}
                             <td>
-                                <form action="{{ url_for('ban_client', client_id=entry.client.id_client) }}" method="post" onsubmit="return confirm('Bannir {{ entry.client.prenom }} {{ entry.client.nom }} ?');">
-                                    <button type="submit" class="ban-btn" title="Bannir le client {{ entry.client.prenom }} {{ entry.client.nom }}">Bannir</button>
+                                <form action="{{ url_for('ban_client', client_id=entry.client.id_client) }}" method="post" class="ban-form" data-client-name="{{ entry.client.prenom }} {{ entry.client.nom }}">
+                                    <button type="button" class="ban-btn" title="Bannir le client {{ entry.client.prenom }} {{ entry.client.nom }}">Bannir</button>
+                                    <noscript>
+                                        <button type="submit" class="ban-btn">Bannir</button>
+                                    </noscript>
                                 </form>
                             </td>
                     </tr>
@@ -56,4 +59,20 @@
         <p>Aucun client avec des commandes non récupérées.</p>
     {% endif %}
     </div>
+    <!-- Modal confirmation bannissement -->
+    <div id="ban-confirm-modal" class="ban-modal" role="dialog" aria-modal="true" aria-hidden="true" hidden>
+        <div class="ban-modal-backdrop" data-dismiss></div>
+        <div class="ban-modal-panel">
+            <header class="ban-modal-header"><h3>Confirmer le bannissement</h3></header>
+            <div class="ban-modal-body">
+                <p id="ban-modal-message">Êtes-vous sûr de vouloir bannir ce client ?</p>
+            </div>
+            <div class="ban-modal-actions">
+                <button id="ban-cancel" type="button" class="btn-cancel">Annuler</button>
+                <button id="ban-confirm" type="button" class="btn-confirm">Bannir</button>
+            </div>
+        </div>
+    </div>
+
+    <script>document.addEventListener("DOMContentLoaded",function(){var m=document.getElementById("ban-confirm-modal"),msg=document.getElementById("ban-modal-message"),c=document.getElementById("ban-confirm"),x=document.getElementById("ban-cancel"),t=null;function s(n,f){t=f;msg.textContent="Bannir "+n+" ? Cette action est définitive.";m.hidden=false;m.setAttribute("aria-hidden","false");requestAnimationFrame(function(){m.classList.add("show")});x.focus()}function h(){m.classList.remove("show");m.setAttribute("aria-hidden","true");setTimeout(function(){m.hidden=true;t=null},220)}Array.prototype.forEach.call(document.querySelectorAll(".ban-form .ban-btn"),function(b){b.addEventListener("click",function(){var f=b.closest("form"),name=f&&f.dataset.clientName?f.dataset.clientName:"ce client";s(name,f)})});m.addEventListener("click",function(e){if(e.target&&e.target.dataset&&e.target.dataset.dismiss!==undefined)h()});x.addEventListener("click",h);c.addEventListener("click",function(){if(t)t.submit()});document.addEventListener("keydown",function(e){if(!m||m.hidden)return;e.key==="Escape"&&h()})});</script>
 {% endblock %}
