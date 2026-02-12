@@ -74,5 +74,56 @@
         </div>
     </div>
 
-    <script>document.addEventListener("DOMContentLoaded",function(){var m=document.getElementById("ban-confirm-modal"),msg=document.getElementById("ban-modal-message"),c=document.getElementById("ban-confirm"),x=document.getElementById("ban-cancel"),t=null;function s(n,f){t=f;msg.textContent="Bannir "+n+" ? Cette action est définitive.";m.hidden=false;m.setAttribute("aria-hidden","false");requestAnimationFrame(function(){m.classList.add("show")});x.focus()}function h(){m.classList.remove("show");m.setAttribute("aria-hidden","true");setTimeout(function(){m.hidden=true;t=null},220)}Array.prototype.forEach.call(document.querySelectorAll(".ban-form .ban-btn"),function(b){b.addEventListener("click",function(){var f=b.closest("form"),name=f&&f.dataset.clientName?f.dataset.clientName:"ce client";s(name,f)})});m.addEventListener("click",function(e){if(e.target&&e.target.dataset&&e.target.dataset.dismiss!==undefined)h()});x.addEventListener("click",h);c.addEventListener("click",function(){if(t)t.submit()});document.addEventListener("keydown",function(e){if(!m||m.hidden)return;e.key==="Escape"&&h()})});</script>
+   <script>
+    document.addEventListener("DOMContentLoaded", function() {
+        // Sélection des éléments du DOM
+        var m = document.getElementById("ban-confirm-modal"),
+            msg = document.getElementById("ban-modal-message"),
+            c = document.getElementById("ban-confirm"),
+            x = document.getElementById("ban-cancel"),
+            t = null;
+    
+        // Fonction pour afficher la modale
+        function s(n, f) {
+            t = f;
+            msg.textContent = "Bannir " + n + " ? Cette action bloquera toutes les commandes et réservations.";
+            m.hidden = false;
+            m.setAttribute("aria-hidden", "false");
+            
+            requestAnimationFrame(function() {
+                m.classList.add("show");
+            });
+            
+            x.focus();
+        }
+    
+        // Fonction pour masquer la modale
+        function h() {
+            m.classList.remove("show");
+            m.setAttribute("aria-hidden", "true");
+            
+            setTimeout(function() {
+                m.hidden = true;
+                t = null;
+            }, 220);
+        }
+    
+        // Attacher l'événement au clic sur les boutons de bannissement
+        Array.prototype.forEach.call(document.querySelectorAll(".ban-form .ban-btn"), function(b) {
+            b.addEventListener("click", function() {
+                var f = b.closest("form"),
+                    name = (f && f.dataset.clientName) ? f.dataset.clientName : "ce client";
+                s(name, f);
+            });
+        });
+    
+        // Bouton Annuler
+        x.addEventListener("click", h);
+    
+        // Bouton Confirmer (soumission du formulaire)
+        c.addEventListener("click", function() {
+            if (t) t.submit();
+        });
+    });
+    </script>
 {% endblock %}
