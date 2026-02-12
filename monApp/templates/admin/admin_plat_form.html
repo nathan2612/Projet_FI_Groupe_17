@@ -1,0 +1,133 @@
+{% extends 'admin/base_admin.html' %}
+
+{% block styles %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/admin/admin.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/admin/admin_ajout_plat.css') }}">
+{% endblock %}
+
+{% block main %}
+<div class="admin-page">
+    <h1>{{ action }} un plat</h1>
+    <form method="post">
+        {{ form.hidden_tag() }}
+        <div>
+            {{ form.nom_plat.label }}<br>
+            {{ form.nom_plat(size=50) }}
+        </div>
+        <div>
+            {{ form.id_categorie.label }}<br>
+            {{ form.id_categorie() }}
+        </div>
+        <div>
+            {{ form.description.label }}<br>
+            {{ form.description(size=80) }}
+        </div>
+        <div>
+            {{ form.longue_description.label }}<br>
+            {{ form.longue_description(rows=4, cols=80) }}
+        </div>
+        <div>
+            {{ form.prix.label }}<br>
+            {{ form.prix(size=10) }}
+        </div>
+        <div>
+            {{ form.disponible.label }}<br>
+            {{ form.disponible() }}
+        </div>
+        <div>
+            {{ form.image_url.label }}<br>
+            <!-- Drag and drop area -->
+            <div id="drop-area" style="border:2px dashed #ccc; padding:20px; text-align:center; margin-bottom:10px;">
+                <p>Glissez-déposez une image ici ou cliquez pour sélectionner un fichier</p>
+                <input type="file" id="fileElem" accept="image/*" style="display:none">
+                <button type="button" id="fileSelect" class="btn btn-secondary">Choisir une image</button>
+                <div id="preview" style="margin-top:10px;"></div>
+            </div>
+            <!-- Champ caché pour l'URL de l'image -->
+            {{ form.image_url(size=80, style="display:none;") }}
+        </div>
+        
+        <div class="checkbox-row">
+            {{ form.vegetarien() }} {{ form.vegetarien.label }}
+            {{ form.vegan() }} {{ form.vegan.label }}
+        </div>
+
+        <div class="checkbox-row">
+            {{ form.gluten() }} {{ form.gluten.label }}
+            {{ form.lactose() }} {{ form.lactose.label }}
+            {{ form.fruit_a_coque() }} {{ form.fruit_a_coque.label }}
+            {{ form.crustaces() }} {{ form.crustaces.label }}
+        </div>
+
+        <div class="actions">
+            {{ form.submit(class="btn btn-primary") }} <a href="{{ url_for('admin_plats') }}" class="btn btn-cancel">Annuler</a>
+        </div>
+    </form>
+    <script>
+    // Drag and drop image upload
+    const dropArea = document.getElementById('drop-area');
+    const fileElem = document.getElementById('fileElem');
+    const fileSelect = document.getElementById('fileSelect');
+    const preview = document.getElementById('preview');
+    const imageUrlInput = document.getElementsByName('image_url')[0];
+
+    fileSelect.addEventListener('click', () => fileElem.click());
+
+    ;['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+        dropArea.addEventListener(eventName, preventDefaults, false)
+    });
+    function preventDefaults(e) {
+        e.preventDefault();
+        e.stopPropagation();
+    }
+
+    dropArea.addEventListener('drop', handleDrop, false);
+    fileElem.addEventListener('change', handleFiles, false);
+
+    function handleDrop(e) {
+        let dt = e.dataTransfer;
+        let files = dt.files;
+        handleFiles({target: {files: files}});
+    }
+
+    function handleFiles(e) {
+        const files = e.target.files;
+        if (files.length > 0) {
+            const file = files[0];
+            if (!file.type.startsWith('image/')) {
+                alert('Veuillez sélectionner un fichier image.');
+                return;
+            }
+            // Afficher l'aperçu
+            const reader = new FileReader();
+            reader.onload = function(ev) {
+                preview.innerHTML = `<img src="${ev.target.result}" alt="Aperçu" style="max-width:200px; max-height:200px;"/>`;
+            };
+            reader.readAsDataURL(file);
+
+            // Upload de l'image (nécessite une route Flask pour gérer l'upload)
+            uploadImage(file);
+        }
+    }
+
+    function uploadImage(file) {
+        const formData = new FormData();
+        formData.append('image', file);
+        fetch('/upload-image/', {
+            method: 'POST',
+            body: formData
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                // Utiliser le chemin relatif retourné par l'API
+                imageUrlInput.value = data.relative_path;
+            } else {
+                alert('Erreur lors de l\'upload de l\'image.');
+            }
+        })
+        .catch(() => alert('Erreur lors de l\'upload de l\'image.'));
+    }
+    </script>
+</div>
+{% endblock %}

@@ -1,0 +1,82 @@
+{% extends 'admin/base_admin.html' %}
+
+{% block styles %}
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/client/commandes.css') }}">
+{% endblock %}
+
+{% block main %}
+    <div class="container commandes-page">
+        <header class="commandes-header">
+            <h1>Gestion des Commandes</h1>
+            <p>Suivez et mettez à jour le statut des commandes en cours.</p>
+        </header>
+
+        {% if commandes %}
+            <div class="commandes-grid">
+                {% for cmd in commandes %}
+                    <article class="commande-card">
+                        <div class="card-header">
+                            <div class="header-info">
+                                <span class="commande-id">Commande #{{ cmd.id_commande }}</span>
+                                <span class="client-name"><i class="fas fa-user"></i> {{ cmd.client.prenom }} {{ cmd.client.nom }}</span>
+                            </div>
+                            <div class="header-status">
+                                <span class="status-badge status-{{ cmd.statut | lower | replace(' ', '-') }}">{{ cmd.statut }}</span>
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            <div class="commande-details">
+                                <h4>Contenu</h4>
+                                <ul class="item-list">
+                                    {% for ligne in cmd.plats %}
+                                        <li><span class="item-name">{{ ligne.plat.nom_plat }}</span> <span class="item-quantity">x {{ ligne.quantite }}</span></li>
+                                    {% endfor %}
+                                        {% for ligne in cmd.menus %}
+                                            <li>
+                                                <div class="item-main">
+                                                    <span class="item-name">{{ ligne.menu.nom_menu }}</span>
+                                                    <span class="item-quantity">x {{ ligne.quantite }}</span>
+                                                </div>
+                                                <div class="menu-choices">
+                                                    {% if ligne.entree %}
+                                                        <small class="choice">Entrée: {{ ligne.entree.nom_plat }}</small>
+                                                    {% endif %}
+                                                    {% if ligne.plat_choisi %}
+                                                        <small class="choice">Plat: {{ ligne.plat_choisi.nom_plat }}</small>
+                                                    {% endif %}
+                                                    {% if ligne.dessert %}
+                                                        <small class="choice">Dessert: {{ ligne.dessert.nom_plat }}</small>
+                                                    {% endif %}
+                                                </div>
+                                            </li>
+                                        {% endfor %}
+                                </ul>
+                            </div>
+                            <div class="commande-meta">
+                                <p><strong>Date :</strong> {{ cmd.date_commande.strftime('%d/%m/%Y %H:%M') if cmd.date_commande else 'N/A' }}</p>
+                                <p><strong>Total :</strong> {{ "%.2f€"|format(cmd.montant_total) }}</p>
+                            </div>
+                        </div>
+                        <div class="card-footer">
+                            <form method="post" action="{{ url_for('set_statut', cmd_id=cmd.id_commande) }}" class="status-form">
+                                <label for="statut-{{ cmd.id_commande }}">Changer le statut :</label>
+                                <select name="statut" id="statut-{{ cmd.id_commande }}">
+                                    <option value="En attente" {% if cmd.statut == 'En attente' %}selected{% endif %}>En attente</option>
+                                    <option value="En préparation" {% if cmd.statut == 'En préparation' %}selected{% endif %}>En préparation</option>
+                                    <option value="Prêt" {% if cmd.statut == 'Prêt' %}selected{% endif %}>Prêt</option>
+                                    <option value="récupéré" {% if cmd.statut == 'récupéré' %}selected{% endif %}>Récupéré</option>
+                                    <option value="non récupéré" {% if cmd.statut == 'non récupéré' %}selected{% endif %}>Non récupéré</option>
+                                </select>
+                                <button type="submit" class="btn-update">Mettre à jour</button>
+                            </form>
+                        </div>
+                    </article>
+                {% endfor %}
+            </div>
+        {% else %}
+            <div class="no-commandes">
+                <p>Aucune commande à afficher pour le moment.</p>
+            </div>
+        {% endif %}
+    </div>
+{% endblock %}

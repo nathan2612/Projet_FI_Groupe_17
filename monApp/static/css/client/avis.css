@@ -1,0 +1,87 @@
+.avis {
+    margin: 60px auto;
+}
+.avis h2 {
+    font-size: 36px;
+    font-weight: 800;
+    text-align: center;
+    margin-bottom: 40px;
+}
+.avis-list.simple {
+    max-width: 1000px;
+    margin: 0 auto;
+}
+.avis-row {
+    display: grid;
+    grid-template-columns: auto 1fr auto;
+    gap: 20px;
+    align-items: center;
+    padding: 24px 28px;
+    margin-bottom: 16px;
+    border: 1px solid #f0f0f0;
+}
+.auteur {
+    margin: 0;
+}
+.notes-img {
+    width: 120px;
+    height: auto;
+    flex-shrink: 0;
+}
+.avis-text {
+    line-height: 1.3;
+    margin: 0;
+    font-style: italic;
+}
+.avis-more {
+    display: flex;
+    justify-content: center;
+    gap: 1rem;
+    margin-top: 32px;
+}
+.voir-plus {
+    color: #ff6d41;
+    border: 2px solid #ff6d41;
+    padding: 12px 28px;
+    border-radius: 12px;
+    text-decoration: none;
+    font-weight: 700;
+    transition: all 0.3s ease;
+}
+.voir-plus:hover {
+    background: #ff6d41 ;
+    color: #fff;
+    transform: translateY(-2px);
+}
+@media (max-width: 768px) {
+    .avis h2 {
+        font-size: 28px;
+    }
+
+    .avis-row {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+    }
+
+    .auteur {
+        order: 1;
+        margin-bottom: 12px;
+    }
+
+    .notes-img {
+        width: 50px;
+        order: 2;
+        margin-bottom: 12px;
+    }
+
+    .avis-text {
+        font-size: 15px;
+        order: 3;
+    }
+
+    .avis {
+        padding: 20px;
+    }
+}

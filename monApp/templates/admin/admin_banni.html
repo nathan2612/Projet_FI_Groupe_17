@@ -1,0 +1,129 @@
+{% extends "admin/base_admin.html" %}
+
+{% block styles %}
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/admin/admin_banni.css') }}">
+{% endblock %}
+
+{% block main %}
+    <div class="admin-banni-page">
+        <div class="top-actions" style="display:flex; justify-content:space-between; align-items:center; gap:12px;">
+            <h1>Clients avec commandes non récupérées</h1>
+            <div>
+                <a href="{{ url_for('admin_bannis') }}" class="toggle-btn">Voir les clients bannis</a>
+            </div>
+        </div>
+        {% if clients %}
+        <div class="table-wrapper">
+            <table class="table admin-table">
+            <thead>
+                <tr>
+                    <th>#</th>
+                    <th>Nom</th>
+                    <th>Prénom</th>
+                    <th>Téléphone</th>
+                        <th>Commandes non récupérées</th>
+                        <th>Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for entry in clients %}
+                    <tr>
+                        <td>{{ loop.index }}</td>
+                        <td>{{ entry.client.nom }}</td>
+                        <td>{{ entry.client.prenom }}</td>
+                        <td>{{ entry.client.telephone }}</td>
+                        {% set title = entry.nb_non_recup ~ ' commande(s) non récupérée(s)' %}
+                        {% if entry.nb_non_recup == 0 %}
+                            <td><span class="badge-count badge-count-green" title="{{ title }}" aria-label="{{ title }}">{{ entry.nb_non_recup }}</span></td>
+                        {% elif entry.nb_non_recup == 1 %}
+                            <td><span class="badge-count badge-count-light-orange" title="{{ title }}" aria-label="{{ title }}">{{ entry.nb_non_recup }}</span></td>
+                        {% elif entry.nb_non_recup == 2 %}
+                            <td><span class="badge-count badge-count-orange" title="{{ title }}" aria-label="{{ title }}">{{ entry.nb_non_recup }}</span></td>
+                        {% else %}
+                            <td><span class="badge-count badge-count-red" title="{{ title }}" aria-label="{{ title }}">{{ entry.nb_non_recup }}</span></td>
+                        {% endif %}
+                            <td>
+                                <form action="{{ url_for('ban_client', client_id=entry.client.id_client) }}" method="post" class="ban-form" data-client-name="{{ entry.client.prenom }} {{ entry.client.nom }}">
+                                    <button type="button" class="ban-btn" title="Bannir le client {{ entry.client.prenom }} {{ entry.client.nom }}">Bannir</button>
+                                    <noscript>
+                                        <button type="submit" class="ban-btn">Bannir</button>
+                                    </noscript>
+                                </form>
+                            </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+            </table>
+        </div>
+    {% else %}
+        <p>Aucun client avec des commandes non récupérées.</p>
+    {% endif %}
+    </div>
+    <!-- Modal confirmation bannissement -->
+    <div id="ban-confirm-modal" class="ban-modal" role="dialog" aria-modal="true" aria-hidden="true" hidden>
+        <div class="ban-modal-backdrop" data-dismiss></div>
+        <div class="ban-modal-panel">
+            <header class="ban-modal-header"><h3>Confirmer le bannissement</h3></header>
+            <div class="ban-modal-body">
+                <p id="ban-modal-message">Êtes-vous sûr de vouloir bannir ce client ?</p>
+            </div>
+            <div class="ban-modal-actions">
+                <button id="ban-cancel" type="button" class="btn-cancel">Annuler</button>
+                <button id="ban-confirm" type="button" class="btn-confirm">Bannir</button>
+            </div>
+        </div>
+    </div>
+
+   <script>
+    document.addEventListener("DOMContentLoaded", function() {
+        // Sélection des éléments du DOM
+        var m = document.getElementById("ban-confirm-modal"),
+            msg = document.getElementById("ban-modal-message"),
+            c = document.getElementById("ban-confirm"),
+            x = document.getElementById("ban-cancel"),
+            t = null;
+    
+        // Fonction pour afficher la modale
+        function s(n, f) {
+            t = f;
+            msg.textContent = "Bannir " + n + " ? Cette action bloquera toutes les commandes et réservations.";
+            m.hidden = false;
+            m.setAttribute("aria-hidden", "false");
+            
+            requestAnimationFrame(function() {
+                m.classList.add("show");
+            });
+            
+            x.focus();
+        }
+    
+        // Fonction pour masquer la modale
+        function h() {
+            m.classList.remove("show");
+            m.setAttribute("aria-hidden", "true");
+            
+            setTimeout(function() {
+                m.hidden = true;
+                t = null;
+            }, 220);
+        }
+    
+        // Attacher l'événement au clic sur les boutons de bannissement
+        Array.prototype.forEach.call(document.querySelectorAll(".ban-form .ban-btn"), function(b) {
+            b.addEventListener("click", function() {
+                var f = b.closest("form"),
+                    name = (f && f.dataset.clientName) ? f.dataset.clientName : "ce client";
+                s(name, f);
+            });
+        });
+    
+        // Bouton Annuler
+        x.addEventListener("click", h);
+    
+        // Bouton Confirmer (soumission du formulaire)
+        c.addEventListener("click", function() {
+            if (t) t.submit();
+        });
+    });
+    </script>
+{% endblock %}

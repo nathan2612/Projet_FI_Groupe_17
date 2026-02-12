@@ -1,0 +1,29 @@
+{% extends "client/base.html" %}
+
+{% block styles %}
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/client/propos.css') }}">
+{% endblock %}
+
+{% block main %}
+    <div class="page-content-wrapper"> 
+
+        <div class="about-text-container">
+            <h1>A propos de l'Oumami</h1>
+            
+            <p>L'«Oumami» est un mot japonais qui signifie un «goût savoureux». C'est la cinquième saveur fondamentale avec le sucré, l'acide, l'amer et le salé. Ce goût a été découvert en 1908 par un chercheur japonais, Professeur IKEDA Kikunae. L'«umami» est présent dans le DASHI (bouillon d'algue KOMBU, de copeaux de bonite séchée et de champignon SHIITAKE), ingrédient indispensable dans la cuisine japonaise. C'est la raison pour laquelle j'ai choisi ce mot «oumami» pour nommer mon magasin, où je pourrai vous faire découvrir ce goût savoureux et l'art de cuisine asiatique au travers de mes plats. Madoka</p>
+
+            <div class="bottom-text">
+                <p><strong>Tous nos plats sont «faits maison». Dégustez-les !</strong><br>
+                Les plats «faits maison» sont élaborés sur place à partir de produits bruts.</p>
+
+                <p>En décembre 2024, l'Oumami est apparu sur le guide "Gault&Millau Restaurant " ainsi que "gaultmillau.com".</p>
+            </div>
+        </div>
+
+        <div class="about-image-container">
+            <img src="{{ url_for('static', filename='images/assets/sushi-sur-la-table.jpg') }}" alt="Plat Oumami - sushi sur la table">
+
+        </div>
+
+    </div>
+{% endblock %}

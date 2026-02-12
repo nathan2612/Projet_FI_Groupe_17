@@ -1,0 +1,135 @@
+.admin-page {
+     max-width: 1000px;
+     margin: 2rem auto;
+     padding: 2rem;
+     font-family: 'Inter', system-ui, sans-serif;
+     color: #1f2937;
+     background: #fff;
+     border-radius: 8px;
+     box-shadow: 0 4px 6px -1px rgba(0,0,0,.1);
+}
+ .admin-page h1 {
+     font-size: 1.875rem;
+     color: #4f46e5;
+     padding-bottom: 1rem;
+     border-bottom: 2px solid #e5e7eb;
+     margin-bottom: 2rem;
+}
+ .form-field {
+     margin-bottom: 1.5rem;
+}
+ .form-field label {
+     display: block;
+     margin-bottom: .5rem;
+     font-weight: 600;
+}
+ .form-field input[type="text"], .form-field textarea {
+     width: 100%;
+     padding: .75rem;
+     border: 1px solid #e5e7eb;
+     border-radius: 8px;
+     transition: all .2s;
+}
+ .form-field input:focus, .form-field textarea:focus {
+     outline: none;
+     border-color: #4f46e5;
+     box-shadow: 0 0 0 3px rgba(79,70,229,.1);
+}
+ .checkbox-container {
+     display: grid;
+     grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+     gap: 10px;
+     padding: 15px;
+     background: #f3f4f6;
+     border-radius: 8px;
+}
+ .checkbox-label {
+     display: flex;
+     align-items: center;
+     background: #fff;
+     padding: 10px;
+     border-radius: 6px;
+     border: 1px solid #e5e7eb;
+     cursor: pointer;
+     transition: 0.2s;
+}
+ .checkbox-label:hover {
+     border-color: #4f46e5;
+     transform: translateY(-2px);
+}
+ #drop-area-menu {
+     background: #fafafa;
+     border: 2px dashed #cbd5e1 !important;
+}
+ .btn-submit, .btn {
+     display: inline-block;
+     background: #4f46e5;
+     color: #fff;
+     padding: .75rem 1.5rem;
+     border-radius: 8px;
+     font-weight: 600;
+     border: none;
+     cursor: pointer;
+     text-decoration: none;
+}
+ .btn-submit:hover, .btn:hover {
+     background: #4338ca;
+}
+ .btn-cancel {
+     background: #f3f4f6;
+     color: #6b7280;
+     padding: .75rem 1.5rem;
+     border-radius: 8px;
+     text-decoration: none;
+}
+ .admin-table {
+     width: 100%;
+     border-collapse: collapse;
+     margin-top: 1rem;
+}
+ .admin-table th, .admin-table td {
+     padding: 12px 15px;
+     text-align: left;
+     border-bottom: 1px solid #eee;
+}
+ .admin-table th {
+     background: #f8fafc;
+     color: #64748b;
+     font-size: 0.85rem;
+     text-transform: uppercase;
+}
+ .admin-table button {
+     background: #fee2e2;
+     color: #dc2626;
+     border: none;
+     padding: 5px 10px;
+     border-radius: 4px;
+     cursor: pointer;
+}
+ .admin-table button:hover {
+     background: #dc2626;
+     color: #fff;
+}
+ .alert {
+     padding: 1rem;
+     border-radius: 8px;
+     margin-bottom: 1.5rem;
+}
+ .alert-error {
+     background: #fee2e2;
+     color: #991b1b;
+}
+ .alert-success {
+     background: #dcfce7;
+     color: #166534;
+}
+ td a {
+     color: #4f46e5;
+     text-decoration: none;
+     font-weight: 600;
+}
+ .form-actions {
+     display: flex;
+     gap: 10px;
+     margin-top: 1.5rem;
+}

@@ -1,0 +1,203 @@
+import click
+import logging as lg
+import random
+from .app import app, db
+from sqlalchemy import text
+
+@app.cli.command()
+@click.argument('filename')
+def loaddb(filename):
+    import yaml
+    from datetime import datetime
+    
+    db.drop_all()
+    db.create_all()
+    
+    # Réactiver les contraintes de clés étrangères
+    with db.engine.connect() as conn:
+        conn.execute(db.text('SET FOREIGN_KEY_CHECKS=1;'))
+        conn.commit()
+
+    with open(filename, 'r', encoding='utf-8') as file:
+        data = yaml.safe_load(file)
+
+    from .models import (
+        CATEGORIE, PLAT, CLIENT, COMMANDE, MENU,
+        CONTENIR, APPARTENIR_PLATS, APPARTENIR_MENUS, AVIS, DEFINIR_STOCK,RESERVATION,SERVICE,SALLE
+    )
+
+    def parse_date(s):
+        if s is None:
+            return None
+        if isinstance(s, datetime):
+            return s.date()
+        try:
+            return datetime.strptime(s, '%Y-%m-%d').date()
+        except Exception:
+            return None
+
+    def parse_time(s):
+        if s is None:
+            return None
+        if isinstance(s, datetime):
+            return s.time()
+        try:
+            return datetime.strptime(s, '%H:%M:%S').time()
+        except Exception:
+            return None
+
+    for entry in data.get('categories', []) or []:
+        obj = CATEGORIE(
+            id_categorie=entry.get('id_categorie'),
+            nom_categorie=entry.get('nom_categorie'),
+            image_categorie=entry.get('image_categorie', 'default_categorie.png')
+        )
+        db.session.merge(obj)
+    db.session.commit()
+
+    for entry in data.get('plats', []) or []:
+        obj = PLAT(
+            id_plat=entry.get('id_plat'),
+            id_categorie=entry.get('id_categorie'),
+            nom_plat=entry.get('nom_plat'),
+            description=entry.get('description'),
+            longue_description=entry.get('longue_description'),
+            prix=entry.get('prix'),
+            disponible=entry.get('disponible', True),
+            image_url=entry.get('image_url', 'default_plat.png'),
+            vegetarien=entry.get('vegetarien', random.choice([True, False])),
+            vegan=entry.get('vegan', random.choice([True, False])),
+            gluten=entry.get('gluten', random.choice([True, False])),
+            lactose=entry.get('lactose', random.choice([True, False])),
+            fruit_a_coque=entry.get('fruit_a_coque', random.choice([True, False])),
+            crustaces=entry.get('crustaces', random.choice([True, False]))
+        )
+        db.session.merge(obj)
+    db.session.commit()
+
+    for entry in data.get('definir_stock', []) or []:
+        obj = DEFINIR_STOCK(
+            id_plat=entry.get('id_plat'),
+            jour=parse_date(datetime.today()),
+            stock=entry.get('stock')
+        )
+        db.session.merge(obj)
+    db.session.commit()
+
+    from hashlib import sha256
+    for entry in data.get('clients', []) or []:
+        m = sha256()
+        m.update(entry.get('mot_de_passe').encode())
+        obj = CLIENT(
+            id_client=entry.get('id_client'),
+            nom=entry.get('nom'),
+            prenom=entry.get('prenom'),
+            telephone=entry.get('telephone'),
+            mot_de_passe=m.hexdigest(),
+            banni=entry.get('banni', False),
+            # Rôle de l'utilisateur : 'user' (par défaut) ou 'admin'
+            role=entry.get('role', 'user')
+        )
+        db.session.merge(obj)
+    db.session.commit()
+
+    for entry in data.get('menus', []) or []:
+        obj = MENU(
+            id_menu=entry.get('id_menu'),
+            nom_menu=entry.get('nom_menu'),
+            description=entry.get('description'),
+            image_url=entry.get('image_url', 'default_menu.jpg'),
+            prix=entry.get('prix')
+        )
+        db.session.merge(obj)
+    db.session.commit()
+
+    for entry in data.get('contenir', []) or []:
+        obj = CONTENIR(
+            id_menu=entry.get('id_menu'),
+            id_plat=entry.get('id_plat'),
+            type_plat=entry.get('type_plat')
+        )
+        db.session.merge(obj)
+    db.session.commit()
+
+    # 6) commandes
+    for entry in data.get('commandes', []) or []:
+        obj = COMMANDE(
+            id_commande=entry.get('id_commande'),
+            id_client=entry.get('id_client'),
+            date_commande=datetime.strptime(entry.get('date_commande'), '%Y-%m-%d %H:%M:%S'),
+            statut=entry.get('statut'),
+            montant_total=entry.get('montant_total'),
+            nombre_personnes=entry.get('nombre_personnes')
+        )
+        db.session.merge(obj)
+    db.session.commit()
+
+    for entry in data.get('appartenir_plats', []) or []:
+        obj = APPARTENIR_PLATS(
+            id_commande=entry.get('id_commande'),
+            id_plat=entry.get('id_plat'),
+            quantite=entry.get('quantite'),
+        )
+        db.session.merge(obj)
+    db.session.commit()
+
+    for entry in data.get('appartenir_menus', []) or []:
+        obj = APPARTENIR_MENUS(
+            id_commande=entry.get('id_commande'),
+            id_menu=entry.get('id_menu'),
+            quantite=entry.get('quantite'),
+            id_entree=entry.get('id_entree',None),
+            id_plat_choisi=entry.get('id_plat_choisi',None),
+            id_dessert=entry.get('id_dessert',None)
+        )
+        db.session.merge(obj)
+    db.session.commit()
+
+    for entry in data.get('avis', []) or []:
+        obj = AVIS(
+            id_avis=entry.get('id_avis'),
+            id_client=entry.get('id_client'),
+            note=entry.get('note'),
+            commentaire=entry.get('commentaire')
+        )
+        db.session.merge(obj)
+    db.session.commit()
+
+    for entry in data.get('salle', []) or []:
+        obj = SALLE(
+            id_parametre=entry.get('id_parametre'),
+            cle=entry.get('cle'),
+            valeur=entry.get('valeur')
+        )
+        db.session.merge(obj)
+    db.session.commit()
+
+    for entry in data.get('service', []) or []:
+        obj = SERVICE(
+            id_service=entry.get('id_service'),
+            heure_debut=entry.get('heure_debut'),
+            heure_fin=entry.get('heure_fin'),
+            actif=entry.get('actif',True)
+        )
+        db.session.merge(obj)
+    db.session.commit()
+
+    for entry in data.get('reservation', []) or []:
+        obj = RESERVATION(
+            id_reservation=entry.get('id_reservation'),
+            date_reservation=datetime.strptime(entry.get('date_reservation'), '%Y-%m-%d'),
+            id_client=entry.get('id_client'),
+            id_service=entry.get('id_service'),
+            nb_personne=entry.get('nb_personne')
+        )
+        db.session.merge(obj)
+    db.session.commit()
+
+    lg.warning('Database initialized from %s!', filename)
+
+@app.cli.command()
+def syncdb():
+    db.create_all()
+    lg.warning('Database synchronized!')
