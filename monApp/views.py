@@ -226,6 +226,10 @@ def ajouter_menu_selection():
         flash("Veuillez vous connecter pour ajouter des articles au panier.", "info")
         return redirect(url_for('connexion', next=request.referrer or url_for('produits')))
 
+    if current_user.banni:
+        flash("Vous ne pouvez pas passer de commande car votre compte est banni.", "error")
+        return redirect(url_for('index'))
+
     entree_id = request.form.get('entree')
     plat_id = request.form.get('plat')
     dessert_id = request.form.get('dessert')
@@ -324,6 +328,10 @@ def nouveaute():
 @app.route('/panier/')
 @login_required
 def panier():
+    if current_user.banni:
+        flash("Vous ne pouvez pas accéder au panier car votre compte est banni.", "error")
+        return redirect(url_for('index'))
+    
     commande = None
     total_general = 0
     heure_possible = ['11:30', '11:45', '12:00', '12:15', '12:30', '12:45', '13:00', '13:15', '13:30', '13:45', '14:00', '17:00', '17:15', '17:30', '17:45', '18:00', '18:15', '18:30', '18:45', '19:00', '19:15', '19:30', '19:45', '20:00']
@@ -365,6 +373,10 @@ def ajouter_au_panier():
         flash("Veuillez vous connecter pour ajouter des articles au panier.", "info")
         return redirect(url_for('connexion', next=url_for('produits')))
 
+    if current_user.banni:
+        flash("Vous ne pouvez pas passer de commande car votre compte est banni.", "error")
+        return redirect(url_for('index'))
+
     id_plat = request.form.get('id_plat')
 
     commande = db.session.query(COMMANDE).filter_by(id_client=current_user.id_client, statut='En commande').first()
@@ -397,6 +409,10 @@ def ajouter_au_panier():
 @app.route('/modifier-quantite-panier/', methods=['POST'])
 @login_required
 def modifier_quantite_panier():
+    if current_user.banni:
+        flash("Vous ne pouvez pas modifier votre panier car votre compte est banni.", "error")
+        return redirect(url_for('index'))
+    
     id_plat = request.form.get('id_plat')
     id_menu = request.form.get('id_menu')
     id_entree = request.form.get('id_entree')
@@ -438,6 +454,10 @@ def supprimer_du_panier():
     if not current_user.is_authenticated:
         flash("Veuillez vous connecter pour ajouter des articles au panier.", "info")
         return redirect(url_for('connexion', next=url_for('produits')))
+    
+    if current_user.banni:
+        flash("Vous ne pouvez pas supprimer des articles de votre panier car votre compte est banni.", "error")
+        return redirect(url_for('index'))
 
     id_plat = request.form.get('id_plat')
     id_menu = request.form.get('id_menu')
@@ -463,6 +483,10 @@ def supprimer_du_panier():
 @app.route('/valider-commande/', methods=['POST'])
 @login_required
 def valider_commande():
+    if current_user.banni:
+        flash("Vous ne pouvez pas valider de commande car votre compte est banni.", "error")
+        return redirect(url_for('index'))
+    
     commande = db.session.query(COMMANDE).filter_by(id_client=current_user.id_client, statut='En commande').first()
     
     heure_retrait = request.form.get('heure_retrait')
@@ -724,6 +748,10 @@ def update_all_stock():
 @app.route('/creer-avis/', methods=['GET', 'POST'])
 @login_required
 def creer_avis():
+    if current_user.banni:
+        flash("Vous ne pouvez pas créer d'avis car votre compte est banni.", "error")
+        return redirect(url_for('index'))
+    
     if request.method == 'POST':
         note = request.form.get('note')
         commentaire = request.form.get('commentaire')
@@ -1336,6 +1364,10 @@ def admin_delete_menu(id_menu):
 @app.route('/reservation/', methods=['GET', 'POST'])
 @login_required
 def reservation():
+    if current_user.banni:
+        flash("Vous ne pouvez pas faire de réservation car votre compte est banni.", "error")
+        return redirect(url_for('index'))
+    
     form = ReservationForm()
     
     selected_date = None
