@@ -1,4 +1,3 @@
-cd Projet_FI_Groupe_17/
 python3 -m venv venv
 source venv/bin/activate
 pip install -r requirements.txt

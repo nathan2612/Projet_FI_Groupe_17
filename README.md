@@ -10,21 +10,14 @@ Ci‑dessous les étapes pour préparer l'environnement, initialiser la base et 
 - MySQL / MariaDB (accessible depuis la machine qui exécute l'application)
 - git, un shell (bash)
 
-Fichier de dépendances: `requirement.txt` (utilisé avec pip).
+Fichier de dépendances: `requirements.txt` (utilisé avec pip).
 
 ## Installer l'environnement
 
-1. Créer et activer un environnement virtuel (recommandé) :
+- pour l'instalation il suffit de cloner le dépôt :
 
 ```bash
-python3 -m venv .venv
-source .venv/bin/activate
-```
-
-2. Installer les dépendances :
-
-```bash
-pip install -r requirement.txt
+git clone https://github.com/nathan2612/Projet_FI_Groupe_17
 ```
 
 ## Configuration de la base de données
@@ -40,21 +33,17 @@ Il faut changer cette ligne selon vos login et votre base de donné, comme ceci 
 ```bash
 'mysql+pymysql://user:password@host:3306/nom_de_la_base?charset=utf8mb4'
 ```
+## Instalation de l'application
 
-### Préparer la base (création + données de test)
-
-L'application fournit une commande pour charger les fixtures YAML :
-
-```bash
-flask loaddb monApp/data/data.yml
-```
-
-Attention : `flask loaddb` fait `drop_all()` puis `create_all()` — il **efface** la base existante avant de la recréer.
-
-## Lancer l'application
-
-En développement :
+pour installer l'application, il suffit de faire ces commandes dans le terminal : 
 
 ```bash
-flask run
+cd Projet_FI_Groupe_17
+chmod +x ./app.sh 
+./app.sh
 ```
+
+## Lancer le site
+Une fois les étapes précédentes terminées, vous pouvez aller sur le site en ouvrant votre navigateur à l'adresse suivante : 
+
+url : `http://localhost:5000`
