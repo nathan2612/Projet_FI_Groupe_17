@@ -67,6 +67,33 @@
             </ul>
         </div>
 
+        <div class="dashboard-card">
+            <h2 class="card-title">Services Aujourd'hui</h2>
+            <ul class="liste-services">
+                {% for info in services_info %}
+                    <li class="service">
+                        <div class="entete-service">
+                            <span class="horaire">{{ info.service.heure_debut.strftime('%H:%M') }} - {{ info.service.heure_fin.strftime('%H:%M') }}</span>
+                        </div>
+                        <div class="capacite">
+                            <div class="barre">
+                                <div class="remplissage" style="width: {{ info.pourcentage_remplissage }}%;" 
+                                     data-percentage="{{ info.pourcentage_remplissage }}"></div>
+                            </div>
+                            <div class="info">
+                                <span class="reserve">{{ info.total_reserve }}/{{ info.capacite_max }} personnes</span>
+                                <span class="restant {% if info.places_restantes <= 5 %}alerte{% endif %}">
+                                    {{ info.places_restantes }} places restantes
+                                </span>
+                            </div>
+                        </div>
+                    </li>
+                {% else %}
+                    <li class="empty-state">Aucun service actif aujourd'hui.</li>
+                {% endfor %}
+            </ul>
+        </div>
+
         <div class="dashboard-card full-width">
             <h2 class="card-title">Statistiques Comparatives</h2>
             <ul class="comparison-list">

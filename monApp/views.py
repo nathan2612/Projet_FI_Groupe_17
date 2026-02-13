@@ -1022,6 +1022,29 @@ def admin_index():
 
     print(tout_plats_rupture)
 
+    capacite_max_entry = db.session.query(SALLE).filter_by(cle='capacite').first()
+    capacite_max = capacite_max_entry.valeur if capacite_max_entry else 0
+
+    services = db.session.query(SERVICE).filter_by(actif=True).order_by(SERVICE.heure_debut).all()
+    
+    services_info = []
+    for service in services:
+        total_reserve = db.session.query(func.sum(RESERVATION.nb_personne)).filter(
+            RESERVATION.id_service == service.id_service,
+            RESERVATION.date_reservation == today
+        ).scalar() or 0
+        
+        places_restantes = capacite_max - total_reserve
+        pourcentage_remplissage = int((total_reserve / capacite_max * 100)) if capacite_max > 0 else 0
+        
+        services_info.append({
+            'service': service,
+            'total_reserve': total_reserve,
+            'places_restantes': places_restantes,
+            'capacite_max': capacite_max,
+            'pourcentage_remplissage': pourcentage_remplissage
+        })
+
     return render_template(
         "admin/admin_index.html",
         top_5_ventes=top_5_ventes,
@@ -1037,7 +1060,8 @@ def admin_index():
         ca_auj=ca_auj,
         ca_mois=ca_mois,
         ca_annee=ca_annee,
-        tout_plats_rupture=tout_plats_rupture
+        tout_plats_rupture=tout_plats_rupture,
+        services_info=services_info
     )
 
 
